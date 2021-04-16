@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    username: postgres
+    password: root
+    url: jdbc:postgres://localhost:5432/flea_campus
+    driver-class-name: org.postgresql.Driver
+
+logging:
+  level:
+    com:
+      gyh:
+        fleacampus:
+          mapper: DEBUG
+
+mybatis:
+  mapper-locations: classpath:/mapper/*Mapper.xml
+  type-aliases-package: com.gyh.fleacampus.mapper
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

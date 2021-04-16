@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gyh.fleacampus.mapper.UserMapper">
+    <resultMap id="userMap" type="com.gyh.fleacampus.model.User">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="name" column="name"/>
+        <result property="telephone" column="telephone"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <resultMap id="userRoleMapper" type="com.gyh.fleacampus.model.User" extends="userMap">
+        <collection property="roles" ofType="com.gyh.fleacampus.model.Role"
+                    select="com.ibms.demo.mapper.RoleMapper.findRoleByUserId" column="id"/>
+    </resultMap>
+
+    <select id="loadUserByUsername" parameterType="String" resultMap="userRoleMapper">
+        select u.*
+        from user u
+        where u.username = #{useruame}
+    </select>
+
+    <select id="findUserRoleById" parameterType="int" resultMap="userRoleMapper">
+        select * from user where id = #{id}
+    </select>
+
+    <select id="findUserById" parameterType="int" resultMap="userMap">
+        select * from user where id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="userRoleMapper">
+        select * from user
+    </select>
+
+    <insert id="save" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.model.User" useGeneratedKeys="true">
+        insert into user (username, password, telephone, name)
+        values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR},
+                #{name,jdbcType=TIMESTAMP})
+    </insert>
+
+    <update id="update" parameterType="com.gyh.fleacampus.model.User">
+        update user
+            <set>
+                <if test="username != null">
+                    username = #{username},
+                </if>
+                <if test="password != null">
+                    password = #{password},
+                </if>
+                <if test="name != null">
+                    name = #{name},
+                </if>
+                <if test="telephone != null">
+                    telephone = #{telephone},
+                </if>
+            </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserById" parameterType="int">
+        delete from user where id = #{id}
+    </delete>
+</mapper>
