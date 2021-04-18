@@ -1,4 +1,3 @@
-/*
 package com.gyh.fleacampus.config
 
 import io.swagger.annotations.ApiOperation
@@ -14,10 +13,9 @@ import springfox.documentation.spring.web.plugins.Docket
 import springfox.documentation.swagger2.annotations.EnableSwagger2
 
 
-*/
 /**
  * Created by GYH on 2021/4/16
- *//*
+ */
 
 @Configuration
 @EnableSwagger2
@@ -61,4 +59,4 @@ class Knife4jConfiguration {
         return listOf(SecurityReference("Authorization", arrayOf(authorizationScope)))
     }
 
-}*/
+}

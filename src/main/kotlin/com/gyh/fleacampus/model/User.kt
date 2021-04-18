@@ -2,8 +2,8 @@ package com.gyh.fleacampus.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
-import io.swagger.v3.oas.annotations.Parameter
-import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiModelProperty
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDateTime
@@ -20,19 +20,19 @@ import java.util.stream.Collectors
  * @apiParam {String} password 密码
  * @apiParam {Date} [createTime] 注册日期
  */
-@Schema(name = "用户")
+@ApiModel(value = "用户")
 class User : UserDetails {
-    @Schema(name = "客户字段分组ID")
+    @ApiModelProperty(value = "客户字段分组ID")
     var id: Int? = null
     private var username: String? = null
     private var password: String? = null
-    private var roles: Set<Role?>? = null
+    private var roles: Set<Role>? = null
     var name: String? = null
     var telephone: String? = null
     var createTime: LocalDateTime? = null
 
-    override fun getUsername(): String {
-        return username!!
+    override fun getUsername(): String? {
+        return username
     }
 
     fun setUsername(username: String?) {
@@ -40,8 +40,8 @@ class User : UserDetails {
     }
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    override fun getPassword(): String {
-        return password!!
+    override fun getPassword(): String? {
+        return password
     }
 
     fun setPassword(password: String?) {
@@ -50,12 +50,12 @@ class User : UserDetails {
 
     @JsonIgnore
     fun getRoles(): Set<String?> {
-        return (if (roles == null) emptySet<Role>() else roles)!!.stream()
+        return (if (roles == null) emptySet() else roles)!!.stream()
             .map { obj: Role? -> obj?.name }.collect(Collectors.toSet())
     }
 
-    override fun getAuthorities(): Collection<GrantedAuthority?> {
-        return roles!!
+    override fun getAuthorities(): Collection<GrantedAuthority> {
+        return roles ?: emptyList()
     }
 
     fun setRoles(roles: Collection<String?>?) {
@@ -64,7 +64,7 @@ class User : UserDetails {
         }
     }
 
-    fun setRoles(roles: Set<Role?>?) {
+    fun setRoles(roles: Set<Role>?) {
         this.roles = roles
     }
 

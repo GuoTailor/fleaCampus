@@ -16,6 +16,3 @@ mybatis:
   mapper-locations: classpath:/mapper/*Mapper.xml
   type-aliases-package: com.gyh.fleacampus.mapper
 
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html

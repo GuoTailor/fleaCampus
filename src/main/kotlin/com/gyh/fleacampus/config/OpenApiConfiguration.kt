@@ -1,4 +1,5 @@
 package com.gyh.fleacampus.config
+/*
 
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.ExternalDocumentation
@@ -9,12 +10,12 @@ import io.swagger.v3.oas.models.security.SecurityScheme
 import org.springdoc.core.GroupedOpenApi
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-
+*/
 
 /**
  * Created by GYH on 2021/4/16
  */
-@Configuration
+/*@Configuration
 class OpenApiConfiguration {
     @Bean
     fun publicApi(): GroupedOpenApi {
@@ -47,4 +48,4 @@ class OpenApiConfiguration {
             )
     }
 
-}
+}*/

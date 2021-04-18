@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse
 class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     private val logger = LoggerFactory.getLogger(this.javaClass.simpleName)
     private val objectMapper = ObjectMapper()
+
     @Bean
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
@@ -48,22 +49,16 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
             .and().authorizeRequests()
             .antMatchers("/login", "/common/**").permitAll()
             .antMatchers(
-                "/swagger-ui.html",
                 "/swagger-ui/*",
                 "/swagger-resources/**",
-                "/v2/api-docs",
                 "/v3/api-docs",
                 "/webjars/**"
             ).permitAll()
             .antMatchers("/**/*.html", "/**/*.js", "/**/*.css", "/**/*.png", "/**/*.ico", "/static/**").permitAll()
             .anyRequest().authenticated().and()
             .exceptionHandling()
-            .authenticationEntryPoint { request: HttpServletRequest?, response: HttpServletResponse, ex: AuthenticationException ->
-                response.writer.write(
-                    objectMapper.writeValueAsString(
-                        ResponseInfo.failed<String>(ex.message)
-                    )
-                )
+            .authenticationEntryPoint { _, response, ex ->
+                response.writer.write(objectMapper.writeValueAsString(ResponseInfo.failed<String>(ex.message)))
             }
             .and()
             .formLogin()

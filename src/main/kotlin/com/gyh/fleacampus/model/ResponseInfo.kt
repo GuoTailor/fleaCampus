@@ -24,26 +24,32 @@ class ResponseInfo<T> {
     companion object {
         const val OK_CODE = 0
         const val FAILED_CODE = 1
+        @JvmStatic
         fun <T> ok(): ResponseInfo<T> {
             return ResponseInfo(OK_CODE, "成功")
         }
 
+        @JvmStatic
         fun <T> ok(msg: String?, data: T): ResponseInfo<T> {
             return ResponseInfo(OK_CODE, msg, data)
         }
 
+        @JvmStatic
         fun <T> ok(data: T): ResponseInfo<T> {
             return ResponseInfo(OK_CODE, "成功", data)
         }
 
+        @JvmStatic
         fun <T> failed(): ResponseInfo<T> {
             return ResponseInfo(FAILED_CODE, "失败")
         }
 
+        @JvmStatic
         fun <T> failed(msg: String?): ResponseInfo<T> {
             return ResponseInfo(FAILED_CODE, msg)
         }
 
+        @JvmStatic
         fun <T> failed(msg: String?, data: T): ResponseInfo<T> {
             return ResponseInfo(FAILED_CODE, msg, data)
         }
