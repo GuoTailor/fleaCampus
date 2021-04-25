@@ -49,7 +49,6 @@ class UserService(val passwordEncoder: PasswordEncoder, val roleService: RoleSer
      * @return user
      */
     fun register(user: User): User {
-        user.password = passwordEncoder.encode(user.password)
         userMapper.save(user)
         roleService.addRoleToUser(user.id!!, Role.USER, null)
         return user
@@ -59,7 +58,6 @@ class UserService(val passwordEncoder: PasswordEncoder, val roleService: RoleSer
         val id: Int = getCurrentUser().id!!
         // 如果修改的用户是自己或者自己是超级管理员就允许修改
         return if (id == user.id || id == 1) {
-            user.password = passwordEncoder.encode(user.password)
             userMapper.update(user)
         } else throw IllegalStateException("不能修改")
     }

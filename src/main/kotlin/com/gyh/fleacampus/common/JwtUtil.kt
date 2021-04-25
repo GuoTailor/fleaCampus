@@ -38,7 +38,7 @@ o2kQ+X5xK9cipRgEKwIDAQAB""".toByteArray(),
             .body
         val user = User()
         user.id = claims["id"] as Int?
-        user.setUsername(claims["username"] as String?)
+        user.setUsername(claims["username"] as String)
         user.setRoles(claims["roles"] as Collection<String>)
         return user
     }
