@@ -6,16 +6,11 @@ import java.util.*
 /**
  * Created by gyh on 2021/2/4
  */
-class Role : GrantedAuthority {
+class Role(name: String) : GrantedAuthority {
     var id: Int? = null
-    var name: String? = null
+    var name: String? = name
     var nameZh: String? = null
     var unitId: Int? = null
-
-    constructor() {}
-    constructor(name: String?) {
-        this.name = name
-    }
 
     override fun getAuthority(): String {
         return name!!

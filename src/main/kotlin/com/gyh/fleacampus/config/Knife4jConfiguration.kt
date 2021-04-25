@@ -1,8 +1,13 @@
 package com.gyh.fleacampus.config
 
+import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j
+import com.github.xiaoymin.knife4j.spring.extension.OpenApiExtensionResolver
 import io.swagger.annotations.ApiOperation
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Import
+import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration
 import springfox.documentation.builders.ApiInfoBuilder
 import springfox.documentation.builders.PathSelectors
 import springfox.documentation.builders.RequestHandlerSelectors
@@ -20,6 +25,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @Configuration
 @EnableSwagger2
 class Knife4jConfiguration {
+    @Autowired
+    lateinit var openApiExtensionResolver: OpenApiExtensionResolver
+
     @Bean(value = ["defaultApi2"])
     fun defaultApi2(): Docket {
         return Docket(DocumentationType.OAS_30)
@@ -36,6 +44,7 @@ class Knife4jConfiguration {
             .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation::class.java))
             .paths(PathSelectors.any())
             .build()
+            .extensions(openApiExtensionResolver.buildExtensions("1.0版本"))
             .securityContexts(securityContexts())
             .securitySchemes(securitySchemes())
     }

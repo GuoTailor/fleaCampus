@@ -35,7 +35,7 @@ class User : UserDetails {
         return username
     }
 
-    fun setUsername(username: String?) {
+    fun setUsername(username: String) {
         this.username = username
     }
 
@@ -44,24 +44,22 @@ class User : UserDetails {
         return password
     }
 
-    fun setPassword(password: String?) {
+    fun setPassword(password: String) {
         this.password = password
     }
 
     @JsonIgnore
-    fun getRoles(): Set<String?> {
-        return (if (roles == null) emptySet() else roles)!!.stream()
-            .map { obj: Role? -> obj?.name }.collect(Collectors.toSet())
+    fun getRoles(): Set<String> {
+        return (roles ?: emptySet()).stream()
+            .map { obj: Role -> obj.name!! }.collect(Collectors.toSet())
     }
 
     override fun getAuthorities(): Collection<GrantedAuthority> {
         return roles ?: emptyList()
     }
 
-    fun setRoles(roles: Collection<String?>?) {
-        if (roles != null) {
-            this.roles = roles.stream().map { name: String? -> Role(name) }.collect(Collectors.toSet())
-        }
+    fun setRoles(roles: Collection<String>) {
+        this.roles = roles.stream().map { name: String -> Role(name) }.collect(Collectors.toSet())
     }
 
     fun setRoles(roles: Set<Role>?) {
