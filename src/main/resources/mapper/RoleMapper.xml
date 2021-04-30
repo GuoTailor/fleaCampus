@@ -5,39 +5,41 @@
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="nameZh" column="name_zh"/>
-        <result property="unitId" column="unit_id"/>
     </resultMap>
     <delete id="removeRoleToUser">
-        delete from user_role where user_id = #{userId} and role_id = #{roleId} and unit_id = #{unitId}
+        delete from fc_user_role where user_id = #{userId} and role_id = #{roleId}
     </delete>
     <delete id="deleteById">
-        delete from user_role where id = #{id}
+        delete from fc_user_role where id = #{id}
     </delete>
 
     <select id="findRoleByUserId" parameterType="int" resultMap="roleMap">
-        select role.*, ur.unit_id from role
-        left join user_role ur on ur.role_id = role.id
+        select fc_role.* from fc_role
+        left join fc_user_role ur on ur.role_id = fc_role.id
         where ur.user_id = #{userId}
     </select>
+
     <select id="findAll" resultType="com.gyh.fleacampus.model.Role">
-        select * from role
+        select * from fc_role
     </select>
+
     <select id="findIdByName" resultType="java.lang.Integer">
-        select id from role where name = #{name}
+        select id from fc_role where name = #{name}
     </select>
+
     <select id="findByUserIdAndRoleId" resultType="com.gyh.fleacampus.model.UserRole">
-        select * from user_role where user_id = #{userId} and role_id = #{roleId}
+        select * from fc_user_role where user_id = #{userId} and role_id = #{roleId}
     </select>
 
     <insert id="insert" parameterType="int">
-        insert into user_role(user_id, role_id, unit_id) values (#{userId}, #{roleId}, #{unitId})
+        insert into fc_user_role(user_id, role_id) values (#{userId}, #{roleId})
     </insert>
 
     <update id="updateRoleById">
-        update user_role set role_id = #{roleId}, unit_id = #{unitId} where id = #{id}
+        update fc_user_role set role_id = #{roleId} where id = #{id}
     </update>
 
     <update id="updateRoleByUserIdAndUnitId">
-        update user_role set role_id = #{roleId} where user_id = #{userId} and unit_id = #{unitId}
+        update fc_user_role set role_id = #{roleId} where user_id = #{userId}
     </update>
 </mapper>

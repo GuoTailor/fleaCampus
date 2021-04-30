@@ -31,7 +31,6 @@ fun main(args: Array<String>) {
         .optModelUrls("file:///mnt/e/AndroidStudioProjects/open_nsfw_android-dev/app/src/main/assets/nsfw") // search models in specified path
         .optModelName("nsfw") // specify model file prefix
         .build()
-    val model = Model.newInstance("")
     ModelZoo.listModels().forEach { (t, u) -> println(t.toString() + u) }
     ModelZoo.loadModel(criteria).use { model ->
         model.newPredictor().use { predictor ->

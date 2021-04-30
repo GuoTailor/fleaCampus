@@ -10,7 +10,6 @@ class Role(name: String) : GrantedAuthority {
     var id: Int? = null
     var name: String? = name
     var nameZh: String? = null
-    var unitId: Int? = null
 
     override fun getAuthority(): String {
         return name!!
