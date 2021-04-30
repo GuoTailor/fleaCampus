@@ -12,7 +12,7 @@
  Target Server Version : 130002
  File Encoding         : 65001
 
- Date: 23/04/2021 09:43:26
+ Date: 30/04/2021 16:58:35
 */
 
 
@@ -72,6 +72,17 @@ START 1
 CACHE 1;
 
 -- ----------------------------
+-- Sequence structure for post_id_seq
+-- ----------------------------
+DROP SEQUENCE IF EXISTS "public"."post_id_seq";
+CREATE SEQUENCE "public"."post_id_seq" 
+INCREMENT 1
+MINVALUE  1
+MAXVALUE 2147483647
+START 1
+CACHE 1;
+
+-- ----------------------------
 -- Table structure for fc_area
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."fc_area";
@@ -87,8 +98,32 @@ COMMENT ON COLUMN "public"."fc_area"."area" IS '校区名字';
 COMMENT ON COLUMN "public"."fc_area"."create_time" IS '创建时间';
 
 -- ----------------------------
--- Records of fc_area
+-- Table structure for fc_post
 -- ----------------------------
+DROP TABLE IF EXISTS "public"."fc_post";
+CREATE TABLE "public"."fc_post" (
+  "id" int4 NOT NULL DEFAULT nextval('post_id_seq'::regclass),
+  "user_id" int4 NOT NULL,
+  "title" varchar(255) COLLATE "pg_catalog"."default" NOT NULL,
+  "content" text COLLATE "pg_catalog"."default" NOT NULL,
+  "create_time" timestamp(6) NOT NULL DEFAULT now(),
+  "state" varchar(16) COLLATE "pg_catalog"."default" NOT NULL,
+  "release_time" timestamp(6),
+  "type" varchar(16) COLLATE "pg_catalog"."default"
+)
+;
+COMMENT ON COLUMN "public"."fc_post"."user_id" IS '发布者id';
+COMMENT ON COLUMN "public"."fc_post"."title" IS '标题';
+COMMENT ON COLUMN "public"."fc_post"."content" IS '内容';
+COMMENT ON COLUMN "public"."fc_post"."create_time" IS '创建时间';
+COMMENT ON COLUMN "public"."fc_post"."state" IS '状态 draft：草稿，normal：发布，timing：定时发布';
+COMMENT ON COLUMN "public"."fc_post"."release_time" IS '定时发布时间';
+COMMENT ON COLUMN "public"."fc_post"."type" IS '帖子类型
+buy：买
+sell:卖
+confess：表白
+game: 游戏
+other：其他';
 
 -- ----------------------------
 -- Table structure for fc_role
@@ -104,13 +139,6 @@ COMMENT ON COLUMN "public"."fc_role"."name" IS '角色名';
 COMMENT ON COLUMN "public"."fc_role"."name_zh" IS '角色名中文';
 
 -- ----------------------------
--- Records of fc_role
--- ----------------------------
-INSERT INTO "public"."fc_role" VALUES (1, 'ROLE_SUPER_ADMIN', '超级管理员');
-INSERT INTO "public"."fc_role" VALUES (2, 'ROLE_ADMIN', '管理员');
-INSERT INTO "public"."fc_role" VALUES (3, 'ROLE_USER', '用户');
-
--- ----------------------------
 -- Table structure for fc_school
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."fc_school";
@@ -122,10 +150,6 @@ CREATE TABLE "public"."fc_school" (
 ;
 COMMENT ON COLUMN "public"."fc_school"."name" IS '学校名';
 COMMENT ON COLUMN "public"."fc_school"."create_time" IS '创建时间';
-
--- ----------------------------
--- Records of fc_school
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for fc_user
@@ -161,10 +185,6 @@ COMMENT ON COLUMN "public"."fc_user"."specialty" IS '专业';
 COMMENT ON COLUMN "public"."fc_user"."create_time" IS '创建时间';
 
 -- ----------------------------
--- Records of fc_user
--- ----------------------------
-
--- ----------------------------
 -- Table structure for fc_user_role
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."fc_user_role";
@@ -176,10 +196,6 @@ CREATE TABLE "public"."fc_user_role" (
 ;
 COMMENT ON COLUMN "public"."fc_user_role"."user_id" IS '用户id';
 COMMENT ON COLUMN "public"."fc_user_role"."role_id" IS '角色id';
-
--- ----------------------------
--- Records of fc_user_role
--- ----------------------------
 
 -- ----------------------------
 -- Alter sequences owned by
@@ -217,9 +233,21 @@ OWNED BY "public"."fc_user_role"."id";
 SELECT setval('"public"."fc_user_role_id_seq"', 2, false);
 
 -- ----------------------------
+-- Alter sequences owned by
+-- ----------------------------
+ALTER SEQUENCE "public"."post_id_seq"
+OWNED BY "public"."fc_post"."id";
+SELECT setval('"public"."post_id_seq"', 2, false);
+
+-- ----------------------------
 -- Primary Key structure for table fc_area
 -- ----------------------------
 ALTER TABLE "public"."fc_area" ADD CONSTRAINT "fc_area_pkey" PRIMARY KEY ("id");
+
+-- ----------------------------
+-- Primary Key structure for table fc_post
+-- ----------------------------
+ALTER TABLE "public"."fc_post" ADD CONSTRAINT "post_pkey" PRIMARY KEY ("id");
 
 -- ----------------------------
 -- Primary Key structure for table fc_role

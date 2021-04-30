@@ -14,7 +14,7 @@
     <name>fleaCampus</name>
     <description>Demo project for Spring Boot</description>
     <properties>
-        <java.version>11</java.version>
+        <java.version>1.8</java.version>
         <kotlin.version>1.4.32</kotlin.version>
     </properties>
     <dependencies>
@@ -86,11 +86,34 @@
             <artifactId>knife4j-spring-boot-starter</artifactId>
             <version>3.0.2</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.tensorflow/tensorflow-core-platform -->
         <dependency>
             <groupId>org.tensorflow</groupId>
             <artifactId>tensorflow-core-platform</artifactId>
             <version>0.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>ai.djl.tflite</groupId>
+            <artifactId>tflite-engine</artifactId>
+            <version>0.10.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>ai.djl.tflite</groupId>
+            <artifactId>tflite-native-auto</artifactId>
+            <version>2.4.1</version>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/ai.djl/api -->
+        <dependency>
+            <groupId>ai.djl</groupId>
+            <artifactId>api</artifactId>
+            <version>0.10.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/ai.djl/repository -->
+        <dependency>
+            <groupId>ai.djl</groupId>
+            <artifactId>repository</artifactId>
+            <version>0.4.1</version>
         </dependency>
 
         <dependency>
