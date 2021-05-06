@@ -1,6 +1,10 @@
 package com.gyh.fleacampus.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDateTime
+import java.util.stream.Collectors
 
 /**
  *
@@ -14,7 +18,12 @@ data class FcUser(
     /**
      * 用户名
      */
-    var username: String? = null,
+    private var username: String? = null,
+    private var password: String? = null,
+    /**
+     * 角色
+     */
+    private var roles: Set<Role>? = null,
     /**
      * 个性签名
      */
@@ -58,4 +67,59 @@ data class FcUser(
     /**
      * 创建时间
      */
-    var createTime: LocalDateTime? = null)
+    var createTime: LocalDateTime? = null,
+) : UserDetails {
+
+    @JsonIgnore
+    fun getRoles(): Set<String> {
+        return (roles ?: emptySet()).stream()
+            .map { obj: Role -> obj.name!! }
+            .collect(Collectors.toSet())
+    }
+
+    override fun getAuthorities(): Collection<GrantedAuthority> {
+        return roles ?: emptyList()
+    }
+
+    override fun getPassword(): String? {
+        return password
+    }
+
+    fun setPassword(password: String) {
+        this.password = password
+    }
+
+    fun setRoles(roles: Collection<String>) {
+        this.roles = roles.stream()
+            .map { name: String -> Role(name) }
+            .collect(Collectors.toSet())
+    }
+
+    override fun getUsername(): String? {
+        return username
+    }
+
+    fun setUsername(username: String) {
+        this.username = username
+    }
+
+    @JsonIgnore
+    override fun isAccountNonExpired(): Boolean {
+        return true
+    }
+
+    @JsonIgnore
+    override fun isAccountNonLocked(): Boolean {
+        return true
+    }
+
+    @JsonIgnore
+    override fun isCredentialsNonExpired(): Boolean {
+        return true
+    }
+
+    @JsonIgnore
+    override fun isEnabled(): Boolean {
+        return true
+    }
+}

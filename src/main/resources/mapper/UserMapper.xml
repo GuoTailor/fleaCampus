@@ -12,7 +12,7 @@
 
     <resultMap id="userRoleMapper" type="com.gyh.fleacampus.model.User" extends="userMap">
         <collection property="roles" ofType="com.gyh.fleacampus.model.Role"
-                    select="com.ibms.demo.mapper.RoleMapper.findRoleByUserId" column="id"/>
+                    select="com.gyh.fleacampus.mapper.RoleMapper.findRoleByUserId" column="id"/>
     </resultMap>
 
     <select id="loadUserByUsername" parameterType="String" resultMap="userRoleMapper">

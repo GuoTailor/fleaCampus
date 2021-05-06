@@ -44,7 +44,7 @@ class UserService(val passwordEncoder: PasswordEncoder, val roleService: RoleSer
     }
 
     /**
-     * 注册用户，并添加默认角色[Role.ADMIN]
+     * 注册用户，并添加默认角色[Role.USER]
      * @param user user
      * @return user
      */

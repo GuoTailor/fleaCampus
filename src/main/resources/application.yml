@@ -2,7 +2,7 @@ spring:
   datasource:
     username: postgres
     password: root
-    url: jdbc:postgres://localhost:5432/flea_campus
+    url: jdbc:postgresql://localhost:5432/flea_campus
     driver-class-name: org.postgresql.Driver
 
 logging:

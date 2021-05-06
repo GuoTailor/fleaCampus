@@ -1,18 +1,9 @@
 package com.gyh.fleacampus
 
-import ai.djl.Device
-import ai.djl.Model
-import ai.djl.modality.Classifications
-import ai.djl.modality.cv.Image
-import ai.djl.modality.cv.ImageFactory
-import ai.djl.repository.zoo.Criteria
-import ai.djl.repository.zoo.ModelZoo
 import org.mybatis.spring.annotation.MapperScan
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.transaction.annotation.EnableTransactionManagement
-import java.nio.file.Path
-import java.nio.file.Paths
 
 @SpringBootApplication
 @MapperScan("com.gyh.fleacampus.mapper")
@@ -22,7 +13,7 @@ class FleaCampusApplication
 fun main(args: Array<String>) {
     runApplication<FleaCampusApplication>(*args)
 
-    val imageFile: Path = Paths.get("1.jpg")
+    /*val imageFile: Path = Paths.get("1.jpg")
     val img: Image = ImageFactory.getInstance().fromFile(imageFile)
     val criteria = Criteria.builder()
         .optDevice(Device.cpu())
@@ -37,5 +28,5 @@ fun main(args: Array<String>) {
             val detection = predictor.predict(img)
             println(detection)
         }
-    }
+    }*/
 }

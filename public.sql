@@ -12,7 +12,7 @@
  Target Server Version : 130002
  File Encoding         : 65001
 
- Date: 30/04/2021 16:58:35
+ Date: 06/05/2021 17:16:52
 */
 
 
@@ -98,6 +98,11 @@ COMMENT ON COLUMN "public"."fc_area"."area" IS '校区名字';
 COMMENT ON COLUMN "public"."fc_area"."create_time" IS '创建时间';
 
 -- ----------------------------
+-- Records of fc_area
+-- ----------------------------
+INSERT INTO "public"."fc_area" VALUES (1, 1, '无', '2021-05-06 16:37:35.136034');
+
+-- ----------------------------
 -- Table structure for fc_post
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."fc_post";
@@ -126,6 +131,10 @@ game: 游戏
 other：其他';
 
 -- ----------------------------
+-- Records of fc_post
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for fc_role
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."fc_role";
@@ -139,6 +148,13 @@ COMMENT ON COLUMN "public"."fc_role"."name" IS '角色名';
 COMMENT ON COLUMN "public"."fc_role"."name_zh" IS '角色名中文';
 
 -- ----------------------------
+-- Records of fc_role
+-- ----------------------------
+INSERT INTO "public"."fc_role" VALUES (1, 'ROLE_SUPER_ADMIN', '超级管理员');
+INSERT INTO "public"."fc_role" VALUES (2, 'ROLE_ADMIN', '管理员');
+INSERT INTO "public"."fc_role" VALUES (3, 'ROLE_USER', '用户');
+
+-- ----------------------------
 -- Table structure for fc_school
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."fc_school";
@@ -150,6 +166,11 @@ CREATE TABLE "public"."fc_school" (
 ;
 COMMENT ON COLUMN "public"."fc_school"."name" IS '学校名';
 COMMENT ON COLUMN "public"."fc_school"."create_time" IS '创建时间';
+
+-- ----------------------------
+-- Records of fc_school
+-- ----------------------------
+INSERT INTO "public"."fc_school" VALUES (1, '无学校', '2021-05-06 16:37:15.896839');
 
 -- ----------------------------
 -- Table structure for fc_user
@@ -168,7 +189,8 @@ CREATE TABLE "public"."fc_user" (
   "school_area_id" int4 NOT NULL,
   "grade" varchar(255) COLLATE "pg_catalog"."default" NOT NULL,
   "specialty" varchar(255) COLLATE "pg_catalog"."default" NOT NULL,
-  "create_time" timestamp(6) NOT NULL DEFAULT now()
+  "create_time" timestamp(6) NOT NULL DEFAULT now(),
+  "password" varchar(255) COLLATE "pg_catalog"."default"
 )
 ;
 COMMENT ON COLUMN "public"."fc_user"."username" IS '用户名';
@@ -183,6 +205,11 @@ COMMENT ON COLUMN "public"."fc_user"."school_area_id" IS '学校区域id';
 COMMENT ON COLUMN "public"."fc_user"."grade" IS '年纪';
 COMMENT ON COLUMN "public"."fc_user"."specialty" IS '专业';
 COMMENT ON COLUMN "public"."fc_user"."create_time" IS '创建时间';
+COMMENT ON COLUMN "public"."fc_user"."password" IS '密码';
+
+-- ----------------------------
+-- Records of fc_user
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for fc_user_role
@@ -198,11 +225,15 @@ COMMENT ON COLUMN "public"."fc_user_role"."user_id" IS '用户id';
 COMMENT ON COLUMN "public"."fc_user_role"."role_id" IS '角色id';
 
 -- ----------------------------
+-- Records of fc_user_role
+-- ----------------------------
+
+-- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."fc_area_id_seq"
 OWNED BY "public"."fc_area"."id";
-SELECT setval('"public"."fc_area_id_seq"', 3, false);
+SELECT setval('"public"."fc_area_id_seq"', 3, true);
 
 -- ----------------------------
 -- Alter sequences owned by
@@ -216,14 +247,14 @@ SELECT setval('"public"."fc_role_id_seq"', 4, true);
 -- ----------------------------
 ALTER SEQUENCE "public"."fc_school_id_seq"
 OWNED BY "public"."fc_school"."id";
-SELECT setval('"public"."fc_school_id_seq"', 3, false);
+SELECT setval('"public"."fc_school_id_seq"', 2, true);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."fc_user_id_seq"
 OWNED BY "public"."fc_user"."id";
-SELECT setval('"public"."fc_user_id_seq"', 3, false);
+SELECT setval('"public"."fc_user_id_seq"', 2, false);
 
 -- ----------------------------
 -- Alter sequences owned by
@@ -273,6 +304,11 @@ ALTER TABLE "public"."fc_user_role" ADD CONSTRAINT "fc_user_role_pkey" PRIMARY K
 -- Foreign Keys structure for table fc_area
 -- ----------------------------
 ALTER TABLE "public"."fc_area" ADD CONSTRAINT "fc_area_school_id_fkey" FOREIGN KEY ("school_id") REFERENCES "public"."fc_school" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- ----------------------------
+-- Foreign Keys structure for table fc_post
+-- ----------------------------
+ALTER TABLE "public"."fc_post" ADD CONSTRAINT "fc_post_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."fc_user" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- ----------------------------
 -- Foreign Keys structure for table fc_user
