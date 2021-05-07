@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.CorsUtils
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -39,7 +40,6 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
         return BCryptPasswordEncoder()
     }
 
-    @Throws(Exception::class)
     override fun configure(httpSecurity: HttpSecurity) {
         val successFailureHandler = AppAuthenticationSuccessFailureHandler()
         httpSecurity
@@ -47,23 +47,21 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
             .csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and().authorizeRequests()
-            .antMatchers("/login", "/common/**").permitAll()
             .antMatchers(
-                "/swagger-ui/*",
-                "/swagger-resources/**",
-                "/v3/api-docs",
-                "/webjars/**"
+                "/common/**", "/login",
+                "/swagger-ui/*", "/swagger-resources/**", "/v3/api-docs", "/webjars/**",
+                "/**/*.html", "/**/*.js", "/**/*.css", "/**/*.png", "/**/*.ico", "/static/**",
             ).permitAll()
-            .antMatchers("/**/*.html", "/**/*.js", "/**/*.css", "/**/*.png", "/**/*.ico", "/static/**").permitAll()
+            .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
             .anyRequest().authenticated().and()
             .exceptionHandling()
             .authenticationEntryPoint { _, response, ex ->
                 response.writer.write(objectMapper.writeValueAsString(ResponseInfo.failed<String>(ex.message)))
             }
-            .and()
-            .formLogin()
+            .and().formLogin()
             .successHandler(successFailureHandler)
             .failureHandler(successFailureHandler)
+
             .and().addFilter(JWTAuthenticationFilter(authenticationManager()))
     }
 

@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse
  */
 class JWTAuthenticationFilter(authenticationManager: AuthenticationManager) :
     BasicAuthenticationFilter(authenticationManager) {
+
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         val authHeader = request.getHeader(HttpHeaders.AUTHORIZATION)
         response.contentType = "application/json;charset=utf-8"
