@@ -3,18 +3,22 @@ package com.gyh.fleacampus.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.gyh.fleacampus.model.ResponseInfo
 import com.gyh.fleacampus.model.Role
+import com.gyh.fleacampus.service.UserService
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.core.AuthenticationException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
@@ -23,7 +27,6 @@ import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.CorsUtils
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 /**
  * Created by gyh on 2021/2/3
@@ -34,6 +37,8 @@ import javax.servlet.http.HttpServletResponse
 class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     private val logger = LoggerFactory.getLogger(this.javaClass.simpleName)
     private val objectMapper = ObjectMapper()
+    @Autowired
+    lateinit var userDetailsService: UserService
 
     @Bean
     fun passwordEncoder(): PasswordEncoder {
@@ -57,12 +62,17 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
             .exceptionHandling()
             .authenticationEntryPoint { _, response, ex ->
                 response.writer.write(objectMapper.writeValueAsString(ResponseInfo.failed<String>(ex.message)))
-            }
-            .and().formLogin()
-            .successHandler(successFailureHandler)
-            .failureHandler(successFailureHandler)
+            }.and()
+            .addFilterBefore(WxLoginFilter(authenticationManager()), UsernamePasswordAuthenticationFilter::class.java)
+            .addFilter(JWTAuthenticationFilter(authenticationManager()))
+    }
 
-            .and().addFilter(JWTAuthenticationFilter(authenticationManager()))
+    override fun configure(auth: AuthenticationManagerBuilder) {
+        val wxIdAuthenticationProvider = WxIdAuthenticationProvider()
+        val daoAuthenticationProvider = DaoAuthenticationProvider()
+        daoAuthenticationProvider.setUserDetailsService(userDetailsService)
+        auth.authenticationProvider(wxIdAuthenticationProvider)
+        auth.authenticationProvider(daoAuthenticationProvider)
     }
 
     /**
