@@ -1,6 +1,6 @@
 package com.gyh.fleacampus.config
 
-import com.github.xiaoymin.knife4j.spring.extension.OpenApiExtensionResolver
+/*import com.github.xiaoymin.knife4j.spring.extension.OpenApiExtensionResolver
 import io.swagger.annotations.ApiOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
@@ -16,11 +16,12 @@ import springfox.documentation.spi.DocumentationType
 import springfox.documentation.spi.service.contexts.SecurityContext
 import springfox.documentation.spring.web.plugins.Docket
 import springfox.documentation.swagger2.annotations.EnableSwagger2
-
+*/
 
 /**
  * Created by GYH on 2021/4/16
  */
+/*
 
 @Configuration
 @EnableSwagger2
@@ -69,3 +70,4 @@ class Knife4jConfiguration {
     }
 
 }
+*/

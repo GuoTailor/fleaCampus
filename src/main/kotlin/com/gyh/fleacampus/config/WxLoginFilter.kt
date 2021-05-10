@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import javax.servlet.FilterChain
@@ -27,11 +28,11 @@ class WxLoginFilter(private val authManager: AuthenticationManager) :
         val password = request.getParameter("password") ?: ""
         val wxId = request.getParameter("wxId")
         return if (wxId.isNullOrEmpty()) {
-            authManager.authenticate(WxIdAuthenticationToken(wxId))
-        } else {
             val authRequest = UsernamePasswordAuthenticationToken(username, password)
             authRequest.details = authenticationDetailsSource.buildDetails(request)
             authManager.authenticate(authRequest)
+        } else {
+            authManager.authenticate(WxIdAuthenticationToken(wxId))
         }
     }
 
@@ -54,7 +55,8 @@ class WxLoginFilter(private val authManager: AuthenticationManager) :
         response: HttpServletResponse,
         failed: AuthenticationException
     ) {
-        super.unsuccessfulAuthentication(request, response, failed)
+        SecurityContextHolder.clearContext()
+        rememberMeServices.loginFail(request, response)
         response.contentType = "application/json;charset=utf-8"
         response.writer.write(json.writeValueAsString(ResponseInfo.failed<String>("用户名或密码错误")))
     }

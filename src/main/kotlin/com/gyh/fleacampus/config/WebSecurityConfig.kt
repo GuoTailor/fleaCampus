@@ -46,7 +46,6 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
     override fun configure(httpSecurity: HttpSecurity) {
-        val successFailureHandler = AppAuthenticationSuccessFailureHandler()
         httpSecurity
             .cors().and()
             .csrf().disable()
@@ -54,13 +53,14 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
             .and().authorizeRequests()
             .antMatchers(
                 "/common/**", "/login",
-                "/swagger-ui/*", "/swagger-resources/**", "/v3/api-docs", "/webjars/**",
+                "/swagger-ui/*", "/swagger-resources/**", "/v3/api-docs/**", "/webjars/**",
                 "/**/*.html", "/**/*.js", "/**/*.css", "/**/*.png", "/**/*.ico", "/static/**",
             ).permitAll()
             .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
             .anyRequest().authenticated().and()
             .exceptionHandling()
             .authenticationEntryPoint { _, response, ex ->
+                response.contentType = "application/json;charset=utf-8"
                 response.writer.write(objectMapper.writeValueAsString(ResponseInfo.failed<String>(ex.message)))
             }.and()
             .addFilterBefore(WxLoginFilter(authenticationManager()), UsernamePasswordAuthenticationFilter::class.java)

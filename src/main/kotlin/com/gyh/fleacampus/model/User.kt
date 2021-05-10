@@ -1,45 +1,86 @@
 package com.gyh.fleacampus.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonProperty
-import io.swagger.annotations.ApiModel
-import io.swagger.annotations.ApiModelProperty
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDateTime
-import java.util.function.Function
 import java.util.stream.Collectors
 
 /**
- * Created by gyh on 2021/2/3
- * @apiDefine User
- * @apiParam {Integer} id 用户id
- * @apiParam {String} telephone 电话
- * @apiParam {String} username 用户名
- * @apiParam {String} name 姓名
- * @apiParam {String} password 密码
- * @apiParam {Date} [createTime] 注册日期
+ *
+ * @TableName fc_user
  */
-@ApiModel(value = "用户")
-class User : UserDetails {
-    @ApiModelProperty(value = "客户字段分组ID")
-    var id: Int? = null
-    private var username: String? = null
-    private var password: String? = null
-    private var roles: Set<Role>? = null
-    var name: String? = null
-    var telephone: String? = null
-    var createTime: LocalDateTime? = null
+data class User(
+    /**
+     *
+     */
+    var id: Int? = null,
+    /**
+     * 用户名
+     */
+    private var username: String? = null,
+    private var password: String? = null,
+    /**
+     * 角色
+     */
+    private var roles: Set<Role>? = null,
+    /**
+     * 个性签名
+     */
+    var signature: String? = null,
+    /**
+     * 头像url地址
+     */
+    var photo: String? = null,
+    /**
+     * 手机
+     */
+    var phone: String? = null,
+    /**
+     * 性别：0：未知，1：男，2：女
+     */
+    var sex: Short? = null,
+    /**
+     * 经验
+     */
+    var exp: Int? = null,
+    /**
+     * 积分
+     */
+    var score: Int? = null,
+    /**
+     * 星座
+     */
+    var horoscope: String? = null,
+    /**
+     * 学校区域id
+     */
+    var schoolAreaId: Int? = null,
+    /**
+     * 年纪
+     */
+    var grade: String? = null,
+    /**
+     * 专业
+     */
+    var specialty: String? = null,
+    /**
+     * 创建时间
+     */
+    var createTime: LocalDateTime? = null,
+) : UserDetails {
 
-    override fun getUsername(): String? {
-        return username
+    @JsonIgnore
+    fun getRoles(): Set<String> {
+        return (roles ?: emptySet()).stream()
+            .map { obj: Role -> obj.name!! }
+            .collect(Collectors.toSet())
     }
 
-    fun setUsername(username: String) {
-        this.username = username
+    override fun getAuthorities(): Collection<GrantedAuthority> {
+        return roles ?: emptyList()
     }
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     override fun getPassword(): String? {
         return password
     }
@@ -48,22 +89,18 @@ class User : UserDetails {
         this.password = password
     }
 
-    @JsonIgnore
-    fun getRoles(): Set<String> {
-        return (roles ?: emptySet()).stream()
-            .map { obj: Role -> obj.name!! }.collect(Collectors.toSet())
-    }
-
-    override fun getAuthorities(): Collection<GrantedAuthority> {
-        return roles ?: emptyList()
-    }
-
     fun setRoles(roles: Collection<String>) {
-        this.roles = roles.stream().map { name: String -> Role(name) }.collect(Collectors.toSet())
+        this.roles = roles.stream()
+            .map { name: String -> Role(name) }
+            .collect(Collectors.toSet())
     }
 
-    fun setRoles(roles: Set<Role>?) {
-        this.roles = roles
+    override fun getUsername(): String? {
+        return username
+    }
+
+    fun setUsername(username: String) {
+        this.username = username
     }
 
     @JsonIgnore

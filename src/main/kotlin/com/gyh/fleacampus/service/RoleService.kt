@@ -12,7 +12,7 @@ import javax.annotation.Resource
 @Service
 class RoleService {
     @Resource
-    var roleMapper: RoleMapper? = null
+    lateinit var roleMapper: RoleMapper
     private val roles: MutableSet<Role> = HashSet()
 
     /**
@@ -24,19 +24,19 @@ class RoleService {
         if (roles.isEmpty()) {
             synchronized(RoleService::class.java) {
                 if (roles.isEmpty()) {
-                    roles.addAll(roleMapper!!.findAll())
+                    roles.addAll(roleMapper.findAll())
                 }
             }
         }
         return roles
     }
 
-    fun getRoleIdByName(roleName: String): Int? {
+    fun getRoleIdByName(roleName: String): Int {
         return getRoles().stream()
             .filter { r: Role -> r.name.equals(roleName) }
             .findFirst()
             .orElseThrow { IllegalStateException("不存在该角色名:$roleName") }
-            .id
+            .id!!
     }
 
     /**
@@ -48,17 +48,17 @@ class RoleService {
      */
     fun addRoleToUser(userId: Int, roleName: String, unitId: Int?): Int {
         val roleId = getRoleIdByName(roleName)
-        return roleMapper!!.insert(userId, roleId!!, unitId!!)
+        return roleMapper.insert(userId, roleId!!, unitId!!)
     }
 
     fun updateRoleById(roleName: String, id: Int?, unitId: Int?): Int {
         val roleId = getRoleIdByName(roleName)
-        return roleMapper!!.updateRoleById(id!!, roleId!!, unitId!!)
+        return roleMapper.updateRoleById(id!!, roleId!!, unitId!!)
     }
 
     fun updateRoleByUserIdAndUnitId(roleName: String, userId: Int?, unitId: Int?): Int {
         val roleId = getRoleIdByName(roleName)
-        return roleMapper!!.updateRoleByUserIdAndUnitId(userId!!, roleId!!, unitId!!)
+        return roleMapper.updateRoleByUserIdAndUnitId(userId!!, roleId!!, unitId!!)
     }
 
     /**
@@ -70,12 +70,12 @@ class RoleService {
      */
     fun removeRoleToUser(userId: Int, roleName: String, unitId: Int?): Int {
         val roleId = getRoleIdByName(roleName)
-        return roleMapper!!.removeRoleToUser(userId, roleId!!, unitId!!)
+        return roleMapper.removeRoleToUser(userId, roleId!!, unitId!!)
     }
 
     fun findByUserIdAndRoleId(userId: Int?, roleName: String): List<UserRole> {
         val userRoleId = getRoleIdByName(roleName)
-        val userRoles = roleMapper!!.findByUserIdAndRoleId(userId!!, userRoleId!!)
+        val userRoles = roleMapper.findByUserIdAndRoleId(userId!!, userRoleId!!)
         return userRoles ?: emptyList()
     }
 }

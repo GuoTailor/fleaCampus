@@ -2,7 +2,6 @@ package com.gyh.fleacampus.common
 
 import com.gyh.fleacampus.model.User
 import io.jsonwebtoken.*
-import io.jsonwebtoken.security.SignatureException
 import java.security.Key
 import java.util.*
 import javax.crypto.spec.SecretKeySpec
@@ -12,10 +11,9 @@ import javax.crypto.spec.SecretKeySpec
  */
 object JwtUtil {
     private val key: Key = SecretKeySpec(
-        """MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDdlatRjRjogo3WojgGHFHYLugd
-UWAY9iR3fy4arWNA1KoS8kVw33cJibXr8bvwUAUparCwlvdbH6dvEOfou0/gCFQs
-HUfQrSDv+MuSUMAe8jzKE4qW+jK+xQU9a03GUnKHkkle+Q0pX/g6jXZ7r1/xAK5D
-o2kQ+X5xK9cipRgEKwIDAQAB""".toByteArray(),
+        """TUlHZk1BMEdDU3FHU0liM0RRRUJBUVVBQTRHTkFEQ0JpUUtCZ1FEZGxhdFJqUmpvZ28zV29qZ0dIRkhZTHVnZApVV0FZOWlSM2Z5NGFyV05BM
+            |UtvUzhrVnczM2NKaWJYcjhidndVQVVwYXJDd2x2ZGJINmR2RU9mb3UwL2dDRlFzCkhVZlFyU0R2K011U1VNQWU4anpLRTRxVytqSyt4UVU5
+            |YTAzR1VuS0hra2xlK1EwcFgvZzZqWFo3cjEveEFLNUQKbzJrUStYNXhLOWNpcFJnRUt3SURBUUFC""".trimMargin().toByteArray(),
         SignatureAlgorithm.HS256.jcaName
     )
 
