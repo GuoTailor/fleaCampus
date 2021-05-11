@@ -46,19 +46,19 @@ class RoleService {
      * @param roleName 角色id
      * @return 受影响行数
      */
-    fun addRoleToUser(userId: Int, roleName: String, unitId: Int?): Int {
+    fun addRoleToUser(userId: Int, roleName: String): Int {
         val roleId = getRoleIdByName(roleName)
-        return roleMapper.insert(userId, roleId!!, unitId!!)
+        return roleMapper.insert(userId, roleId)
     }
 
-    fun updateRoleById(roleName: String, id: Int?, unitId: Int?): Int {
+    fun updateRoleById(roleName: String, id: Int): Int {
         val roleId = getRoleIdByName(roleName)
-        return roleMapper.updateRoleById(id!!, roleId!!, unitId!!)
+        return roleMapper.updateRoleById(id, roleId)
     }
 
-    fun updateRoleByUserIdAndUnitId(roleName: String, userId: Int?, unitId: Int?): Int {
+    fun updateRoleByUserIdAndUnitId(roleName: String, userId: Int): Int {
         val roleId = getRoleIdByName(roleName)
-        return roleMapper.updateRoleByUserIdAndUnitId(userId!!, roleId!!, unitId!!)
+        return roleMapper.updateRoleByUserIdAndUnitId(userId, roleId)
     }
 
     /**
@@ -68,14 +68,13 @@ class RoleService {
      * @param roleName 角色id
      * @return 受影响行数
      */
-    fun removeRoleToUser(userId: Int, roleName: String, unitId: Int?): Int {
+    fun removeRoleToUser(userId: Int, roleName: String): Int {
         val roleId = getRoleIdByName(roleName)
-        return roleMapper.removeRoleToUser(userId, roleId!!, unitId!!)
+        return roleMapper.removeRoleToUser(userId, roleId)
     }
 
-    fun findByUserIdAndRoleId(userId: Int?, roleName: String): List<UserRole> {
+    fun findByUserIdAndRoleId(userId: Int, roleName: String): List<UserRole> {
         val userRoleId = getRoleIdByName(roleName)
-        val userRoles = roleMapper.findByUserIdAndRoleId(userId!!, userRoleId!!)
-        return userRoles ?: emptyList()
+        return roleMapper.findByUserIdAndRoleId(userId, userRoleId)
     }
 }

@@ -32,7 +32,6 @@ server:
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
-    layout: BaseLayout
   api-docs:
     groups:
       enabled: true

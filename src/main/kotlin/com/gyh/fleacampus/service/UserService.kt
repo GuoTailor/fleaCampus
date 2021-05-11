@@ -36,7 +36,7 @@ class UserService(val passwordEncoder: PasswordEncoder, val roleService: RoleSer
     fun register(user: User): User {
         user.password?.let { user.setPassword(passwordEncoder.encode(it)) }
         userMapper.insertSelective(user)
-        roleService.addRoleToUser(user.id!!, Role.USER, null)
+        roleService.addRoleToUser(user.id!!, Role.USER)
         return user
     }
 

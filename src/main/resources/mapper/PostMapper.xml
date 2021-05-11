@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gyh.fleacampus.mapper.PostMapper">
+    <resultMap id="BaseResultMap" type="com.gyh.fleacampus.model.Post">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="state" jdbcType="VARCHAR" property="state"/>
+        <result column="release_time" jdbcType="TIMESTAMP" property="releaseTime"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, user_id, title, content, create_time, "state", release_time, "type"
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from "fc_post"
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from "fc_post"
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.model.Post"
+            useGeneratedKeys="true">
+        insert into "fc_post" (user_id, title, content,
+                               create_time, "state", release_time,
+                               "type")
+        values (#{userId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
+                #{createTime,jdbcType=TIMESTAMP}, #{state,jdbcType=VARCHAR}, #{releaseTime,jdbcType=TIMESTAMP},
+                #{type,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.model.Post"
+            useGeneratedKeys="true">
+        insert into "fc_post"
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="state != null">
+                "state",
+            </if>
+            <if test="releaseTime != null">
+                release_time,
+            </if>
+            <if test="type != null">
+                "type",
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="releaseTime != null">
+                #{releaseTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.model.Post">
+        update "fc_post"
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="state != null">
+                "state" = #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="releaseTime != null">
+                release_time = #{releaseTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="type != null">
+                "type" = #{type,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.gyh.fleacampus.model.Post">
+        update "fc_post"
+        set user_id      = #{userId,jdbcType=INTEGER},
+            title        = #{title,jdbcType=VARCHAR},
+            content      = #{content,jdbcType=VARCHAR},
+            create_time  = #{createTime,jdbcType=TIMESTAMP},
+            "state"      = #{state,jdbcType=VARCHAR},
+            release_time = #{releaseTime,jdbcType=TIMESTAMP},
+            "type"       = #{type,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>
