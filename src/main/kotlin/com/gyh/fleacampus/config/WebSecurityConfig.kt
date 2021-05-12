@@ -7,6 +7,7 @@ import com.gyh.fleacampus.service.UserService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
+import org.springframework.http.HttpMethod
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
@@ -56,6 +57,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
                 "/swagger-ui/*", "/swagger-resources/**", "/v3/api-docs/**", "/webjars/**",
                 "/**/*.html", "/**/*.js", "/**/*.css", "/**/*.png", "/**/*.ico", "/static/**",
             ).permitAll()
+            .antMatchers(HttpMethod.GET, "/post").permitAll()
             .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
             .anyRequest().authenticated().and()
             .exceptionHandling()

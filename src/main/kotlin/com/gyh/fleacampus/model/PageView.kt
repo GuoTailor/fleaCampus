@@ -26,6 +26,7 @@ class PageView<T>(pojo: List<T>) {
             return PageView(pojo)
         }
 
+        @JvmStatic
         fun getPages(total: Long, pageSize: Int): Int {
             return if (total == 0L || pageSize == 0) {
                 0

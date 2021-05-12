@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class LoginApi {
     @Operation(summary = "登录")
-    @PostMapping("/login1", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    @PostMapping("/login", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun login(
         @Parameter(description = "用户名", required = true) username: String,
         @Parameter(description = "密码", required = true) password: String

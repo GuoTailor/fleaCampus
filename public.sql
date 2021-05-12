@@ -12,7 +12,7 @@
  Target Server Version : 130002
  File Encoding         : 65001
 
- Date: 06/05/2021 17:16:52
+ Date: 12/05/2021 16:23:13
 */
 
 
@@ -21,6 +21,17 @@
 -- ----------------------------
 DROP SEQUENCE IF EXISTS "public"."fc_area_id_seq";
 CREATE SEQUENCE "public"."fc_area_id_seq" 
+INCREMENT 1
+MINVALUE  1
+MAXVALUE 2147483647
+START 1
+CACHE 1;
+
+-- ----------------------------
+-- Sequence structure for fc_comment_id_seq
+-- ----------------------------
+DROP SEQUENCE IF EXISTS "public"."fc_comment_id_seq";
+CREATE SEQUENCE "public"."fc_comment_id_seq" 
 INCREMENT 1
 MINVALUE  1
 MAXVALUE 2147483647
@@ -101,6 +112,31 @@ COMMENT ON COLUMN "public"."fc_area"."create_time" IS '创建时间';
 -- Records of fc_area
 -- ----------------------------
 INSERT INTO "public"."fc_area" VALUES (1, 1, '无', '2021-05-06 16:37:35.136034');
+
+-- ----------------------------
+-- Table structure for fc_comment
+-- ----------------------------
+DROP TABLE IF EXISTS "public"."fc_comment";
+CREATE TABLE "public"."fc_comment" (
+  "id" int4 NOT NULL DEFAULT nextval('fc_comment_id_seq'::regclass),
+  "user_id" int4 NOT NULL,
+  "post_id" int4 NOT NULL,
+  "comment_id" int4,
+  "content" text COLLATE "pg_catalog"."default" NOT NULL,
+  "create_time" timestamp(6) NOT NULL DEFAULT now(),
+  "flag" int2 NOT NULL DEFAULT 1
+)
+;
+COMMENT ON COLUMN "public"."fc_comment"."user_id" IS '评论用户';
+COMMENT ON COLUMN "public"."fc_comment"."post_id" IS '评论帖子';
+COMMENT ON COLUMN "public"."fc_comment"."comment_id" IS '回复的评论';
+COMMENT ON COLUMN "public"."fc_comment"."content" IS '评论内容';
+COMMENT ON COLUMN "public"."fc_comment"."create_time" IS '创建时间';
+COMMENT ON COLUMN "public"."fc_comment"."flag" IS '0:隐藏，1:展示';
+
+-- ----------------------------
+-- Records of fc_comment
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for fc_post
@@ -210,6 +246,7 @@ COMMENT ON COLUMN "public"."fc_user"."password" IS '密码';
 -- ----------------------------
 -- Records of fc_user
 -- ----------------------------
+INSERT INTO "public"."fc_user" VALUES (1, 'test', NULL, NULL, NULL, 0, 0, 0, NULL, 1, '1', '未知', '2021-05-10 16:56:14.067509', NULL);
 
 -- ----------------------------
 -- Table structure for fc_user_role
@@ -238,6 +275,13 @@ SELECT setval('"public"."fc_area_id_seq"', 3, true);
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
+ALTER SEQUENCE "public"."fc_comment_id_seq"
+OWNED BY "public"."fc_comment"."id";
+SELECT setval('"public"."fc_comment_id_seq"', 2, false);
+
+-- ----------------------------
+-- Alter sequences owned by
+-- ----------------------------
 ALTER SEQUENCE "public"."fc_role_id_seq"
 OWNED BY "public"."fc_role"."id";
 SELECT setval('"public"."fc_role_id_seq"', 4, true);
@@ -254,7 +298,7 @@ SELECT setval('"public"."fc_school_id_seq"', 2, true);
 -- ----------------------------
 ALTER SEQUENCE "public"."fc_user_id_seq"
 OWNED BY "public"."fc_user"."id";
-SELECT setval('"public"."fc_user_id_seq"', 2, false);
+SELECT setval('"public"."fc_user_id_seq"', 2, true);
 
 -- ----------------------------
 -- Alter sequences owned by
@@ -274,6 +318,11 @@ SELECT setval('"public"."post_id_seq"', 2, false);
 -- Primary Key structure for table fc_area
 -- ----------------------------
 ALTER TABLE "public"."fc_area" ADD CONSTRAINT "fc_area_pkey" PRIMARY KEY ("id");
+
+-- ----------------------------
+-- Primary Key structure for table fc_comment
+-- ----------------------------
+ALTER TABLE "public"."fc_comment" ADD CONSTRAINT "fc_comment_pkey" PRIMARY KEY ("id");
 
 -- ----------------------------
 -- Primary Key structure for table fc_post
@@ -304,6 +353,13 @@ ALTER TABLE "public"."fc_user_role" ADD CONSTRAINT "fc_user_role_pkey" PRIMARY K
 -- Foreign Keys structure for table fc_area
 -- ----------------------------
 ALTER TABLE "public"."fc_area" ADD CONSTRAINT "fc_area_school_id_fkey" FOREIGN KEY ("school_id") REFERENCES "public"."fc_school" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- ----------------------------
+-- Foreign Keys structure for table fc_comment
+-- ----------------------------
+ALTER TABLE "public"."fc_comment" ADD CONSTRAINT "fc_comment_comment_id_fkey" FOREIGN KEY ("comment_id") REFERENCES "public"."fc_comment" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."fc_comment" ADD CONSTRAINT "fc_comment_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "public"."fc_post" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."fc_comment" ADD CONSTRAINT "fc_comment_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."fc_user" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- ----------------------------
 -- Foreign Keys structure for table fc_post

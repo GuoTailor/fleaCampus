@@ -14,6 +14,9 @@
     <sql id="Base_Column_List">
         id, user_id, title, content, create_time, "state", release_time, "type"
     </sql>
+    <select id="findAll" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from fc_post
+    </select>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
