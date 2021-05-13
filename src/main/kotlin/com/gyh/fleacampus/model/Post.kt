@@ -1,16 +1,16 @@
 package com.gyh.fleacampus.model
 
 import io.swagger.v3.oas.annotations.media.Schema
-import java.lang.IllegalStateException
+import java.io.Serializable
 import java.time.LocalDateTime
 import java.util.*
 
 /**
- *
- * @TableName fc_post
+ * fc_post
+ * @author
  */
 @Schema(description = "帖子")
-data class Post(
+open class Post(
     @Schema(description = "id")
     var id: Int? = null,
 
@@ -33,15 +33,9 @@ data class Post(
     var content: String? = null,
 
     /**
-     * 创建时间
-     */
-    @Schema(description = "创建时间", example = "1620783689372", type = "integer")
-    var createTime: LocalDateTime? = null,
-
-    /**
      * 状态 draft：草稿，normal：发布，timing：定时发布
      */
-    @Schema(description = "状态")
+    @Schema(description = "状态 draft：草稿，normal：发布，timing：定时发布")
     var state: String? = null,
 
     /**
@@ -58,17 +52,46 @@ data class Post(
      * game: 游戏
      * other：其他
      */
-    @Schema(
-        description = "帖子类型\n" +
-                "buy：买\n" +
-                "sell:卖\n" +
-                "confess：表白\n" +
-                "game: 游戏\n" +
-                "other：其他",
-        example = "sell"
-    )
+    @Schema(description = "内容")
     var type: String? = null,
+
+    /**
+     * 点赞数
+     */
+    @Schema(description = "点赞数")
+    var likes: Int? = null,
+
+    /**
+     * 评论数
+     */
+    @Schema(description = "评论数")
+    var comments: Int? = null,
+
+    /**
+     * 收藏数
+     */
+    @Schema(description = "收藏数")
+    var collects: Int? = null,
+
+    /**
+     * 0：违规，1：有效
+     */
+    @Schema(description = "0：违规，1：有效")
+    var flag: Int? = null,
+
+    /**
+     * 置顶顺序，越大排序越靠前
+     */
+    @Schema(description = "置顶顺序，越大排序越靠前")
+    var topOrder: Int? = null,
+
+    /**
+     * 创建时间
+     */
+    @Schema(description = "创建时间", example = "1620783689372", type = "number")
+    var createTime: LocalDateTime? = null,
 ) {
+
 
     enum class ReleaseState {
         DRAFT, NORMAL, TIMING

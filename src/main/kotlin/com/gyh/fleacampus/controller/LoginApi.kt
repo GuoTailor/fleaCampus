@@ -13,11 +13,12 @@ import org.springframework.web.bind.annotation.RestController
 @Tag(name = "通用")
 @RestController
 class LoginApi {
-    @Operation(summary = "登录")
+    @Operation(summary = "登录",description = "用户名密码，当使用用户名密码登录的时候该字段必传。微信Id，当使用微信登录的时候该字段必传")
     @PostMapping("/login", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun login(
-        @Parameter(description = "用户名", required = true) username: String,
-        @Parameter(description = "密码", required = true) password: String
+        @Parameter(description = "用户名") username: String,
+        @Parameter(description = "密码") password: String,
+        @Parameter(description = "微信id") wxId: String,
     ) {
     }
 }

@@ -4,6 +4,7 @@
     <resultMap id="BaseResultMap" type="com.gyh.fleacampus.model.User">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
         <result column="signature" jdbcType="VARCHAR" property="signature"/>
         <result column="photo" jdbcType="VARCHAR" property="photo"/>
         <result column="phone" jdbcType="VARCHAR" property="phone"/>
@@ -17,22 +18,9 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
     </resultMap>
     <sql id="Base_Column_List">
-        id, username, signature, photo, phone, sex, "exp", score, horoscope, school_area_id,
-    grade, specialty, create_time
+        id, username, "password", signature, photo, phone, sex, "exp", score, horoscope,
+    school_area_id, grade, specialty, create_time
     </sql>
-
-    <resultMap id="userRoleMapper" type="com.gyh.fleacampus.model.User" extends="BaseResultMap">
-        <collection property="roles" ofType="com.gyh.fleacampus.model.Role"
-                    select="com.gyh.fleacampus.mapper.RoleMapper.findRoleByUserId" column="id"/>
-    </resultMap>
-
-    <select id="loadUserByUsername" parameterType="string" resultMap="userRoleMapper">
-        select
-        <include refid="Base_Column_List"/>
-        from fc_user
-        where username = #{username}
-    </select>
-
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -46,20 +34,23 @@
     </delete>
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.model.User"
             useGeneratedKeys="true">
-        insert into "fc_user" (username, signature, photo,
-                               phone, sex, "exp", score,
-                               horoscope, school_area_id, grade,
-                               specialty, create_time)
-        values (#{username,jdbcType=VARCHAR}, #{signature,jdbcType=VARCHAR}, #{photo,jdbcType=VARCHAR},
-                #{phone,jdbcType=VARCHAR}, #{sex,jdbcType=SMALLINT}, #{exp,jdbcType=INTEGER}, #{score,jdbcType=INTEGER},
-                #{horoscope,jdbcType=VARCHAR}, #{schoolAreaId,jdbcType=INTEGER}, #{grade,jdbcType=VARCHAR},
-                #{specialty,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+        insert into "fc_user" (username, "password", signature,
+                               photo, phone, sex,
+                               "exp", score, horoscope,
+                               school_area_id, grade, specialty,
+                               create_time)
+        values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{signature,jdbcType=VARCHAR},
+                #{photo,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{sex,jdbcType=SMALLINT},
+                #{exp,jdbcType=INTEGER}, #{score,jdbcType=INTEGER}, #{horoscope,jdbcType=VARCHAR},
+                #{schoolAreaId,jdbcType=INTEGER}, #{grade,jdbcType=VARCHAR}, #{specialty,jdbcType=VARCHAR},
+                #{createTime,jdbcType=TIMESTAMP})
     </insert>
     <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.model.User"
             useGeneratedKeys="true">
         insert into "fc_user"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="username != null">username,</if>
+            <if test="password != null">"password",</if>
             <if test="signature != null">signature,</if>
             <if test="photo != null">photo,</if>
             <if test="phone != null">phone,</if>
@@ -74,6 +65,7 @@
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="username != null">#{username,jdbcType=VARCHAR},</if>
+            <if test="password != null">#{password,jdbcType=VARCHAR},</if>
             <if test="signature != null">#{signature,jdbcType=VARCHAR},</if>
             <if test="photo != null">#{photo,jdbcType=VARCHAR},</if>
             <if test="phone != null">#{phone,jdbcType=VARCHAR},</if>
@@ -87,10 +79,10 @@
             <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.model.User">
-        update "fc_user"
+    <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.model.User">update "fc_user"
         <set>
             <if test="username != null">username = #{username,jdbcType=VARCHAR},</if>
+            <if test="password != null">"password" = #{password,jdbcType=VARCHAR},</if>
             <if test="signature != null">signature = #{signature,jdbcType=VARCHAR},</if>
             <if test="photo != null">photo = #{photo,jdbcType=VARCHAR},</if>
             <if test="phone != null">phone = #{phone,jdbcType=VARCHAR},</if>
@@ -108,6 +100,7 @@
     <update id="updateByPrimaryKey" parameterType="com.gyh.fleacampus.model.User">
         update "fc_user"
         set username       = #{username,jdbcType=VARCHAR},
+            "password"     = #{password,jdbcType=VARCHAR},
             signature      = #{signature,jdbcType=VARCHAR},
             photo          = #{photo,jdbcType=VARCHAR},
             phone          = #{phone,jdbcType=VARCHAR},

@@ -6,6 +6,7 @@ import com.gyh.fleacampus.mapper.PostMapper
 import com.gyh.fleacampus.model.PageView
 import com.gyh.fleacampus.model.Post
 import com.gyh.fleacampus.model.Role
+import com.gyh.fleacampus.model.view.PostResponse
 import org.springframework.stereotype.Service
 import javax.annotation.Resource
 
@@ -26,11 +27,11 @@ class PostService {
         return postMapper.insertSelective(post)
     }
 
-    fun findById(id: Int): Post {
+    fun findById(id: Int): PostResponse {
         return postMapper.selectByPrimaryKey(id) ?: error("帖子id不存在")
     }
 
-    fun findPost(pageNum: Int, pageSize: Int): PageView<Post> {
+    fun findByPage(pageNum: Int, pageSize: Int): PageView<PostResponse> {
         PageHelper.startPage<Any>(pageNum, pageSize)
         return PageView.build(postMapper.findAll())
     }

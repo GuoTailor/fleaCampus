@@ -12,7 +12,7 @@
  Target Server Version : 130002
  File Encoding         : 65001
 
- Date: 12/05/2021 16:23:13
+ Date: 13/05/2021 15:56:04
 */
 
 
@@ -32,6 +32,17 @@ CACHE 1;
 -- ----------------------------
 DROP SEQUENCE IF EXISTS "public"."fc_comment_id_seq";
 CREATE SEQUENCE "public"."fc_comment_id_seq" 
+INCREMENT 1
+MINVALUE  1
+MAXVALUE 2147483647
+START 1
+CACHE 1;
+
+-- ----------------------------
+-- Sequence structure for fc_like_id_seq
+-- ----------------------------
+DROP SEQUENCE IF EXISTS "public"."fc_like_id_seq";
+CREATE SEQUENCE "public"."fc_like_id_seq" 
 INCREMENT 1
 MINVALUE  1
 MAXVALUE 2147483647
@@ -83,10 +94,21 @@ START 1
 CACHE 1;
 
 -- ----------------------------
--- Sequence structure for post_id_seq
+-- Sequence structure for fc_post_id_seq
 -- ----------------------------
-DROP SEQUENCE IF EXISTS "public"."post_id_seq";
-CREATE SEQUENCE "public"."post_id_seq" 
+DROP SEQUENCE IF EXISTS "public"."fc_post_id_seq";
+CREATE SEQUENCE "public"."fc_post_id_seq"
+INCREMENT 1
+MINVALUE  1
+MAXVALUE 2147483647
+START 1
+CACHE 1;
+
+-- ----------------------------
+-- Sequence structure for fc_reply_id_seq
+-- ----------------------------
+DROP SEQUENCE IF EXISTS "public"."fc_reply_id_seq";
+CREATE SEQUENCE "public"."fc_reply_id_seq"
 INCREMENT 1
 MINVALUE  1
 MAXVALUE 2147483647
@@ -121,21 +143,48 @@ CREATE TABLE "public"."fc_comment" (
   "id" int4 NOT NULL DEFAULT nextval('fc_comment_id_seq'::regclass),
   "user_id" int4 NOT NULL,
   "post_id" int4 NOT NULL,
-  "comment_id" int4,
+  "replys" int4 NOT NULL DEFAULT 0,
   "content" text COLLATE "pg_catalog"."default" NOT NULL,
   "create_time" timestamp(6) NOT NULL DEFAULT now(),
-  "flag" int2 NOT NULL DEFAULT 1
+  "flag" int2 NOT NULL DEFAULT 1,
+  "likes" int4 NOT NULL DEFAULT 0,
+  "top_order" int4 NOT NULL DEFAULT 0
 )
 ;
 COMMENT ON COLUMN "public"."fc_comment"."user_id" IS '评论用户';
 COMMENT ON COLUMN "public"."fc_comment"."post_id" IS '评论帖子';
-COMMENT ON COLUMN "public"."fc_comment"."comment_id" IS '回复的评论';
+COMMENT ON COLUMN "public"."fc_comment"."replys" IS '回复数';
 COMMENT ON COLUMN "public"."fc_comment"."content" IS '评论内容';
 COMMENT ON COLUMN "public"."fc_comment"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."fc_comment"."flag" IS '0:隐藏，1:展示';
+COMMENT ON COLUMN "public"."fc_comment"."likes" IS '点赞数';
+COMMENT ON COLUMN "public"."fc_comment"."top_order" IS '置顶顺序，越大排序越靠前';
 
 -- ----------------------------
 -- Records of fc_comment
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for fc_like
+-- ----------------------------
+DROP TABLE IF EXISTS "public"."fc_like";
+CREATE TABLE "public"."fc_like" (
+  "id" int4 NOT NULL DEFAULT nextval('fc_like_id_seq'::regclass),
+  "user_id" int4 NOT NULL,
+  "post_id" int4 NOT NULL,
+  "comment_id" int4,
+  "reply_id" int4,
+  "status" int2 NOT NULL DEFAULT 1
+)
+;
+COMMENT ON COLUMN "public"."fc_like"."user_id" IS '用户id';
+COMMENT ON COLUMN "public"."fc_like"."post_id" IS '帖子id';
+COMMENT ON COLUMN "public"."fc_like"."comment_id" IS '评论id';
+COMMENT ON COLUMN "public"."fc_like"."reply_id" IS '回复id';
+COMMENT ON COLUMN "public"."fc_like"."status" IS '点赞状态0--取消赞   1--有效赞';
+
+-- ----------------------------
+-- Records of fc_like
 -- ----------------------------
 
 -- ----------------------------
@@ -143,14 +192,19 @@ COMMENT ON COLUMN "public"."fc_comment"."flag" IS '0:隐藏，1:展示';
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."fc_post";
 CREATE TABLE "public"."fc_post" (
-  "id" int4 NOT NULL DEFAULT nextval('post_id_seq'::regclass),
+  "id" int4 NOT NULL DEFAULT nextval('fc_post_id_seq'::regclass),
   "user_id" int4 NOT NULL,
   "title" varchar(255) COLLATE "pg_catalog"."default" NOT NULL,
   "content" text COLLATE "pg_catalog"."default" NOT NULL,
-  "create_time" timestamp(6) NOT NULL DEFAULT now(),
   "state" varchar(16) COLLATE "pg_catalog"."default" NOT NULL,
   "release_time" timestamp(6),
-  "type" varchar(16) COLLATE "pg_catalog"."default"
+  "type" varchar(255) COLLATE "pg_catalog"."default",
+  "likes" int4 NOT NULL DEFAULT 0,
+  "comments" int4 NOT NULL DEFAULT 0,
+  "collects" int4 NOT NULL DEFAULT 0,
+  "flag" int4 NOT NULL DEFAULT 1,
+  "top_order" int4 NOT NULL DEFAULT 0,
+  "create_time" timestamp(6) NOT NULL DEFAULT now()
 )
 ;
 COMMENT ON COLUMN "public"."fc_post"."user_id" IS '发布者id';
@@ -165,9 +219,43 @@ sell:卖
 confess：表白
 game: 游戏
 other：其他';
+COMMENT ON COLUMN "public"."fc_post"."likes" IS '点赞数';
+COMMENT ON COLUMN "public"."fc_post"."comments" IS '评论数';
+COMMENT ON COLUMN "public"."fc_post"."collects" IS '收藏数';
+COMMENT ON COLUMN "public"."fc_post"."flag" IS '0：违规，1：有效';
+COMMENT ON COLUMN "public"."fc_post"."top_order" IS '置顶顺序，越大排序越靠前';
 
 -- ----------------------------
 -- Records of fc_post
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for fc_reply
+-- ----------------------------
+DROP TABLE IF EXISTS "public"."fc_reply";
+CREATE TABLE "public"."fc_reply" (
+  "id" int4 NOT NULL DEFAULT nextval('fc_reply_id_seq'::regclass),
+  "comment_id" int4 NOT NULL,
+  "reply_id" int4,
+  "reply_type" varchar(8) COLLATE "pg_catalog"."default" NOT NULL,
+  "content" text COLLATE "pg_catalog"."default" NOT NULL,
+  "user_id" int4 NOT NULL,
+  "to_uid" int4 NOT NULL,
+  "likes" int4 NOT NULL DEFAULT 0,
+  "create_time" timestamp(6) NOT NULL DEFAULT now()
+)
+;
+COMMENT ON COLUMN "public"."fc_reply"."comment_id" IS '评论id';
+COMMENT ON COLUMN "public"."fc_reply"."reply_id" IS '回复目标id';
+COMMENT ON COLUMN "public"."fc_reply"."reply_type" IS '回复类型comment：回复的评论，reply：回复的回复';
+COMMENT ON COLUMN "public"."fc_reply"."content" IS '回复内容';
+COMMENT ON COLUMN "public"."fc_reply"."user_id" IS '回复的用户id';
+COMMENT ON COLUMN "public"."fc_reply"."to_uid" IS '目标用户id';
+COMMENT ON COLUMN "public"."fc_reply"."likes" IS '点赞数';
+COMMENT ON COLUMN "public"."fc_reply"."create_time" IS '创建时间';
+
+-- ----------------------------
+-- Records of fc_reply
 -- ----------------------------
 
 -- ----------------------------
@@ -215,6 +303,7 @@ DROP TABLE IF EXISTS "public"."fc_user";
 CREATE TABLE "public"."fc_user" (
   "id" int4 NOT NULL DEFAULT nextval('fc_user_id_seq'::regclass),
   "username" varchar(64) COLLATE "pg_catalog"."default" NOT NULL,
+  "password" varchar(255) COLLATE "pg_catalog"."default",
   "signature" varchar(255) COLLATE "pg_catalog"."default",
   "photo" varchar(255) COLLATE "pg_catalog"."default",
   "phone" varchar(255) COLLATE "pg_catalog"."default",
@@ -225,8 +314,7 @@ CREATE TABLE "public"."fc_user" (
   "school_area_id" int4 NOT NULL,
   "grade" varchar(255) COLLATE "pg_catalog"."default" NOT NULL,
   "specialty" varchar(255) COLLATE "pg_catalog"."default" NOT NULL,
-  "create_time" timestamp(6) NOT NULL DEFAULT now(),
-  "password" varchar(255) COLLATE "pg_catalog"."default"
+  "create_time" timestamp(6) NOT NULL DEFAULT now()
 )
 ;
 COMMENT ON COLUMN "public"."fc_user"."username" IS '用户名';
@@ -246,7 +334,7 @@ COMMENT ON COLUMN "public"."fc_user"."password" IS '密码';
 -- ----------------------------
 -- Records of fc_user
 -- ----------------------------
-INSERT INTO "public"."fc_user" VALUES (1, 'test', NULL, NULL, NULL, 0, 0, 0, NULL, 1, '1', '未知', '2021-05-10 16:56:14.067509', NULL);
+INSERT INTO "public"."fc_user" VALUES (1, 'test', NULL, NULL, NULL, NULL, 0, 0, 0, NULL, 1, '1', '未知', '2021-05-10 16:56:14.067509');
 
 -- ----------------------------
 -- Table structure for fc_user_role
@@ -282,6 +370,13 @@ SELECT setval('"public"."fc_comment_id_seq"', 2, false);
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
+ALTER SEQUENCE "public"."fc_like_id_seq"
+OWNED BY "public"."fc_like"."id";
+SELECT setval('"public"."fc_like_id_seq"', 2, false);
+
+-- ----------------------------
+-- Alter sequences owned by
+-- ----------------------------
 ALTER SEQUENCE "public"."fc_role_id_seq"
 OWNED BY "public"."fc_role"."id";
 SELECT setval('"public"."fc_role_id_seq"', 4, true);
@@ -310,9 +405,16 @@ SELECT setval('"public"."fc_user_role_id_seq"', 2, false);
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
-ALTER SEQUENCE "public"."post_id_seq"
+ALTER SEQUENCE "public"."fc_post_id_seq"
 OWNED BY "public"."fc_post"."id";
-SELECT setval('"public"."post_id_seq"', 2, false);
+SELECT setval('"public"."fc_post_id_seq"', 2, false);
+
+-- ----------------------------
+-- Alter sequences owned by
+-- ----------------------------
+ALTER SEQUENCE "public"."fc_reply_id_seq"
+OWNED BY "public"."fc_reply"."id";
+SELECT setval('"public"."fc_reply_id_seq"', 2, false);
 
 -- ----------------------------
 -- Primary Key structure for table fc_area
@@ -325,9 +427,19 @@ ALTER TABLE "public"."fc_area" ADD CONSTRAINT "fc_area_pkey" PRIMARY KEY ("id");
 ALTER TABLE "public"."fc_comment" ADD CONSTRAINT "fc_comment_pkey" PRIMARY KEY ("id");
 
 -- ----------------------------
+-- Primary Key structure for table fc_like
+-- ----------------------------
+ALTER TABLE "public"."fc_like" ADD CONSTRAINT "fc_like_pkey" PRIMARY KEY ("id");
+
+-- ----------------------------
 -- Primary Key structure for table fc_post
 -- ----------------------------
-ALTER TABLE "public"."fc_post" ADD CONSTRAINT "post_pkey" PRIMARY KEY ("id");
+ALTER TABLE "public"."fc_post" ADD CONSTRAINT "fc_post_pkey" PRIMARY KEY ("id");
+
+-- ----------------------------
+-- Primary Key structure for table fc_reply
+-- ----------------------------
+ALTER TABLE "public"."fc_reply" ADD CONSTRAINT "fc_reply_pkey" PRIMARY KEY ("id");
 
 -- ----------------------------
 -- Primary Key structure for table fc_role
@@ -357,14 +469,27 @@ ALTER TABLE "public"."fc_area" ADD CONSTRAINT "fc_area_school_id_fkey" FOREIGN K
 -- ----------------------------
 -- Foreign Keys structure for table fc_comment
 -- ----------------------------
-ALTER TABLE "public"."fc_comment" ADD CONSTRAINT "fc_comment_comment_id_fkey" FOREIGN KEY ("comment_id") REFERENCES "public"."fc_comment" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE "public"."fc_comment" ADD CONSTRAINT "fc_comment_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "public"."fc_post" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE "public"."fc_comment" ADD CONSTRAINT "fc_comment_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."fc_user" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- ----------------------------
+-- Foreign Keys structure for table fc_like
+-- ----------------------------
+ALTER TABLE "public"."fc_like" ADD CONSTRAINT "fc_like_comment_id_fkey" FOREIGN KEY ("comment_id") REFERENCES "public"."fc_comment" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."fc_like" ADD CONSTRAINT "fc_like_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "public"."fc_post" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."fc_like" ADD CONSTRAINT "fc_like_reply_id_fkey" FOREIGN KEY ("reply_id") REFERENCES "public"."fc_reply" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."fc_like" ADD CONSTRAINT "fc_like_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."fc_user" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- ----------------------------
 -- Foreign Keys structure for table fc_post
 -- ----------------------------
 ALTER TABLE "public"."fc_post" ADD CONSTRAINT "fc_post_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."fc_user" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- ----------------------------
+-- Foreign Keys structure for table fc_reply
+-- ----------------------------
+ALTER TABLE "public"."fc_reply" ADD CONSTRAINT "fc_reply_comment_id_fkey" FOREIGN KEY ("comment_id") REFERENCES "public"."fc_comment" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."fc_reply" ADD CONSTRAINT "fc_reply_reply_id_fkey" FOREIGN KEY ("reply_id") REFERENCES "public"."fc_reply" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- ----------------------------
 -- Foreign Keys structure for table fc_user

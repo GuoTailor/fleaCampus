@@ -6,22 +6,65 @@
         <result column="user_id" jdbcType="INTEGER" property="userId"/>
         <result column="title" jdbcType="VARCHAR" property="title"/>
         <result column="content" jdbcType="VARCHAR" property="content"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="state" jdbcType="VARCHAR" property="state"/>
         <result column="release_time" jdbcType="TIMESTAMP" property="releaseTime"/>
         <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="likes" jdbcType="INTEGER" property="likes"/>
+        <result column="comments" jdbcType="INTEGER" property="comments"/>
+        <result column="collects" jdbcType="INTEGER" property="collects"/>
+        <result column="flag" jdbcType="INTEGER" property="flag"/>
+        <result column="top_order" jdbcType="INTEGER" property="topOrder"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
     </resultMap>
+
+    <resultMap id="postResponse" type="com.gyh.fleacampus.model.view.PostResponse" extends="BaseResultMap">
+        <result property="username" column="username"/>
+        <result property="photo" column="photo"/>
+    </resultMap>
+
     <sql id="Base_Column_List">
-        id, user_id, title, content, create_time, "state", release_time, "type"
+        id, user_id, title, "content", "state", release_time, "type", likes, "comments", collects,
+    flag, top_order, create_time
     </sql>
-    <select id="findAll" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List"/> from fc_post
+    <select id="findAll" resultMap="postResponse">
+        select p.id,
+               p.user_id,
+               p.title,
+               p."content",
+               p."state",
+               p.release_time,
+               p."type",
+               p.likes,
+               p."comments",
+               p.collects,
+               p.flag,
+               p.top_order,
+               p.create_time,
+               u.username,
+               u.photo
+        from fc_post p
+                 left join fc_user u on u.id = p.user_id
     </select>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from "fc_post"
-        where id = #{id,jdbcType=INTEGER}
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="postResponse">
+        select p.id,
+               p.user_id,
+               p.title,
+               p."content",
+               p."state",
+               p.release_time,
+               p."type",
+               p.likes,
+               p."comments",
+               p.collects,
+               p.flag,
+               p.top_order,
+               p.create_time,
+               u.username,
+               u.photo
+        from fc_post p
+                 left join fc_user u on u.id = p.user_id
+        where p.id = #{id,jdbcType=INTEGER}
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete
@@ -31,86 +74,60 @@
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.model.Post"
             useGeneratedKeys="true">
         insert into "fc_post" (user_id, title, content,
-                               create_time, "state", release_time,
-                               "type")
+                               "state", release_time, "type",
+                               likes, comments, collects,
+                               flag, top_order, create_time)
         values (#{userId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
-                #{createTime,jdbcType=TIMESTAMP}, #{state,jdbcType=VARCHAR}, #{releaseTime,jdbcType=TIMESTAMP},
-                #{type,jdbcType=VARCHAR})
+                #{state,jdbcType=VARCHAR}, #{releaseTime,jdbcType=TIMESTAMP}, #{type,jdbcType=VARCHAR},
+                #{likes,jdbcType=INTEGER}, #{comments,jdbcType=INTEGER}, #{collects,jdbcType=INTEGER},
+                #{flag,jdbcType=INTEGER}, #{topOrder,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP})
     </insert>
     <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.model.Post"
             useGeneratedKeys="true">
         insert into "fc_post"
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="userId != null">
-                user_id,
-            </if>
-            <if test="title != null">
-                title,
-            </if>
-            <if test="content != null">
-                content,
-            </if>
-            <if test="createTime != null">
-                create_time,
-            </if>
-            <if test="state != null">
-                "state",
-            </if>
-            <if test="releaseTime != null">
-                release_time,
-            </if>
-            <if test="type != null">
-                "type",
-            </if>
+            <if test="userId != null">user_id,</if>
+            <if test="title != null">title,</if>
+            <if test="content != null">content,</if>
+            <if test="state != null">"state",</if>
+            <if test="releaseTime != null">release_time,</if>
+            <if test="type != null">"type",</if>
+            <if test="likes != null">likes,</if>
+            <if test="comments != null">comments,</if>
+            <if test="collects != null">collects,</if>
+            <if test="flag != null">flag,</if>
+            <if test="topOrder != null">top_order,</if>
+            <if test="createTime != null">create_time,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="userId != null">
-                #{userId,jdbcType=INTEGER},
-            </if>
-            <if test="title != null">
-                #{title,jdbcType=VARCHAR},
-            </if>
-            <if test="content != null">
-                #{content,jdbcType=VARCHAR},
-            </if>
-            <if test="createTime != null">
-                #{createTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="state != null">
-                #{state,jdbcType=VARCHAR},
-            </if>
-            <if test="releaseTime != null">
-                #{releaseTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="type != null">
-                #{type,jdbcType=VARCHAR},
-            </if>
+            <if test="userId != null">#{userId,jdbcType=INTEGER},</if>
+            <if test="title != null">#{title,jdbcType=VARCHAR},</if>
+            <if test="content != null">#{content,jdbcType=VARCHAR},</if>
+            <if test="state != null">#{state,jdbcType=VARCHAR},</if>
+            <if test="releaseTime != null">#{releaseTime,jdbcType=TIMESTAMP},</if>
+            <if test="type != null">#{type,jdbcType=VARCHAR},</if>
+            <if test="likes != null">#{likes,jdbcType=INTEGER},</if>
+            <if test="comments != null">#{comments,jdbcType=INTEGER},</if>
+            <if test="collects != null">#{collects,jdbcType=INTEGER},</if>
+            <if test="flag != null">#{flag,jdbcType=INTEGER},</if>
+            <if test="topOrder != null">#{topOrder,jdbcType=INTEGER},</if>
+            <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.model.Post">
-        update "fc_post"
+    <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.model.Post">update "fc_post"
         <set>
-            <if test="userId != null">
-                user_id = #{userId,jdbcType=INTEGER},
-            </if>
-            <if test="title != null">
-                title = #{title,jdbcType=VARCHAR},
-            </if>
-            <if test="content != null">
-                content = #{content,jdbcType=VARCHAR},
-            </if>
-            <if test="createTime != null">
-                create_time = #{createTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="state != null">
-                "state" = #{state,jdbcType=VARCHAR},
-            </if>
-            <if test="releaseTime != null">
-                release_time = #{releaseTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="type != null">
-                "type" = #{type,jdbcType=VARCHAR},
-            </if>
+            <if test="userId != null">user_id = #{userId,jdbcType=INTEGER},</if>
+            <if test="title != null">title = #{title,jdbcType=VARCHAR},</if>
+            <if test="content != null">content = #{content,jdbcType=VARCHAR},</if>
+            <if test="state != null">"state" = #{state,jdbcType=VARCHAR},</if>
+            <if test="releaseTime != null">release_time = #{releaseTime,jdbcType=TIMESTAMP},</if>
+            <if test="type != null">"type" = #{type,jdbcType=VARCHAR},</if>
+            <if test="likes != null">likes = #{likes,jdbcType=INTEGER},</if>
+            <if test="comments != null">comments = #{comments,jdbcType=INTEGER},</if>
+            <if test="collects != null">collects = #{collects,jdbcType=INTEGER},</if>
+            <if test="flag != null">flag = #{flag,jdbcType=INTEGER},</if>
+            <if test="topOrder != null">top_order = #{topOrder,jdbcType=INTEGER},</if>
+            <if test="createTime != null">create_time = #{createTime,jdbcType=TIMESTAMP},</if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
@@ -119,10 +136,14 @@
         set user_id      = #{userId,jdbcType=INTEGER},
             title        = #{title,jdbcType=VARCHAR},
             content      = #{content,jdbcType=VARCHAR},
-            create_time  = #{createTime,jdbcType=TIMESTAMP},
             "state"      = #{state,jdbcType=VARCHAR},
             release_time = #{releaseTime,jdbcType=TIMESTAMP},
-            "type"       = #{type,jdbcType=VARCHAR}
-        where id = #{id,jdbcType=INTEGER}
-    </update>
+            "type"       = #{type,jdbcType=VARCHAR},
+            likes        = #{likes,jdbcType=INTEGER},
+            comments     = #{comments,jdbcType=INTEGER},
+            collects     = #{collects,jdbcType=INTEGER},
+            flag         = #{flag,jdbcType=INTEGER},
+            top_order    = #{topOrder,jdbcType=INTEGER},
+            create_time  = #{createTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}    </update>
 </mapper>

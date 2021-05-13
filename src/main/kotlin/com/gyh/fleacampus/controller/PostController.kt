@@ -3,6 +3,7 @@ package com.gyh.fleacampus.controller
 import com.gyh.fleacampus.model.PageView
 import com.gyh.fleacampus.model.Post
 import com.gyh.fleacampus.model.ResponseInfo
+import com.gyh.fleacampus.model.view.PostResponse
 import com.gyh.fleacampus.service.PostService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -29,7 +30,7 @@ class PostController {
 
     @Operation(summary = "根据id获取帖子")
     @GetMapping
-    fun findById(@Parameter(description = "帖子id", required = true) @RequestParam id: Int): ResponseInfo<Post> {
+    fun findById(@Parameter(description = "帖子id", required = true) @RequestParam id: Int): ResponseInfo<PostResponse> {
         return ResponseInfo.ok(postService.findById(id))
     }
 
@@ -38,8 +39,8 @@ class PostController {
     fun findAll(
         @Parameter(description = "第几页，默认从1开始") @RequestParam pageNum: Int = 1,
         @Parameter(description = "每页数量，默认30") @RequestParam pageSize: Int = 30
-    ): ResponseInfo<PageView<Post>> {
-        return ResponseInfo.ok(postService.findPost(pageNum, pageSize))
+    ): ResponseInfo<PageView<PostResponse>> {
+        return ResponseInfo.ok(postService.findByPage(pageNum, pageSize))
     }
 
     @Operation(summary = "更新铁子", security = [SecurityRequirement(name = "basicScheme")])
