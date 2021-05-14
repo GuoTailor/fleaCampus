@@ -114,7 +114,8 @@
             <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.model.Post">update "fc_post"
+    <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.model.Post">
+        update "fc_post"
         <set>
             <if test="userId != null">user_id = #{userId,jdbcType=INTEGER},</if>
             <if test="title != null">title = #{title,jdbcType=VARCHAR},</if>

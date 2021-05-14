@@ -5,20 +5,58 @@
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="user_id" jdbcType="INTEGER" property="userId"/>
         <result column="post_id" jdbcType="INTEGER" property="postId"/>
-        <result column="comment_id" jdbcType="INTEGER" property="commentId"/>
+        <result column="replys" jdbcType="INTEGER" property="replys"/>
         <result column="content" jdbcType="VARCHAR" property="content"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="flag" jdbcType="SMALLINT" property="flag"/>
+        <result column="likes" jdbcType="INTEGER" property="likes"/>
+        <result column="top_order" jdbcType="INTEGER" property="topOrder"/>
     </resultMap>
+
+    <resultMap id="commentResponse" type="com.gyh.fleacampus.model.view.CommentResponse" extends="BaseResultMap">
+        <result property="username" column="username"/>
+        <result property="photo" column="photo"/>
+        <collection property="replyList" column="id" javaType="list"
+                    ofType="com.gyh.fleacampus.model.Reply" select="com.gyh.fleacampus.mapper.ReplyMapper.findTopThree"/>
+    </resultMap>
+
     <sql id="Base_Column_List">
-        id, user_id, post_id, comment_id, content, create_time, flag
+        id, user_id, post_id, replys, "content", create_time, flag, likes, top_order
     </sql>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from "fc_comment"
-        where id = #{id,jdbcType=INTEGER}
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="commentResponse">
+        select c.id,
+               c.user_id,
+               c.post_id,
+               c.replys,
+               c."content",
+               c.create_time,
+               c.flag,
+               c.likes,
+               c.top_order,
+               fu.username,
+               fu.phone
+        from "fc_comment" c
+                 left join fc_user fu on c.user_id = fu.id
+        where c.id = #{id,jdbcType=INTEGER}
     </select>
+
+    <select id="findByPage" resultMap="commentResponse">
+        select c.id,
+               c.user_id,
+               c.post_id,
+               c.replys,
+               c."content",
+               c.create_time,
+               c.flag,
+               c.likes,
+               c.top_order,
+               fu.username,
+               fu.phone
+        from "fc_comment" c
+                 left join fc_user fu on c.user_id = fu.id
+        where c.post_id = #{postId}
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete
         from "fc_comment"
@@ -26,10 +64,12 @@
     </delete>
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.model.Comment"
             useGeneratedKeys="true">
-        insert into "fc_comment" (user_id, post_id, comment_id,
-                                  content, create_time, flag)
-        values (#{userId,jdbcType=INTEGER}, #{postId,jdbcType=INTEGER}, #{commentId,jdbcType=INTEGER},
-                #{content,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=SMALLINT})
+        insert into "fc_comment" (user_id, post_id, replys,
+                                  content, create_time, flag,
+                                  likes, top_order)
+        values (#{userId,jdbcType=INTEGER}, #{postId,jdbcType=INTEGER}, #{replys,jdbcType=INTEGER},
+                #{content,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=SMALLINT},
+                #{likes,jdbcType=INTEGER}, #{topOrder,jdbcType=INTEGER})
     </insert>
     <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.model.Comment"
             useGeneratedKeys="true">
@@ -37,28 +77,35 @@
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="userId != null">user_id,</if>
             <if test="postId != null">post_id,</if>
-            <if test="commentId != null">comment_id,</if>
+            <if test="replys != null">replys,</if>
             <if test="content != null">content,</if>
             <if test="createTime != null">create_time,</if>
             <if test="flag != null">flag,</if>
+            <if test="likes != null">likes,</if>
+            <if test="topOrder != null">top_order,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userId != null">#{userId,jdbcType=INTEGER},</if>
             <if test="postId != null">#{postId,jdbcType=INTEGER},</if>
-            <if test="commentId != null">#{commentId,jdbcType=INTEGER},</if>
+            <if test="replys != null">#{replys,jdbcType=INTEGER},</if>
             <if test="content != null">#{content,jdbcType=VARCHAR},</if>
             <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
             <if test="flag != null">#{flag,jdbcType=SMALLINT},</if>
+            <if test="likes != null">#{likes,jdbcType=INTEGER},</if>
+            <if test="topOrder != null">#{topOrder,jdbcType=INTEGER},</if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.model.Comment">update "fc_comment"
+    <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.model.Comment">
+        update "fc_comment"
         <set>
             <if test="userId != null">user_id = #{userId,jdbcType=INTEGER},</if>
             <if test="postId != null">post_id = #{postId,jdbcType=INTEGER},</if>
-            <if test="commentId != null">comment_id = #{commentId,jdbcType=INTEGER},</if>
+            <if test="replys != null">replys = #{replys,jdbcType=INTEGER},</if>
             <if test="content != null">content = #{content,jdbcType=VARCHAR},</if>
             <if test="createTime != null">create_time = #{createTime,jdbcType=TIMESTAMP},</if>
             <if test="flag != null">flag = #{flag,jdbcType=SMALLINT},</if>
+            <if test="likes != null">likes = #{likes,jdbcType=INTEGER},</if>
+            <if test="topOrder != null">top_order = #{topOrder,jdbcType=INTEGER},</if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
@@ -66,9 +113,11 @@
         update "fc_comment"
         set user_id     = #{userId,jdbcType=INTEGER},
             post_id     = #{postId,jdbcType=INTEGER},
-            comment_id  = #{commentId,jdbcType=INTEGER},
+            replys      = #{replys,jdbcType=INTEGER},
             content     = #{content,jdbcType=VARCHAR},
             create_time = #{createTime,jdbcType=TIMESTAMP},
-            flag        = #{flag,jdbcType=SMALLINT}
+            flag        = #{flag,jdbcType=SMALLINT},
+            likes       = #{likes,jdbcType=INTEGER},
+            top_order   = #{topOrder,jdbcType=INTEGER}
         where id = #{id,jdbcType=INTEGER}  </update>
 </mapper>

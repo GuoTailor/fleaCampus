@@ -12,7 +12,7 @@
  Target Server Version : 130002
  File Encoding         : 65001
 
- Date: 13/05/2021 15:56:04
+ Date: 14/05/2021 17:39:47
 */
 
 
@@ -43,6 +43,28 @@ CACHE 1;
 -- ----------------------------
 DROP SEQUENCE IF EXISTS "public"."fc_like_id_seq";
 CREATE SEQUENCE "public"."fc_like_id_seq" 
+INCREMENT 1
+MINVALUE  1
+MAXVALUE 2147483647
+START 1
+CACHE 1;
+
+-- ----------------------------
+-- Sequence structure for fc_post_id_seq
+-- ----------------------------
+DROP SEQUENCE IF EXISTS "public"."fc_post_id_seq";
+CREATE SEQUENCE "public"."fc_post_id_seq" 
+INCREMENT 1
+MINVALUE  1
+MAXVALUE 2147483647
+START 1
+CACHE 1;
+
+-- ----------------------------
+-- Sequence structure for fc_reply_id_seq
+-- ----------------------------
+DROP SEQUENCE IF EXISTS "public"."fc_reply_id_seq";
+CREATE SEQUENCE "public"."fc_reply_id_seq" 
 INCREMENT 1
 MINVALUE  1
 MAXVALUE 2147483647
@@ -94,28 +116,6 @@ START 1
 CACHE 1;
 
 -- ----------------------------
--- Sequence structure for fc_post_id_seq
--- ----------------------------
-DROP SEQUENCE IF EXISTS "public"."fc_post_id_seq";
-CREATE SEQUENCE "public"."fc_post_id_seq"
-INCREMENT 1
-MINVALUE  1
-MAXVALUE 2147483647
-START 1
-CACHE 1;
-
--- ----------------------------
--- Sequence structure for fc_reply_id_seq
--- ----------------------------
-DROP SEQUENCE IF EXISTS "public"."fc_reply_id_seq";
-CREATE SEQUENCE "public"."fc_reply_id_seq"
-INCREMENT 1
-MINVALUE  1
-MAXVALUE 2147483647
-START 1
-CACHE 1;
-
--- ----------------------------
 -- Table structure for fc_area
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."fc_area";
@@ -129,11 +129,6 @@ CREATE TABLE "public"."fc_area" (
 COMMENT ON COLUMN "public"."fc_area"."school_id" IS '学校id';
 COMMENT ON COLUMN "public"."fc_area"."area" IS '校区名字';
 COMMENT ON COLUMN "public"."fc_area"."create_time" IS '创建时间';
-
--- ----------------------------
--- Records of fc_area
--- ----------------------------
-INSERT INTO "public"."fc_area" VALUES (1, 1, '无', '2021-05-06 16:37:35.136034');
 
 -- ----------------------------
 -- Table structure for fc_comment
@@ -161,10 +156,6 @@ COMMENT ON COLUMN "public"."fc_comment"."likes" IS '点赞数';
 COMMENT ON COLUMN "public"."fc_comment"."top_order" IS '置顶顺序，越大排序越靠前';
 
 -- ----------------------------
--- Records of fc_comment
--- ----------------------------
-
--- ----------------------------
 -- Table structure for fc_like
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."fc_like";
@@ -182,10 +173,6 @@ COMMENT ON COLUMN "public"."fc_like"."post_id" IS '帖子id';
 COMMENT ON COLUMN "public"."fc_like"."comment_id" IS '评论id';
 COMMENT ON COLUMN "public"."fc_like"."reply_id" IS '回复id';
 COMMENT ON COLUMN "public"."fc_like"."status" IS '点赞状态0--取消赞   1--有效赞';
-
--- ----------------------------
--- Records of fc_like
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for fc_post
@@ -210,7 +197,6 @@ CREATE TABLE "public"."fc_post" (
 COMMENT ON COLUMN "public"."fc_post"."user_id" IS '发布者id';
 COMMENT ON COLUMN "public"."fc_post"."title" IS '标题';
 COMMENT ON COLUMN "public"."fc_post"."content" IS '内容';
-COMMENT ON COLUMN "public"."fc_post"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."fc_post"."state" IS '状态 draft：草稿，normal：发布，timing：定时发布';
 COMMENT ON COLUMN "public"."fc_post"."release_time" IS '定时发布时间';
 COMMENT ON COLUMN "public"."fc_post"."type" IS '帖子类型
@@ -224,10 +210,7 @@ COMMENT ON COLUMN "public"."fc_post"."comments" IS '评论数';
 COMMENT ON COLUMN "public"."fc_post"."collects" IS '收藏数';
 COMMENT ON COLUMN "public"."fc_post"."flag" IS '0：违规，1：有效';
 COMMENT ON COLUMN "public"."fc_post"."top_order" IS '置顶顺序，越大排序越靠前';
-
--- ----------------------------
--- Records of fc_post
--- ----------------------------
+COMMENT ON COLUMN "public"."fc_post"."create_time" IS '创建时间';
 
 -- ----------------------------
 -- Table structure for fc_reply
@@ -242,7 +225,8 @@ CREATE TABLE "public"."fc_reply" (
   "user_id" int4 NOT NULL,
   "to_uid" int4 NOT NULL,
   "likes" int4 NOT NULL DEFAULT 0,
-  "create_time" timestamp(6) NOT NULL DEFAULT now()
+  "create_time" timestamp(6) NOT NULL DEFAULT now(),
+  "flag" int2 NOT NULL DEFAULT 1
 )
 ;
 COMMENT ON COLUMN "public"."fc_reply"."comment_id" IS '评论id';
@@ -253,10 +237,7 @@ COMMENT ON COLUMN "public"."fc_reply"."user_id" IS '回复的用户id';
 COMMENT ON COLUMN "public"."fc_reply"."to_uid" IS '目标用户id';
 COMMENT ON COLUMN "public"."fc_reply"."likes" IS '点赞数';
 COMMENT ON COLUMN "public"."fc_reply"."create_time" IS '创建时间';
-
--- ----------------------------
--- Records of fc_reply
--- ----------------------------
+COMMENT ON COLUMN "public"."fc_reply"."flag" IS '0:隐藏，1:展示';
 
 -- ----------------------------
 -- Table structure for fc_role
@@ -272,13 +253,6 @@ COMMENT ON COLUMN "public"."fc_role"."name" IS '角色名';
 COMMENT ON COLUMN "public"."fc_role"."name_zh" IS '角色名中文';
 
 -- ----------------------------
--- Records of fc_role
--- ----------------------------
-INSERT INTO "public"."fc_role" VALUES (1, 'ROLE_SUPER_ADMIN', '超级管理员');
-INSERT INTO "public"."fc_role" VALUES (2, 'ROLE_ADMIN', '管理员');
-INSERT INTO "public"."fc_role" VALUES (3, 'ROLE_USER', '用户');
-
--- ----------------------------
 -- Table structure for fc_school
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."fc_school";
@@ -290,11 +264,6 @@ CREATE TABLE "public"."fc_school" (
 ;
 COMMENT ON COLUMN "public"."fc_school"."name" IS '学校名';
 COMMENT ON COLUMN "public"."fc_school"."create_time" IS '创建时间';
-
--- ----------------------------
--- Records of fc_school
--- ----------------------------
-INSERT INTO "public"."fc_school" VALUES (1, '无学校', '2021-05-06 16:37:15.896839');
 
 -- ----------------------------
 -- Table structure for fc_user
@@ -318,6 +287,7 @@ CREATE TABLE "public"."fc_user" (
 )
 ;
 COMMENT ON COLUMN "public"."fc_user"."username" IS '用户名';
+COMMENT ON COLUMN "public"."fc_user"."password" IS '密码';
 COMMENT ON COLUMN "public"."fc_user"."signature" IS '个性签名';
 COMMENT ON COLUMN "public"."fc_user"."photo" IS '头像url地址';
 COMMENT ON COLUMN "public"."fc_user"."phone" IS '手机';
@@ -329,12 +299,6 @@ COMMENT ON COLUMN "public"."fc_user"."school_area_id" IS '学校区域id';
 COMMENT ON COLUMN "public"."fc_user"."grade" IS '年纪';
 COMMENT ON COLUMN "public"."fc_user"."specialty" IS '专业';
 COMMENT ON COLUMN "public"."fc_user"."create_time" IS '创建时间';
-COMMENT ON COLUMN "public"."fc_user"."password" IS '密码';
-
--- ----------------------------
--- Records of fc_user
--- ----------------------------
-INSERT INTO "public"."fc_user" VALUES (1, 'test', NULL, NULL, NULL, NULL, 0, 0, 0, NULL, 1, '1', '未知', '2021-05-10 16:56:14.067509');
 
 -- ----------------------------
 -- Table structure for fc_user_role
@@ -350,71 +314,67 @@ COMMENT ON COLUMN "public"."fc_user_role"."user_id" IS '用户id';
 COMMENT ON COLUMN "public"."fc_user_role"."role_id" IS '角色id';
 
 -- ----------------------------
--- Records of fc_user_role
--- ----------------------------
-
--- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."fc_area_id_seq"
 OWNED BY "public"."fc_area"."id";
-SELECT setval('"public"."fc_area_id_seq"', 3, true);
+SELECT setval('"public"."fc_area_id_seq"', 4, true);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."fc_comment_id_seq"
 OWNED BY "public"."fc_comment"."id";
-SELECT setval('"public"."fc_comment_id_seq"', 2, false);
+SELECT setval('"public"."fc_comment_id_seq"', 5, true);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."fc_like_id_seq"
 OWNED BY "public"."fc_like"."id";
-SELECT setval('"public"."fc_like_id_seq"', 2, false);
-
--- ----------------------------
--- Alter sequences owned by
--- ----------------------------
-ALTER SEQUENCE "public"."fc_role_id_seq"
-OWNED BY "public"."fc_role"."id";
-SELECT setval('"public"."fc_role_id_seq"', 4, true);
-
--- ----------------------------
--- Alter sequences owned by
--- ----------------------------
-ALTER SEQUENCE "public"."fc_school_id_seq"
-OWNED BY "public"."fc_school"."id";
-SELECT setval('"public"."fc_school_id_seq"', 2, true);
-
--- ----------------------------
--- Alter sequences owned by
--- ----------------------------
-ALTER SEQUENCE "public"."fc_user_id_seq"
-OWNED BY "public"."fc_user"."id";
-SELECT setval('"public"."fc_user_id_seq"', 2, true);
-
--- ----------------------------
--- Alter sequences owned by
--- ----------------------------
-ALTER SEQUENCE "public"."fc_user_role_id_seq"
-OWNED BY "public"."fc_user_role"."id";
-SELECT setval('"public"."fc_user_role_id_seq"', 2, false);
+SELECT setval('"public"."fc_like_id_seq"', 3, false);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."fc_post_id_seq"
 OWNED BY "public"."fc_post"."id";
-SELECT setval('"public"."fc_post_id_seq"', 2, false);
+SELECT setval('"public"."fc_post_id_seq"', 4, true);
 
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
 ALTER SEQUENCE "public"."fc_reply_id_seq"
 OWNED BY "public"."fc_reply"."id";
-SELECT setval('"public"."fc_reply_id_seq"', 2, false);
+SELECT setval('"public"."fc_reply_id_seq"', 3, false);
+
+-- ----------------------------
+-- Alter sequences owned by
+-- ----------------------------
+ALTER SEQUENCE "public"."fc_role_id_seq"
+OWNED BY "public"."fc_role"."id";
+SELECT setval('"public"."fc_role_id_seq"', 5, true);
+
+-- ----------------------------
+-- Alter sequences owned by
+-- ----------------------------
+ALTER SEQUENCE "public"."fc_school_id_seq"
+OWNED BY "public"."fc_school"."id";
+SELECT setval('"public"."fc_school_id_seq"', 3, true);
+
+-- ----------------------------
+-- Alter sequences owned by
+-- ----------------------------
+ALTER SEQUENCE "public"."fc_user_id_seq"
+OWNED BY "public"."fc_user"."id";
+SELECT setval('"public"."fc_user_id_seq"', 8, true);
+
+-- ----------------------------
+-- Alter sequences owned by
+-- ----------------------------
+ALTER SEQUENCE "public"."fc_user_role_id_seq"
+OWNED BY "public"."fc_user_role"."id";
+SELECT setval('"public"."fc_user_role_id_seq"', 5, true);
 
 -- ----------------------------
 -- Primary Key structure for table fc_area

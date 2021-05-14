@@ -35,7 +35,7 @@ open class Post(
     /**
      * 状态 draft：草稿，normal：发布，timing：定时发布
      */
-    @Schema(description = "状态 draft：草稿，normal：发布，timing：定时发布")
+    @Schema(description = "状态 DRAFT：草稿，NORMAL：发布，TIMING：定时发布")
     var state: String? = null,
 
     /**

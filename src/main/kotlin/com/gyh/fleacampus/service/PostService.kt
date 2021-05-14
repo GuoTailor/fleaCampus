@@ -18,13 +18,14 @@ class PostService {
     @Resource
     lateinit var postMapper: PostMapper
 
-    fun createPost(post: Post): Int {
+    fun createPost(post: Post): Post {
         post.checkStatus()
         val userId = getCurrentUser().id
         post.userId = userId
         post.type = post.type?.toLowerCase()
         // TODO 定时发布时间
-        return postMapper.insertSelective(post)
+        postMapper.insertSelective(post)
+        return post
     }
 
     fun findById(id: Int): PostResponse {

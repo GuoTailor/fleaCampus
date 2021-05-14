@@ -22,9 +22,9 @@ class PostController {
     @Autowired
     lateinit var postService: PostService
 
-    @Operation(summary = "创建帖子", security = [SecurityRequirement(name = "basicScheme")])
+    @Operation(summary = "创建帖子", security = [SecurityRequirement(name = "Authorization")])
     @PostMapping
-    fun createPost(@RequestBody post: Post): ResponseInfo<Int> {
+    fun createPost(@RequestBody post: Post): ResponseInfo<Post> {
         return ResponseInfo.ok(postService.createPost(post))
     }
 
@@ -37,19 +37,19 @@ class PostController {
     @Operation(summary = "分页获取帖子")
     @GetMapping("/all")
     fun findAll(
-        @Parameter(description = "第几页，默认从1开始") @RequestParam pageNum: Int = 1,
-        @Parameter(description = "每页数量，默认30") @RequestParam pageSize: Int = 30
+        @Parameter(description = "第几页，默认从1开始") @RequestParam(required = false) pageNum: Int?,
+        @Parameter(description = "每页数量，默认30") @RequestParam(required = false) pageSize: Int?
     ): ResponseInfo<PageView<PostResponse>> {
-        return ResponseInfo.ok(postService.findByPage(pageNum, pageSize))
+        return ResponseInfo.ok(postService.findByPage(pageNum ?: 1, pageSize ?: 30))
     }
 
-    @Operation(summary = "更新铁子", security = [SecurityRequirement(name = "basicScheme")])
+    @Operation(summary = "更新铁子", security = [SecurityRequirement(name = "Authorization")])
     @PutMapping
     fun updatePost(@RequestBody post: Post): ResponseInfo<Int> {
         return ResponseInfo.ok(postService.updatePost(post))
     }
 
-    @Operation(summary = "删除帖子", security = [SecurityRequirement(name = "basicScheme")])
+    @Operation(summary = "删除帖子", security = [SecurityRequirement(name = "Authorization")])
     @DeleteMapping
     fun deletePost(@Parameter(description = "帖子id", required = true) @RequestParam id: Int): ResponseInfo<Int> {
         return ResponseInfo.ok(postService.deletePost(id))

@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema
  */
 data class PostResponse(
     @Schema(description = "用户名")
-    val username: String,
+    var username: String,
     @Schema(description = "用户头像")
-    val photo: String,
+    var photo: String,
 ): Post()

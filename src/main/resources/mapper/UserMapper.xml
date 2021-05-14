@@ -21,6 +21,11 @@
         id, username, "password", signature, photo, phone, sex, "exp", score, horoscope,
     school_area_id, grade, specialty, create_time
     </sql>
+    <select id="loadUserByUsername" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from fc_user where username = #{username}
+    </select>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -79,7 +84,8 @@
             <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.model.User">update "fc_user"
+    <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.model.User">
+        update "fc_user"
         <set>
             <if test="username != null">username = #{username,jdbcType=VARCHAR},</if>
             <if test="password != null">"password" = #{password,jdbcType=VARCHAR},</if>

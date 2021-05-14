@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gyh.fleacampus.mapper.ReplyMapper">
+    <resultMap id="BaseResultMap" type="com.gyh.fleacampus.model.Reply">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="comment_id" jdbcType="INTEGER" property="commentId"/>
+        <result column="reply_id" jdbcType="INTEGER" property="replyId"/>
+        <result column="reply_type" jdbcType="VARCHAR" property="replyType"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="to_uid" jdbcType="INTEGER" property="toUid"/>
+        <result column="likes" jdbcType="INTEGER" property="likes"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="flag" jdbcType="SMALLINT" property="flag"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, comment_id, reply_id, reply_type, content, user_id, to_uid, likes, create_time, flag
+    </sql>
+    <resultMap id="replyResponse" type="com.gyh.fleacampus.model.view.ReplyResponse" extends="BaseResultMap">
+        <result property="username" column="username"/>
+        <result property="photo" column="photo"/>
+    </resultMap>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from "fc_reply"
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="findByPage" resultMap="replyResponse">
+        select fr.id,
+               fr.comment_id,
+               fr.reply_id,
+               fr.reply_type,
+               fr.content,
+               fr.user_id,
+               fr.to_uid,
+               fr.likes,
+               fr.create_time,
+               fr.flag,
+               fu.username,
+               fu.phone
+        from fc_reply fr
+                 left join fc_user fu on fr.user_id = fu.id
+        where comment_id = #{id}
+        order by create_time desc
+    </select>
+
+    <select id="findTopThree" resultMap="replyResponse">
+        select fr.id,
+               fr.comment_id,
+               fr.reply_id,
+               fr.reply_type,
+               fr.content,
+               fr.user_id,
+               fr.to_uid,
+               fr.likes,
+               fr.create_time,
+               fr.flag,
+               fu.username,
+               fu.phone
+        from fc_reply fr
+                 left join fc_user fu on fr.user_id = fu.id
+        where comment_id = #{id}
+        order by create_time desc
+        limit 3
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from "fc_reply"
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.model.Reply"
+            useGeneratedKeys="true">
+        insert into "fc_reply" (comment_id, reply_id, reply_type,
+                                content, user_id, to_uid,
+                                likes, create_time, flag)
+        values (#{commentId,jdbcType=INTEGER}, #{replyId,jdbcType=INTEGER}, #{replyType,jdbcType=VARCHAR},
+                #{content,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{toUid,jdbcType=INTEGER},
+                #{likes,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=SMALLINT})
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.model.Reply"
+            useGeneratedKeys="true">
+        insert into "fc_reply"
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="commentId != null">comment_id,</if>
+            <if test="replyId != null">reply_id,</if>
+            <if test="replyType != null">reply_type,</if>
+            <if test="content != null">content,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="toUid != null">to_uid,</if>
+            <if test="likes != null">likes,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="flag != null">flag,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="commentId != null">#{commentId,jdbcType=INTEGER},</if>
+            <if test="replyId != null">#{replyId,jdbcType=INTEGER},</if>
+            <if test="replyType != null">#{replyType,jdbcType=VARCHAR},</if>
+            <if test="content != null">#{content,jdbcType=VARCHAR},</if>
+            <if test="userId != null">#{userId,jdbcType=INTEGER},</if>
+            <if test="toUid != null">#{toUid,jdbcType=INTEGER},</if>
+            <if test="likes != null">#{likes,jdbcType=INTEGER},</if>
+            <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
+            <if test="flag != null">#{flag,jdbcType=SMALLINT},</if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.model.Reply">
+        update "fc_reply"
+        <set>
+            <if test="commentId != null">comment_id = #{commentId,jdbcType=INTEGER},</if>
+            <if test="replyId != null">reply_id = #{replyId,jdbcType=INTEGER},</if>
+            <if test="replyType != null">reply_type = #{replyType,jdbcType=VARCHAR},</if>
+            <if test="content != null">content = #{content,jdbcType=VARCHAR},</if>
+            <if test="userId != null">user_id = #{userId,jdbcType=INTEGER},</if>
+            <if test="toUid != null">to_uid = #{toUid,jdbcType=INTEGER},</if>
+            <if test="likes != null">likes = #{likes,jdbcType=INTEGER},</if>
+            <if test="createTime != null">create_time = #{createTime,jdbcType=TIMESTAMP},</if>
+            <if test="flag != null">flag = #{flag,jdbcType=SMALLINT},</if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.gyh.fleacampus.model.Reply">
+        update "fc_reply"
+        set comment_id  = #{commentId,jdbcType=INTEGER},
+            reply_id    = #{replyId,jdbcType=INTEGER},
+            reply_type  = #{replyType,jdbcType=VARCHAR},
+            content     = #{content,jdbcType=VARCHAR},
+            user_id     = #{userId,jdbcType=INTEGER},
+            to_uid      = #{toUid,jdbcType=INTEGER},
+            likes       = #{likes,jdbcType=INTEGER},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            flag        = #{flag,jdbcType=SMALLINT}
+        where id = #{id,jdbcType=INTEGER}    </update>
+</mapper>

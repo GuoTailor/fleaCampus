@@ -25,10 +25,10 @@ open class Comment (
     var postId: Int? = null,
 
     /**
-     * 回复的评论
+     * 回复数
      */
-    @Schema(description = "回复的评论")
-    var commentId: Int? = null,
+    @Schema(description = "回复数")
+    var replys: Int? = null,
 
     /**
      * 评论内容
@@ -45,6 +45,19 @@ open class Comment (
     /**
      * 0:隐藏，1:展示
      */
-    @Schema(description = "0:违规隐藏，1:展示")
+    @Schema(description = "0:隐藏，1:展示")
     var flag: Int? = null,
+
+    /**
+     * 点赞数
+     */
+    @Schema(description = "点赞数")
+    var likes: Int? = null,
+
+    /**
+     * 置顶顺序，越大排序越靠前
+     */
+    @Schema(description = "置顶顺序，越大排序越靠前")
+    var topOrder: Int? = null,
+
 )

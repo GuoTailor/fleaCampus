@@ -16,7 +16,7 @@ import java.time.LocalDateTime
 @RestController
 @RequestMapping("/common")
 class CommonController(val userService: UserService) {
-    @Operation(summary = "test", security = [SecurityRequirement(name = "basicScheme")])
+    @Operation(summary = "test", security = [SecurityRequirement(name = "Authorization")])
     @GetMapping
     fun test(): ResponseInfo<User> {
         val user = User()

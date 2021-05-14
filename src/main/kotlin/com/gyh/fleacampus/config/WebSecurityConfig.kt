@@ -40,6 +40,8 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     private val objectMapper = ObjectMapper()
     @Autowired
     lateinit var userDetailsService: UserService
+    @Autowired
+    lateinit var pw: PasswordEncoder
 
     @Bean
     fun passwordEncoder(): PasswordEncoder {
@@ -56,6 +58,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
                 "/common/**", "/login",
                 "/swagger-ui/*", "/swagger-resources/**", "/v3/api-docs/**", "/webjars/**",
                 "/**/*.html", "/**/*.js", "/**/*.css", "/**/*.png", "/**/*.ico", "/static/**",
+                "/post/all",
             ).permitAll()
             .antMatchers(HttpMethod.GET, "/post").permitAll()
             .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
@@ -73,6 +76,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
         val wxIdAuthenticationProvider = WxIdAuthenticationProvider()
         val daoAuthenticationProvider = DaoAuthenticationProvider()
         daoAuthenticationProvider.setUserDetailsService(userDetailsService)
+        daoAuthenticationProvider.setPasswordEncoder(pw)
         auth.authenticationProvider(wxIdAuthenticationProvider)
         auth.authenticationProvider(daoAuthenticationProvider)
     }

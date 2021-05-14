@@ -42,12 +42,11 @@ class WxLoginFilter(private val authManager: AuthenticationManager) :
         chain: FilterChain,
         authResult: Authentication
     ) {
-        super.successfulAuthentication(request, response, chain, authResult)
+        //super.successfulAuthentication(request, response, chain, authResult)
         val user = authResult as UsernamePasswordAuthenticationToken
         val token = JwtUtil.generateToken(user.principal as User)
         response.contentType = "application/json;charset=utf-8"
         response.writer.write(json.writeValueAsString(ResponseInfo.ok("成功", token)))
-        chain.doFilter(request, response)
     }
 
     override fun unsuccessfulAuthentication(
