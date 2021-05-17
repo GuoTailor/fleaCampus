@@ -1,12 +1,12 @@
 spring:
   datasource:
     username: postgres
-    password: root
+    password: admin
     url: jdbc:postgresql://localhost:5432/flea_campus
     driver-class-name: org.postgresql.Driver
   servlet:
     multipart:
-      max-file-size: 1000MB
+      max-file-size: 100MB
 
 logging:
   level:

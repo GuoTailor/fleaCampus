@@ -39,7 +39,6 @@ class CommentService {
         reply.userId = userId
         reply.likes = 0
         reply.flag = 1
-        replyMapper.insertSelective(reply)
         return reply
     }
 

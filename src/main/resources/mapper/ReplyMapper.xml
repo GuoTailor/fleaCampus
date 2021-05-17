@@ -18,6 +18,7 @@
     </sql>
     <resultMap id="replyResponse" type="com.gyh.fleacampus.model.view.ReplyResponse" extends="BaseResultMap">
         <result property="username" column="username"/>
+        <result property="toUsername" column="toUsername"/>
         <result property="photo" column="photo"/>
     </resultMap>
 
@@ -39,9 +40,11 @@
                fr.create_time,
                fr.flag,
                fu.username,
+               fu2.username as toUsername,
                fu.phone
         from fc_reply fr
                  left join fc_user fu on fr.user_id = fu.id
+                 left join fc_user fu2 on fr.to_uid = fu2.id
         where comment_id = #{id}
         order by create_time desc
     </select>
@@ -58,9 +61,11 @@
                fr.create_time,
                fr.flag,
                fu.username,
+               fu2.username as toUsername,
                fu.phone
         from fc_reply fr
                  left join fc_user fu on fr.user_id = fu.id
+                 left join fc_user fu2 on fr.to_uid = fu2.id
         where comment_id = #{id}
         order by create_time desc
         limit 3

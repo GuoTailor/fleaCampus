@@ -15,5 +15,6 @@ class ReplyResponse : Reply() {
     @Schema(description = "用户头像")
     var photo: String? = null
 
-    //TODO 回复目标用户名字
+    @Schema(description = "回复目标用户名")
+    var toUsername: String? = null
 }
