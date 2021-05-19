@@ -12,9 +12,12 @@
         <result column="likes" jdbcType="INTEGER" property="likes"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="flag" jdbcType="SMALLINT" property="flag"/>
+        <result column="post_id" jdbcType="INTEGER" property="postId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
     </resultMap>
     <sql id="Base_Column_List">
-        id, comment_id, reply_id, reply_type, content, user_id, to_uid, likes, create_time, flag
+        id, comment_id, reply_id, reply_type, content, user_id, to_uid, likes, create_time,
+    flag, post_id, remark
     </sql>
     <resultMap id="replyResponse" type="com.gyh.fleacampus.model.view.ReplyResponse" extends="BaseResultMap">
         <result property="username" column="username"/>
@@ -39,6 +42,8 @@
                fr.likes,
                fr.create_time,
                fr.flag,
+               fr.post_id,
+               fr.remark,
                fu.username,
                fu2.username as toUsername,
                fu.phone
@@ -60,6 +65,8 @@
                fr.likes,
                fr.create_time,
                fr.flag,
+               fr.post_id,
+               fr.remark,
                fu.username,
                fu2.username as toUsername,
                fu.phone
@@ -79,10 +86,12 @@
             useGeneratedKeys="true">
         insert into "fc_reply" (comment_id, reply_id, reply_type,
                                 content, user_id, to_uid,
-                                likes, create_time, flag)
+                                likes, create_time, flag,
+                                post_id, remark)
         values (#{commentId,jdbcType=INTEGER}, #{replyId,jdbcType=INTEGER}, #{replyType,jdbcType=VARCHAR},
                 #{content,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{toUid,jdbcType=INTEGER},
-                #{likes,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=SMALLINT})
+                #{likes,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=SMALLINT},
+                #{postId,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR})
     </insert>
     <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.model.Reply"
             useGeneratedKeys="true">
@@ -97,6 +106,8 @@
             <if test="likes != null">likes,</if>
             <if test="createTime != null">create_time,</if>
             <if test="flag != null">flag,</if>
+            <if test="postId != null">post_id,</if>
+            <if test="remark != null">remark,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="commentId != null">#{commentId,jdbcType=INTEGER},</if>
@@ -108,6 +119,8 @@
             <if test="likes != null">#{likes,jdbcType=INTEGER},</if>
             <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
             <if test="flag != null">#{flag,jdbcType=SMALLINT},</if>
+            <if test="postId != null">#{postId,jdbcType=INTEGER},</if>
+            <if test="remark != null">#{remark,jdbcType=VARCHAR},</if>
         </trim>
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.model.Reply">
@@ -122,6 +135,8 @@
             <if test="likes != null">likes = #{likes,jdbcType=INTEGER},</if>
             <if test="createTime != null">create_time = #{createTime,jdbcType=TIMESTAMP},</if>
             <if test="flag != null">flag = #{flag,jdbcType=SMALLINT},</if>
+            <if test="postId != null">post_id = #{postId,jdbcType=INTEGER},</if>
+            <if test="remark != null">remark = #{remark,jdbcType=VARCHAR},</if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
@@ -135,6 +150,9 @@
             to_uid      = #{toUid,jdbcType=INTEGER},
             likes       = #{likes,jdbcType=INTEGER},
             create_time = #{createTime,jdbcType=TIMESTAMP},
-            flag        = #{flag,jdbcType=SMALLINT}
-        where id = #{id,jdbcType=INTEGER}    </update>
+            flag        = #{flag,jdbcType=SMALLINT},
+            post_id     = #{postId,jdbcType=INTEGER},
+            remark      = #{remark,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
 </mapper>

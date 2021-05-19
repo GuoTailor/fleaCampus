@@ -8,6 +8,8 @@ import com.gyh.fleacampus.model.Post
 import com.gyh.fleacampus.model.Role
 import com.gyh.fleacampus.model.view.PostResponse
 import org.springframework.stereotype.Service
+import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
 import javax.annotation.Resource
 
 /**
@@ -22,7 +24,7 @@ class PostService {
         post.checkStatus()
         val userId = getCurrentUser().id
         post.userId = userId
-        post.type = post.type?.toLowerCase()
+        post.type = post.type?.lowercase(Locale.getDefault())
         // TODO 定时发布时间
         postMapper.insertSelective(post)
         return post
@@ -51,7 +53,8 @@ class PostService {
             error("帖子的创建者才能修改该帖子")
         }
         post.userId = null
-        post.type = post.type?.toLowerCase()
+        post.type = post.type?.lowercase(Locale.getDefault())
+        AtomicInteger().incrementAndGet()
         return postMapper.updateByPrimaryKeySelective(post)
     }
 

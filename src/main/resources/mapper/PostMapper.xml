@@ -66,6 +66,21 @@
                  left join fc_user u on u.id = p.user_id
         where p.id = #{id,jdbcType=INTEGER}
     </select>
+    <update id="incrComments" parameterType="int">
+        update fc_post
+        set comments = comments + 1
+        where id = #{id}
+    </update>
+    <update id="minusComments" parameterType="int">
+        update fc_post
+        set comments = comments - 1 - (select replys from fc_comment where fc_comment.id = #{id})
+        where id = #{postId}
+    </update>
+    <update id="decrComments" parameterType="int">
+        update fc_post
+        set comments = comments - 1
+        where id = #{id}
+    </update>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete
         from "fc_post"

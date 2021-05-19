@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
 /**
@@ -52,8 +53,25 @@ class CommentController {
 
     @Operation(summary = "创建回复", security = [SecurityRequirement(name = "Authorization")])
     @PostMapping("/reply")
-    fun addReply(@RequestBody reply: Reply): ResponseInfo<Reply> {
+    fun addReply(@Validated @RequestBody reply: Reply): ResponseInfo<Reply> {
         return ResponseInfo.ok(commentService.addReply(reply))
     }
 
+    @Operation(summary = "删除评论", security = [SecurityRequirement(name = "Authorization")])
+    @DeleteMapping
+    fun deleteComment(
+        @Parameter(description = "评论id", required = true) @RequestParam id: Int,
+        @Parameter(description = "帖子id", required = true) @RequestParam postId: Int
+    ): ResponseInfo<Int> {
+        return ResponseInfo.ok(commentService.deleteComment(id, postId))
+    }
+
+    @Operation(summary = "删除回复", security = [SecurityRequirement(name = "Authorization")])
+    @DeleteMapping("/reply")
+    fun deleteReply(
+        @Parameter(description = "回复id", required = true) @RequestParam id: Int,
+        @Parameter(description = "帖子id", required = true) @RequestParam postId: Int
+    ): ResponseInfo<Int> {
+        return ResponseInfo.ok(commentService.deleteReply(id, postId))
+    }
 }

@@ -1,22 +1,31 @@
 package com.gyh.fleacampus.model
 
 import io.swagger.v3.oas.annotations.media.Schema
-import java.time.LocalDateTime
 import java.util.*
+import javax.validation.constraints.NotEmpty
+import javax.validation.constraints.NotNull
 
 /**
  * fc_reply
  * @author
  */
 @Schema(description = "回复")
-open class Reply (
+open class Reply(
     @Schema(description = "id")
     var id: Int? = null,
+
+    /**
+     * 帖子id
+     */
+    @Schema(description = "帖子id")
+    @NotNull
+    var postId: Int? = null,
 
     /**
      * 评论id
      */
     @Schema(description = "评论id")
+    @NotNull
     var commentId: Int? = null,
 
     /**
@@ -35,6 +44,7 @@ open class Reply (
      * 回复内容
      */
     @Schema(description = "回复内容")
+    @NotEmpty
     var content: String? = null,
 
     /**
@@ -47,6 +57,7 @@ open class Reply (
      * 目标用户id
      */
     @Schema(description = "目标用户id")
+    @NotNull
     var toUid: Int? = null,
 
     /**
@@ -66,12 +77,21 @@ open class Reply (
      */
     @Schema(description = "0:隐藏，1:展示")
     var flag: Short? = null,
-) {
+
+    /**
+     * 隐藏说明，用于违规提示
+     */
+    @Schema(description = "隐藏说明，用于违规提示")
+    var remark: String? = null,
+
+    ) {
     enum class ReplyType {
         COMMENT, REPLY
     }
 
     fun checkStatus() {
+        postId ?: error("帖子id不能为空")
+        commentId ?: error("评论的id不能为空")
         if (!ReplyType.values().map { it.name }.contains(replyType)) {
             error("帖子状态是未定义的 {$replyType}")
         }

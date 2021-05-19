@@ -1,19 +1,8 @@
 package com.gyh.fleacampus
 
-import ai.djl.Application
-import ai.djl.modality.Classifications
-import ai.djl.modality.cv.Image
-import ai.djl.modality.cv.ImageFactory
-import ai.djl.modality.cv.output.DetectedObjects
-import ai.djl.repository.zoo.Criteria
-import ai.djl.repository.zoo.ModelZoo
-import ai.djl.training.util.ProgressBar
 import com.gyh.fleacampus.common.LoadBirdsearchModel
 import org.junit.jupiter.api.Test
-import org.tensorflow.Graph
-import org.tensorflow.SavedModelBundle
-import org.tensorflow.Session
-import org.tensorflow.Tensor
+import org.tensorflow.*
 import org.tensorflow.ndarray.Shape
 import org.tensorflow.ndarray.buffer.FloatDataBuffer
 import org.tensorflow.op.Ops
@@ -29,9 +18,6 @@ import javax.swing.ImageIcon
 import javax.swing.JFrame
 import javax.swing.JLabel
 
-fun main() {
-    FleaCampusApplicationTests().contextLoads()
-}
 
 //@SpringBootTest
 class FleaCampusApplicationTests {
@@ -39,7 +25,7 @@ class FleaCampusApplicationTests {
     @Test
     fun contextLoads() {
         val graph = Graph()
-        val parseFrom = GraphDef.parseFrom(File("E:\\IdeaProjects\\NSFW-Python\\model\\frozen_nsfw.pb").inputStream())
+        val parseFrom = GraphDef.parseFrom(File("E:\\IdeaProjects\\nsfw_model\\mobilenet_v2_140_224\\frozen_graph.pb").inputStream())
         graph.importGraphDef(parseFrom)
         //graph.operations().forEach { println("$it ${it.type()} ${it.numOutputs()}") }
 
@@ -48,19 +34,48 @@ class FleaCampusApplicationTests {
 
         val session = Session(graph)
         //run(graph, session)
-        val time = System.currentTimeMillis()
-        run(graph, session)
+        var time = System.currentTimeMillis()
+        run2(graph, session,"C:\\Users\\GYH\\Pictures\\2.jpg")
+        println(System.currentTimeMillis() - time)
+        time = System.currentTimeMillis()
+        run2(graph, session, "C:\\Users\\GYH\\Pictures\\6.jpg")
+        println(System.currentTimeMillis() - time)
+        time = System.currentTimeMillis()
+        run2(graph, session, "E:\\AndroidStudioProjects\\open_nsfw_android-dev\\app\\src\\main\\assets\\img\\aaa.png")
         println(System.currentTimeMillis() - time)
         session.close()
         graph.close()
     }
 
-    fun run(graph: Graph, session: Session) {
+    @Test
+    fun testTensor() {
+        //run(graph, session)
+        var time = System.currentTimeMillis()
+        run3("C:\\Users\\GYH\\Pictures\\2.jpg")
+        println(System.currentTimeMillis() - time)
+        time = System.currentTimeMillis()
+        run3("C:\\Users\\GYH\\Pictures\\4.jpeg")
+        println(System.currentTimeMillis() - time)
+        time = System.currentTimeMillis()
+        run3("E:\\AndroidStudioProjects\\open_nsfw_android-dev\\app\\src\\main\\assets\\img\\aaa.png")
+        println(System.currentTimeMillis() - time)
+    }
+
+    fun run(path: String) {
+        val graph = Graph()
+        val parseFrom = GraphDef.parseFrom(File("E:\\IdeaProjects\\nsfw_model\\mobilenet_v2_140_224\\frozen_graph.pb").inputStream())
+        graph.importGraphDef(parseFrom)
+        //graph.operations().forEach { println("$it ${it.type()} ${it.numOutputs()}") }
+
+        // load saved model
+        //val model = SavedModelBundle.load("E:\\IdeaProjects\\NSFW-Python\\model", "serve")
+
+        val session = Session(graph)
         val tf = Ops.create(graph)
-        val fileName = tf.constant("C:\\Users\\GYH\\Pictures\\4.jpeg")
+        val fileName = tf.constant(path)
         val readFile = tf.io.readFile(fileName)
         var runner = session.runner()
-        session.run(tf.init())
+        //session.run(tf.init())
         val options = DecodeImage.channels(3L)
         val decodeImage = tf.image.decodeImage(readFile.contents(), options)
         (runner.fetch(decodeImage).run()[0] as TUint8).use { outputImage ->
@@ -71,7 +86,7 @@ class FleaCampusApplicationTests {
             session.run(tf.init())
             runner.fetch(tf.image.resizeBilinear(tf.constant(reshape), tf.constant(intArrayOf(224, 224)))).run()[0].use { f ->
                 swap(f.asRawTensor().data().asFloats())
-                val run = runner.feed("input", f).fetch("predictions").run()
+                val run = runner.feed("self", f).fetch("sequential/prediction/Softmax").run()
                 //toImage(run[0].asRawTensor().data().asFloats())
                 run[1].use {
                     //println(it.asRawTensor().data().asFloats().getFloat(0))
@@ -82,14 +97,86 @@ class FleaCampusApplicationTests {
                 }
             }
         }
-        
+        session.close()
+        graph.close()
+    }
+
+    fun run3(path: String) {
+        val graph = Graph()
+        val parseFrom = GraphDef.parseFrom(File("E:\\IdeaProjects\\nsfw_model\\mobilenet_v2_140_224\\quant_nsfw_mobilenet.pb").inputStream())
+        graph.importGraphDef(parseFrom)
+        //graph.operations().forEach { println("$it ${it.type()} ${it.numOutputs()}") }
+
+        // load saved model
+        //val model = SavedModelBundle.load("E:\\IdeaProjects\\NSFW-Python\\model", "serve")
+
+        val session = Session(graph)
+        val tf = Ops.create(graph)
+        val fileName = tf.constant(path)
+        val readFile = tf.io.readFile(fileName)
+        var runner = session.runner()
+        //session.run(tf.init())
+        val options = DecodeImage.channels(3L)
+        val decodeImage = tf.image.decodeImage(readFile.contents(), options)
+        (runner.fetch(decodeImage).run()[0] as TUint8).use { outputImage ->
+            val reshape = LoadBirdsearchModel.reshapeTensor(outputImage)
+
+            //fresh runner for reshape
+            runner = session.runner()
+            session.run(tf.init())
+            runner.fetch(tf.image.resizeBilinear(tf.constant(reshape), tf.constant(intArrayOf(224, 224)))).run()[0].use { f ->
+                swap(f.asRawTensor().data().asFloats())
+                val run = runner.feed("input_1", f).fetch("dense_3/Softmax").run()
+                //toImage(run[0].asRawTensor().data().asFloats())
+                run[1].use {
+                    //println(it.asRawTensor().data().asFloats().getFloat(0))
+                    println(it.numBytes())
+                    for (i in 0 until it.asRawTensor().data().asFloats().size()) {
+                        println(it.asRawTensor().data().asFloats().getFloat(i))
+                    }
+                }
+            }
+        }
+        session.close()
+        graph.close()
+    }
+
+    fun run2(graph: Graph, session: Session, path: String) {
+        val graph2 = Graph()
+        val session2 = Session(graph2)
+        val tf = Ops.create(graph2)
+        val fileName = tf.constant(path)
+        val readFile = tf.io.readFile(fileName)
+        var runner = session2.runner()
+        //session.run(tf.init())
+        val options = DecodeImage.channels(3L)
+        val decodeImage = tf.image.decodeImage(readFile.contents(), options)
+        (runner.fetch(decodeImage).run()[0] as TUint8).use { outputImage ->
+            val reshape = LoadBirdsearchModel.reshapeTensor(outputImage)
+
+            //fresh runner for reshape
+            runner = session2.runner()
+            session2.run(tf.init())
+            runner.fetch(tf.image.resizeBilinear(tf.constant(reshape), tf.constant(intArrayOf(224, 224)))).run()[0].use { f ->
+                swap(f.asRawTensor().data().asFloats())
+                val run = session.runner().feed("self", f).fetch("sequential/prediction/Softmax").run()
+                //toImage(run[0].asRawTensor().data().asFloats())
+                run[0].use {
+                    //println(it.asRawTensor().data().asFloats().getFloat(0))
+                    println(it.numBytes())
+                    for (i in 0 until it.asRawTensor().data().asFloats().size()) {
+                        println(it.asRawTensor().data().asFloats().getFloat(i))
+                    }
+                }
+            }
+        }
     }
 
     fun swap(buffer: FloatDataBuffer) {
         for (i in 0 until buffer.size() step 3) {
-            buffer.setFloat(buffer.getFloat(i + 0) - 123, i + 2)
-            buffer.setFloat(buffer.getFloat(i + 1) - 117, i + 1)
-            buffer.setFloat(buffer.getFloat(i + 2) - 104, i + 0)
+            buffer.setFloat(buffer.getFloat(i + 0) / 255, i + 0)
+            buffer.setFloat(buffer.getFloat(i + 1) / 255, i + 1)
+            buffer.setFloat(buffer.getFloat(i + 2) / 255, i + 2)
         }
     }
 
@@ -155,45 +242,4 @@ class FleaCampusApplicationTests {
         }
     }
 
-    @Test
-    fun nmka() {
-
-        val imageFile: Path = Paths.get("1.jpg")
-        println(imageFile.fileName)
-        val img: Image = ImageFactory.getInstance().fromFile(imageFile)
-        println(img.height)
-
-        val criteria: Criteria<Image, DetectedObjects> = Criteria.builder()
-            .optApplication(Application.CV.OBJECT_DETECTION)
-            .setTypes(Image::class.java, DetectedObjects::class.java)
-            .optFilter("backbone", "resnet50")
-            .optProgress(ProgressBar())
-            .build()
-        ModelZoo.listModels().forEach { println(it) }
-        ModelZoo.loadModel<Image, DetectedObjects>(criteria).use { model ->
-            model.newPredictor().use { predictor ->
-                val detection = predictor.predict(img)
-                println(detection)
-            }
-        }
-    }
-
-    @Test
-    fun nmka2() {
-        val imageFile: Path = Paths.get("1.jpg")
-        val img: Image = ImageFactory.getInstance().fromFile(imageFile)
-        val criteria = Criteria.builder()
-            .setTypes(Image::class.java, Classifications::class.java) // defines input and output data type
-            //.optTranslator(ImageClassificationTranslator.builder().build())
-            .optModelUrls("file:///E:/AndroidStudioProjects/open_nsfw_android-dev/app/src/main/assets/") // search models in specified path
-            .optModelName("nsfw") // specify model file prefix
-            .build()
-
-        ModelZoo.loadModel(criteria).use { model ->
-            model.newPredictor().use { predictor ->
-                val detection = predictor.predict(img)
-                println(detection)
-            }
-        }
-    }
 }

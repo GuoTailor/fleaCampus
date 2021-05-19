@@ -8,7 +8,7 @@ import java.util.*
  * @author
  */
 @Schema(description = "评论")
-open class Comment (
+open class Comment(
     @Schema(description = "id")
     var id: Int? = null,
 
@@ -60,4 +60,9 @@ open class Comment (
     @Schema(description = "置顶顺序，越大排序越靠前")
     var topOrder: Int? = null,
 
+    /**
+     * 隐藏说明，用于违规提示
+     */
+    @Schema(description = "隐藏说明，用于违规提示")
+    var remark: String? = null,
 )

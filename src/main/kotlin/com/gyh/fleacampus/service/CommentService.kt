@@ -3,6 +3,7 @@ package com.gyh.fleacampus.service
 import com.github.pagehelper.PageHelper
 import com.gyh.fleacampus.common.getCurrentUser
 import com.gyh.fleacampus.mapper.CommentMapper
+import com.gyh.fleacampus.mapper.PostMapper
 import com.gyh.fleacampus.mapper.ReplyMapper
 import com.gyh.fleacampus.model.Comment
 import com.gyh.fleacampus.model.PageView
@@ -21,8 +22,11 @@ class CommentService {
     lateinit var commentMapper: CommentMapper
     @Resource
     lateinit var replyMapper: ReplyMapper
+    @Resource
+    lateinit var postMapper: PostMapper
 
     fun addComment(comment: Comment): Comment {
+        comment.postId ?: error("帖子id不能为空")
         val userId = getCurrentUser().id
         comment.userId = userId
         comment.replys = 0
@@ -30,6 +34,7 @@ class CommentService {
         comment.topOrder = 0
         comment.flag = 1
         commentMapper.insertSelective(comment)
+        postMapper.incrComments(comment.postId!!)
         return comment
     }
 
@@ -39,6 +44,9 @@ class CommentService {
         reply.userId = userId
         reply.likes = 0
         reply.flag = 1
+        replyMapper.insertSelective(reply)
+        postMapper.incrComments(reply.postId!!)
+        commentMapper.incrReplys(reply.commentId!!)
         return reply
     }
 
@@ -46,8 +54,14 @@ class CommentService {
         return commentMapper.updateByPrimaryKeySelective(Comment(id = id, flag = flag))
     }
 
-    fun deleteComment(id: Int): Int {
+    fun deleteComment(id: Int, postId: Int): Int {
+        postMapper.minusComments(id, postId)
         return commentMapper.deleteByPrimaryKey(id)
+    }
+
+    fun deleteReply(id: Int, postId: Int): Int {
+        postMapper.decrComments(postId)
+        return replyMapper.deleteByPrimaryKey(id)
     }
 
     fun findCommentByPage(pageNum: Int, pageSize: Int, postId: Int): PageView<CommentResponse> {

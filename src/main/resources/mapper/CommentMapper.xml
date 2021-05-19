@@ -11,17 +11,19 @@
         <result column="flag" jdbcType="SMALLINT" property="flag"/>
         <result column="likes" jdbcType="INTEGER" property="likes"/>
         <result column="top_order" jdbcType="INTEGER" property="topOrder"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
     </resultMap>
 
     <resultMap id="commentResponse" type="com.gyh.fleacampus.model.view.CommentResponse" extends="BaseResultMap">
         <result property="username" column="username"/>
         <result property="photo" column="photo"/>
         <collection property="replyList" column="id" javaType="list"
-                    ofType="com.gyh.fleacampus.model.Reply" select="com.gyh.fleacampus.mapper.ReplyMapper.findTopThree"/>
+                    ofType="com.gyh.fleacampus.model.Reply"
+                    select="com.gyh.fleacampus.mapper.ReplyMapper.findTopThree"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, user_id, post_id, replys, "content", create_time, flag, likes, top_order
+        id, user_id, post_id, replys, content, create_time, flag, likes, top_order, remark
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="commentResponse">
         select c.id,
@@ -33,6 +35,7 @@
                c.flag,
                c.likes,
                c.top_order,
+               c.remark,
                fu.username,
                fu.phone
         from "fc_comment" c
@@ -50,13 +53,18 @@
                c.flag,
                c.likes,
                c.top_order,
+               c.remark,
                fu.username,
                fu.phone
         from "fc_comment" c
                  left join fc_user fu on c.user_id = fu.id
         where c.post_id = #{postId}
     </select>
-
+    <update id="incrReplys" parameterType="int">
+        update fc_comment
+        set replys = replys + 1
+        where id = #{id}
+    </update>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete
         from "fc_comment"
@@ -66,10 +74,10 @@
             useGeneratedKeys="true">
         insert into "fc_comment" (user_id, post_id, replys,
                                   content, create_time, flag,
-                                  likes, top_order)
+                                  likes, top_order, remark)
         values (#{userId,jdbcType=INTEGER}, #{postId,jdbcType=INTEGER}, #{replys,jdbcType=INTEGER},
                 #{content,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=SMALLINT},
-                #{likes,jdbcType=INTEGER}, #{topOrder,jdbcType=INTEGER})
+                #{likes,jdbcType=INTEGER}, #{topOrder,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR})
     </insert>
     <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.model.Comment"
             useGeneratedKeys="true">
@@ -83,6 +91,7 @@
             <if test="flag != null">flag,</if>
             <if test="likes != null">likes,</if>
             <if test="topOrder != null">top_order,</if>
+            <if test="remark != null">remark,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userId != null">#{userId,jdbcType=INTEGER},</if>
@@ -93,6 +102,7 @@
             <if test="flag != null">#{flag,jdbcType=SMALLINT},</if>
             <if test="likes != null">#{likes,jdbcType=INTEGER},</if>
             <if test="topOrder != null">#{topOrder,jdbcType=INTEGER},</if>
+            <if test="remark != null">#{remark,jdbcType=VARCHAR},</if>
         </trim>
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.model.Comment">
@@ -106,6 +116,7 @@
             <if test="flag != null">flag = #{flag,jdbcType=SMALLINT},</if>
             <if test="likes != null">likes = #{likes,jdbcType=INTEGER},</if>
             <if test="topOrder != null">top_order = #{topOrder,jdbcType=INTEGER},</if>
+            <if test="remark != null">remark = #{remark,jdbcType=VARCHAR},</if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
@@ -118,6 +129,8 @@
             create_time = #{createTime,jdbcType=TIMESTAMP},
             flag        = #{flag,jdbcType=SMALLINT},
             likes       = #{likes,jdbcType=INTEGER},
-            top_order   = #{topOrder,jdbcType=INTEGER}
-        where id = #{id,jdbcType=INTEGER}  </update>
+            top_order   = #{topOrder,jdbcType=INTEGER},
+            remark      = #{remark,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
 </mapper>
