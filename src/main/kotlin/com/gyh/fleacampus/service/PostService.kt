@@ -26,6 +26,7 @@ class PostService {
         post.userId = userId
         post.type = post.type?.lowercase(Locale.getDefault())
         // TODO 定时发布时间
+        // TODO https://blog.csdn.net/lovely960823/article/details/110046111
         postMapper.insertSelective(post)
         return post
     }

@@ -2,18 +2,18 @@ package com.gyh.fleacampus
 
 import com.gyh.fleacampus.common.LoadBirdsearchModel
 import org.junit.jupiter.api.Test
-import org.tensorflow.*
+import org.tensorflow.Graph
+import org.tensorflow.SavedModelBundle
+import org.tensorflow.Session
+import org.tensorflow.Tensor
 import org.tensorflow.ndarray.Shape
 import org.tensorflow.ndarray.buffer.FloatDataBuffer
 import org.tensorflow.op.Ops
 import org.tensorflow.op.image.DecodeImage
 import org.tensorflow.proto.framework.GraphDef
-import org.tensorflow.types.TFloat32
 import org.tensorflow.types.TUint8
 import java.awt.image.BufferedImage
 import java.io.File
-import java.nio.file.Path
-import java.nio.file.Paths
 import javax.swing.ImageIcon
 import javax.swing.JFrame
 import javax.swing.JLabel
@@ -51,19 +51,19 @@ class FleaCampusApplicationTests {
     fun testTensor() {
         //run(graph, session)
         var time = System.currentTimeMillis()
-        run3("C:\\Users\\GYH\\Pictures\\2.jpg")
+        run("C:\\Users\\GYH\\Pictures\\2.jpg")
         println(System.currentTimeMillis() - time)
         time = System.currentTimeMillis()
-        run3("C:\\Users\\GYH\\Pictures\\4.jpeg")
+        run("C:\\Users\\GYH\\Pictures\\6.jpg")
         println(System.currentTimeMillis() - time)
         time = System.currentTimeMillis()
-        run3("E:\\AndroidStudioProjects\\open_nsfw_android-dev\\app\\src\\main\\assets\\img\\aaa.png")
+        run("E:\\AndroidStudioProjects\\open_nsfw_android-dev\\app\\src\\main\\assets\\img\\aaa.png")
         println(System.currentTimeMillis() - time)
     }
 
     fun run(path: String) {
         val graph = Graph()
-        val parseFrom = GraphDef.parseFrom(File("E:\\IdeaProjects\\nsfw_model\\mobilenet_v2_140_224\\frozen_graph.pb").inputStream())
+        val parseFrom = GraphDef.parseFrom(File("E:\\IdeaProjects\\NSFW-Python\\model\\frozen_nsfw.pb").inputStream())
         graph.importGraphDef(parseFrom)
         //graph.operations().forEach { println("$it ${it.type()} ${it.numOutputs()}") }
 
@@ -86,7 +86,7 @@ class FleaCampusApplicationTests {
             session.run(tf.init())
             runner.fetch(tf.image.resizeBilinear(tf.constant(reshape), tf.constant(intArrayOf(224, 224)))).run()[0].use { f ->
                 swap(f.asRawTensor().data().asFloats())
-                val run = runner.feed("self", f).fetch("sequential/prediction/Softmax").run()
+                val run = runner.feed("input", f).fetch("predictions").run()
                 //toImage(run[0].asRawTensor().data().asFloats())
                 run[1].use {
                     //println(it.asRawTensor().data().asFloats().getFloat(0))
@@ -157,8 +157,8 @@ class FleaCampusApplicationTests {
             //fresh runner for reshape
             runner = session2.runner()
             session2.run(tf.init())
-            runner.fetch(tf.image.resizeBilinear(tf.constant(reshape), tf.constant(intArrayOf(224, 224)))).run()[0].use { f ->
-                swap(f.asRawTensor().data().asFloats())
+            runner.fetch(tf.math.div(tf.image.resizeBilinear(tf.constant(reshape), tf.constant(intArrayOf(224, 224))), tf.constant(255f))).run()[0].use { f ->
+                //swap(f.asRawTensor().data().asFloats())
                 val run = session.runner().feed("self", f).fetch("sequential/prediction/Softmax").run()
                 //toImage(run[0].asRawTensor().data().asFloats())
                 run[0].use {
