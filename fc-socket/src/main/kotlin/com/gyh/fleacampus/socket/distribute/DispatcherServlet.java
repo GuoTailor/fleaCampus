@@ -15,6 +15,7 @@ import org.springframework.web.method.HandlerMethod;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ public class DispatcherServlet {
      * 此servlet使用的处理程序映射的列表。
      */
     @Nullable
-    private List<AbstractWebSocketHandlerMethodMapping<RequestMappingInfo>> handlerMappings;
+    private List<AbstractWebSocketHandlerMethodMapping> handlerMappings;
 
     /**
      * 初始化该类使用的HandlerMappings。

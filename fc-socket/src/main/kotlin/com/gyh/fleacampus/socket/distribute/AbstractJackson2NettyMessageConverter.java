@@ -104,7 +104,7 @@ public class AbstractJackson2NettyMessageConverter {
     }
 
     private Object readJavaType(JavaType javaType, ServiceRequestInfo inputMessage) throws IOException {
-        return this.objectMapper.readValue(inputMessage.getBody(), javaType);
+        return inputMessage.getBody();
     }
 
     /**
