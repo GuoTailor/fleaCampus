@@ -10,6 +10,7 @@ import javax.crypto.spec.SecretKeySpec
  * Created by gyh on 2021/2/4
  */
 object JwtUtil {
+    @JvmStatic
     private val key: Key = SecretKeySpec(
         """TUlHZk1BMEdDU3FHU0liM0RRRUJBUVVBQTRHTkFEQ0JpUUtCZ1FEZGxhdFJqUmpvZ28zV29qZ0dIRkhZTHVnZApVV0FZOWlSM2Z5NGFyV05BM
             |UtvUzhrVnczM2NKaWJYcjhidndVQVVwYXJDd2x2ZGJINmR2RU9mb3UwL2dDRlFzCkhVZlFyU0R2K011U1VNQWU4anpLRTRxVytqSyt4UVU5

@@ -9,6 +9,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
  * Created by gyh on 2020/3/15.
  */
 @Configuration
-@EnableR2dbcRepositories(basePackages = ["om.gyh.fleacampus.socket.mapper"])
+@EnableR2dbcRepositories(basePackages = ["com.gyh.fleacampus.socket.mapper"])
 @EnableTransactionManagement
 class R2dbcPostgresqlConfiguration

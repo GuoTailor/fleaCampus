@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.gyh.fleacampus.socket.common.NotifyOrder
 import com.gyh.fleacampus.socket.common.Util
 import com.gyh.fleacampus.socket.distribute.DispatcherServlet
@@ -25,11 +26,7 @@ import java.time.ZoneId
  */
 abstract class SocketHandler : WebSocketHandler {
     private val logger = LoggerFactory.getLogger(this.javaClass)
-    private val blankRegex = "\\s".toRegex()
-    private val orderRegex = "\"order\":(.*?)[,}]".toRegex()
-    private val dataRegex = "\"data\":(.*?})[,}]".toRegex()
-    private val reqRegex = "\"req\":(.*?)[,}]".toRegex()
-    val json = jacksonObjectMapper()
+    private val json = jacksonObjectMapper()
     @Autowired
     private lateinit var dispatcherServlet: DispatcherServlet
 
@@ -96,12 +93,7 @@ abstract class SocketHandler : WebSocketHandler {
     abstract fun onDisconnected(queryMap: Map<String, String>, sessionHandler: WebSocketSessionHandler)
 
     private fun toServiceRequestInfo(data: String): ServiceRequestInfo {
-        // TODO 经测试正则表达式比jackson反序列化慢
-        val json = data.replace(blankRegex, "")
-        val orderString = orderRegex.find(json)!!.groups[1]!!.value.replace("\"", "")
-        val dataString = dataRegex.find(json)?.groups?.get(1)?.value
-        val reqString = reqRegex.find(json)!!.groups[1]!!.value.toInt()
-        return ServiceRequestInfo(orderString, dataString, reqString)
+        return this.json.readValue(data)
     }
 
     private fun printLog(info: ServiceRequestInfo): ServiceRequestInfo {

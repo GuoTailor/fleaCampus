@@ -21,6 +21,7 @@
     <modules>
         <module>fc-core</module>
         <module>fc-socket</module>
+        <module>fc-common</module>
     </modules>
 
     <build>
