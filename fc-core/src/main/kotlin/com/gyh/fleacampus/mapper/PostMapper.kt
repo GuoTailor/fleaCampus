@@ -1,7 +1,7 @@
 package com.gyh.fleacampus.mapper
 
 import com.gyh.fleacampus.model.Post
-import com.gyh.fleacampus.model.view.PostResponse
+import com.gyh.fleacampus.model.view.response.PostResponse
 
 /**
  * @Entity com.gyh.fleacampus.model.FcPost
@@ -13,6 +13,9 @@ interface PostMapper {
     fun findAll(): List<PostResponse>
     fun selectByPrimaryKey(id: Int): PostResponse?
     fun incrComments(id: Int): Int
+    fun incrBrowses(id: Int): Int
+    fun incrLikes(id: Int): Int
+    fun incrCollects(id: Int): Int
     fun decrComments(id: Int): Int
     fun minusComments(id: Int, postId: Int): Int
     fun updateByPrimaryKeySelective(record: Post): Int

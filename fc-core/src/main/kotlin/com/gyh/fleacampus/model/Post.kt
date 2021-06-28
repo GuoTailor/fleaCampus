@@ -1,5 +1,6 @@
 package com.gyh.fleacampus.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
 import java.util.*
@@ -51,7 +52,14 @@ open class Post(
      * game: 游戏
      * other：其他
      */
-    @Schema(description = "内容")
+    @Schema(
+        description = "帖子类型" +
+                "     * buy：买" +
+                "     * sell:卖" +
+                "     * confess：表白" +
+                "     * game: 游戏" +
+                "     * other：其他"
+    )
     var type: String? = null,
 
     /**
@@ -71,6 +79,21 @@ open class Post(
      */
     @Schema(description = "收藏数")
     var collects: Int? = null,
+
+    @Schema(description = "浏览数")
+    var browses: Int? = null,
+
+    /**
+     * 图片
+     */
+    @JsonIgnore
+    var imgs: String? = null,
+
+    @Schema(description = "位置")
+    var location: String? = null,
+
+    @Schema(description = "坐标，逗号分割")
+    var coordinate: String? = null,
 
     /**
      * 0：违规，1：有效

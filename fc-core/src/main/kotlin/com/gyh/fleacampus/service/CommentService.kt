@@ -8,8 +8,8 @@ import com.gyh.fleacampus.mapper.ReplyMapper
 import com.gyh.fleacampus.model.Comment
 import com.gyh.fleacampus.model.PageView
 import com.gyh.fleacampus.model.Reply
-import com.gyh.fleacampus.model.view.CommentResponse
-import com.gyh.fleacampus.model.view.ReplyResponse
+import com.gyh.fleacampus.model.view.response.CommentResponse
+import com.gyh.fleacampus.model.view.response.ReplyResponse
 import org.springframework.stereotype.Service
 import javax.annotation.Resource
 

@@ -1,4 +1,4 @@
-package com.gyh.fleacampus.model.view
+package com.gyh.fleacampus.model.view.response
 
 import com.gyh.fleacampus.model.Post
 import io.swagger.v3.oas.annotations.media.Schema
@@ -11,4 +11,6 @@ data class PostResponse(
     var username: String,
     @Schema(description = "用户头像")
     var photo: String,
+    @Schema(description = "图片列表")
+    var images: List<String>,
 ): Post()

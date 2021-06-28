@@ -11,14 +11,14 @@ public class ThreadManager {
     private static final String TAG = "ThreadManager";
     private final ExecutorService executorService ;
     private static ThreadManager instance;
-    private static int poolSize = 32;
+    private static int poolSize = 4;
 
     /**
      * 私有化构造函数，使用单列模式
      */
     private ThreadManager() {
         executorService = new ThreadPoolExecutor(poolSize, poolSize, 0L,
-                TimeUnit.MINUTES, new LinkedBlockingQueue<>(1024), (run, executor) -> {
+                TimeUnit.MINUTES, new LinkedBlockingQueue<>(32), (run, executor) -> {
             if (!executor.isShutdown()) {
                 try {
                     executor.getQueue().put(run);

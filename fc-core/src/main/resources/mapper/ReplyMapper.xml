@@ -19,7 +19,7 @@
         id, comment_id, reply_id, reply_type, content, user_id, to_uid, likes, create_time,
     flag, post_id, remark
     </sql>
-    <resultMap id="replyResponse" type="com.gyh.fleacampus.model.view.ReplyResponse" extends="BaseResultMap">
+    <resultMap id="replyResponse" type="com.gyh.fleacampus.model.view.response.ReplyResponse" extends="BaseResultMap">
         <result property="username" column="username"/>
         <result property="toUsername" column="toUsername"/>
         <result property="photo" column="photo"/>

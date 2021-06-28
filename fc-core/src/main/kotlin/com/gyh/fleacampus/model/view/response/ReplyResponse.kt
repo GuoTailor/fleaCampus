@@ -1,4 +1,4 @@
-package com.gyh.fleacampus.model.view
+package com.gyh.fleacampus.model.view.response
 
 import com.gyh.fleacampus.model.Reply
 import io.swagger.v3.oas.annotations.media.Schema

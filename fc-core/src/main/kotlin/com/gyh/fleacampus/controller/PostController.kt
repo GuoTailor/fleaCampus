@@ -3,7 +3,8 @@ package com.gyh.fleacampus.controller
 import com.gyh.fleacampus.model.PageView
 import com.gyh.fleacampus.model.Post
 import com.gyh.fleacampus.model.ResponseInfo
-import com.gyh.fleacampus.model.view.PostResponse
+import com.gyh.fleacampus.model.view.request.PostRequest
+import com.gyh.fleacampus.model.view.response.PostResponse
 import com.gyh.fleacampus.service.PostService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -24,7 +25,7 @@ class PostController {
 
     @Operation(summary = "创建帖子", security = [SecurityRequirement(name = "Authorization")])
     @PostMapping
-    fun createPost(@RequestBody post: Post): ResponseInfo<Post> {
+    fun createPost(@RequestBody post: PostRequest): ResponseInfo<Post> {
         return ResponseInfo.ok(postService.createPost(post))
     }
 
@@ -45,8 +46,14 @@ class PostController {
 
     @Operation(summary = "更新铁子", security = [SecurityRequirement(name = "Authorization")])
     @PutMapping
-    fun updatePost(@RequestBody post: Post): ResponseInfo<Int> {
+    fun updatePost(@RequestBody post: PostRequest): ResponseInfo<Int> {
         return ResponseInfo.ok(postService.updatePost(post))
+    }
+
+    @Operation(summary = "添加一个浏览量", security = [SecurityRequirement(name = "Authorization")])
+    @PutMapping("/browses")
+    fun incrBrowses(@Parameter(description = "帖子id", required = true) @RequestParam id: Int): ResponseInfo<Int> {
+        return ResponseInfo.ok(postService.incrBrowses(id))
     }
 
     @Operation(summary = "删除帖子", security = [SecurityRequirement(name = "Authorization")])

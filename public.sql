@@ -12,7 +12,7 @@
  Target Server Version : 130002
  File Encoding         : 65001
 
- Date: 14/05/2021 17:39:47
+ Date: 28/06/2021 17:37:07
 */
 
 
@@ -131,6 +131,11 @@ COMMENT ON COLUMN "public"."fc_area"."area" IS '校区名字';
 COMMENT ON COLUMN "public"."fc_area"."create_time" IS '创建时间';
 
 -- ----------------------------
+-- Records of fc_area
+-- ----------------------------
+INSERT INTO "public"."fc_area" VALUES (1, 1, '无', '2021-05-06 16:37:35.136034');
+
+-- ----------------------------
 -- Table structure for fc_comment
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."fc_comment";
@@ -143,7 +148,8 @@ CREATE TABLE "public"."fc_comment" (
   "create_time" timestamp(6) NOT NULL DEFAULT now(),
   "flag" int2 NOT NULL DEFAULT 1,
   "likes" int4 NOT NULL DEFAULT 0,
-  "top_order" int4 NOT NULL DEFAULT 0
+  "top_order" int4 NOT NULL DEFAULT 0,
+  "remark" varchar(255) COLLATE "pg_catalog"."default"
 )
 ;
 COMMENT ON COLUMN "public"."fc_comment"."user_id" IS '评论用户';
@@ -154,6 +160,13 @@ COMMENT ON COLUMN "public"."fc_comment"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."fc_comment"."flag" IS '0:隐藏，1:展示';
 COMMENT ON COLUMN "public"."fc_comment"."likes" IS '点赞数';
 COMMENT ON COLUMN "public"."fc_comment"."top_order" IS '置顶顺序，越大排序越靠前';
+COMMENT ON COLUMN "public"."fc_comment"."remark" IS '隐藏说明，用于违规提示';
+
+-- ----------------------------
+-- Records of fc_comment
+-- ----------------------------
+INSERT INTO "public"."fc_comment" VALUES (2, 7, 3, 0, '啊实打实的', '2021-05-14 16:00:55.622442', 1, 0, 0, NULL);
+INSERT INTO "public"."fc_comment" VALUES (4, 7, 3, 2, 'nmka', '2021-05-14 16:07:41.790965', 1, 0, 0, NULL);
 
 -- ----------------------------
 -- Table structure for fc_like
@@ -175,6 +188,10 @@ COMMENT ON COLUMN "public"."fc_like"."reply_id" IS '回复id';
 COMMENT ON COLUMN "public"."fc_like"."status" IS '点赞状态0--取消赞   1--有效赞';
 
 -- ----------------------------
+-- Records of fc_like
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for fc_post
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."fc_post";
@@ -191,7 +208,11 @@ CREATE TABLE "public"."fc_post" (
   "collects" int4 NOT NULL DEFAULT 0,
   "flag" int4 NOT NULL DEFAULT 1,
   "top_order" int4 NOT NULL DEFAULT 0,
-  "create_time" timestamp(6) NOT NULL DEFAULT now()
+  "create_time" timestamp(6) NOT NULL DEFAULT now(),
+  "location" varchar(255) COLLATE "pg_catalog"."default",
+  "imgs" varchar(255) COLLATE "pg_catalog"."default",
+  "coordinate" varchar(64) COLLATE "pg_catalog"."default",
+  "browses" int4 NOT NULL DEFAULT 0
 )
 ;
 COMMENT ON COLUMN "public"."fc_post"."user_id" IS '发布者id';
@@ -211,6 +232,16 @@ COMMENT ON COLUMN "public"."fc_post"."collects" IS '收藏数';
 COMMENT ON COLUMN "public"."fc_post"."flag" IS '0：违规，1：有效';
 COMMENT ON COLUMN "public"."fc_post"."top_order" IS '置顶顺序，越大排序越靠前';
 COMMENT ON COLUMN "public"."fc_post"."create_time" IS '创建时间';
+COMMENT ON COLUMN "public"."fc_post"."location" IS '位置';
+COMMENT ON COLUMN "public"."fc_post"."imgs" IS '图片地址，空格分割';
+COMMENT ON COLUMN "public"."fc_post"."coordinate" IS '经纬度坐标，逗号分割';
+COMMENT ON COLUMN "public"."fc_post"."browses" IS '浏览数';
+
+-- ----------------------------
+-- Records of fc_post
+-- ----------------------------
+INSERT INTO "public"."fc_post" VALUES (3, 7, 'testTitle', 'content', 'NORMAL', NULL, 'buy', 0, 0, 0, 1, 0, '2021-05-14 10:38:05.880483', NULL, NULL, NULL, 0);
+INSERT INTO "public"."fc_post" VALUES (2, 7, 'testTitle', 'content', 'NORMAL', NULL, 'buy', 0, 7, 0, 1, 0, '2021-05-14 10:33:41.888674', NULL, NULL, NULL, 0);
 
 -- ----------------------------
 -- Table structure for fc_reply
@@ -226,7 +257,9 @@ CREATE TABLE "public"."fc_reply" (
   "to_uid" int4 NOT NULL,
   "likes" int4 NOT NULL DEFAULT 0,
   "create_time" timestamp(6) NOT NULL DEFAULT now(),
-  "flag" int2 NOT NULL DEFAULT 1
+  "flag" int2 NOT NULL DEFAULT 1,
+  "post_id" int4 NOT NULL,
+  "remark" varchar(255) COLLATE "pg_catalog"."default"
 )
 ;
 COMMENT ON COLUMN "public"."fc_reply"."comment_id" IS '评论id';
@@ -238,6 +271,12 @@ COMMENT ON COLUMN "public"."fc_reply"."to_uid" IS '目标用户id';
 COMMENT ON COLUMN "public"."fc_reply"."likes" IS '点赞数';
 COMMENT ON COLUMN "public"."fc_reply"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."fc_reply"."flag" IS '0:隐藏，1:展示';
+COMMENT ON COLUMN "public"."fc_reply"."post_id" IS '帖子id';
+COMMENT ON COLUMN "public"."fc_reply"."remark" IS '隐藏说明，用于违规提示';
+
+-- ----------------------------
+-- Records of fc_reply
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for fc_role
@@ -253,6 +292,13 @@ COMMENT ON COLUMN "public"."fc_role"."name" IS '角色名';
 COMMENT ON COLUMN "public"."fc_role"."name_zh" IS '角色名中文';
 
 -- ----------------------------
+-- Records of fc_role
+-- ----------------------------
+INSERT INTO "public"."fc_role" VALUES (1, 'ROLE_SUPER_ADMIN', '超级管理员');
+INSERT INTO "public"."fc_role" VALUES (2, 'ROLE_ADMIN', '管理员');
+INSERT INTO "public"."fc_role" VALUES (3, 'ROLE_USER', '用户');
+
+-- ----------------------------
 -- Table structure for fc_school
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."fc_school";
@@ -264,6 +310,11 @@ CREATE TABLE "public"."fc_school" (
 ;
 COMMENT ON COLUMN "public"."fc_school"."name" IS '学校名';
 COMMENT ON COLUMN "public"."fc_school"."create_time" IS '创建时间';
+
+-- ----------------------------
+-- Records of fc_school
+-- ----------------------------
+INSERT INTO "public"."fc_school" VALUES (1, '无学校', '2021-05-06 16:37:15.896839');
 
 -- ----------------------------
 -- Table structure for fc_user
@@ -301,6 +352,11 @@ COMMENT ON COLUMN "public"."fc_user"."specialty" IS '专业';
 COMMENT ON COLUMN "public"."fc_user"."create_time" IS '创建时间';
 
 -- ----------------------------
+-- Records of fc_user
+-- ----------------------------
+INSERT INTO "public"."fc_user" VALUES (7, 'test', '$2a$10$huOW4zo4R9NrvkFApohxf.nfknGKhD90qflNMUrQ08idKLPFFua1i', NULL, NULL, NULL, 0, 0, 1, NULL, 1, '1', '未知', '2021-05-13 17:48:19.654484');
+
+-- ----------------------------
 -- Table structure for fc_user_role
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."fc_user_role";
@@ -312,6 +368,11 @@ CREATE TABLE "public"."fc_user_role" (
 ;
 COMMENT ON COLUMN "public"."fc_user_role"."user_id" IS '用户id';
 COMMENT ON COLUMN "public"."fc_user_role"."role_id" IS '角色id';
+
+-- ----------------------------
+-- Records of fc_user_role
+-- ----------------------------
+INSERT INTO "public"."fc_user_role" VALUES (4, 7, 3);
 
 -- ----------------------------
 -- Alter sequences owned by
@@ -346,7 +407,7 @@ SELECT setval('"public"."fc_post_id_seq"', 4, true);
 -- ----------------------------
 ALTER SEQUENCE "public"."fc_reply_id_seq"
 OWNED BY "public"."fc_reply"."id";
-SELECT setval('"public"."fc_reply_id_seq"', 3, false);
+SELECT setval('"public"."fc_reply_id_seq"', 6, true);
 
 -- ----------------------------
 -- Alter sequences owned by

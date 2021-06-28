@@ -17,7 +17,7 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
     </resultMap>
 
-    <resultMap id="postResponse" type="com.gyh.fleacampus.model.view.PostResponse" extends="BaseResultMap">
+    <resultMap id="postResponse" type="com.gyh.fleacampus.model.view.response.PostResponse" extends="BaseResultMap">
         <result property="username" column="username"/>
         <result property="photo" column="photo"/>
     </resultMap>
@@ -79,6 +79,21 @@
     <update id="decrComments" parameterType="int">
         update fc_post
         set comments = comments - 1
+        where id = #{id}
+    </update>
+    <update id="incrBrowses" parameterType="int">
+        update fc_post
+        set browses = browses + 1
+        where id = #{id}
+    </update>
+    <update id="incrLikes" parameterType="int">
+        update fc_post
+        set likes = likes + 1
+        where id = #{id}
+    </update>
+    <update id="incrCollects" parameterType="int">
+        update fc_post
+        set collects = collects + 1
         where id = #{id}
     </update>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

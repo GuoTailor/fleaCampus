@@ -1,7 +1,7 @@
 package com.gyh.fleacampus.mapper
 
 import com.gyh.fleacampus.model.Reply
-import com.gyh.fleacampus.model.view.ReplyResponse
+import com.gyh.fleacampus.model.view.response.ReplyResponse
 
 interface ReplyMapper {
     fun deleteByPrimaryKey(id: Int): Int

@@ -14,7 +14,7 @@
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
     </resultMap>
 
-    <resultMap id="commentResponse" type="com.gyh.fleacampus.model.view.CommentResponse" extends="BaseResultMap">
+    <resultMap id="commentResponse" type="com.gyh.fleacampus.model.view.response.CommentResponse" extends="BaseResultMap">
         <result property="username" column="username"/>
         <result property="photo" column="photo"/>
         <collection property="replyList" column="id" javaType="list"
