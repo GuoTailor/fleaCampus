@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper
 import com.gyh.fleacampus.common.getCurrentUser
 import com.gyh.fleacampus.mapper.LikeMapper
 import com.gyh.fleacampus.mapper.PostMapper
+import com.gyh.fleacampus.model.Like
 import com.gyh.fleacampus.model.PageView
 import com.gyh.fleacampus.model.Post
 import com.gyh.fleacampus.model.Role
@@ -35,9 +36,13 @@ class PostService {
         return post
     }
 
+    /**
+     * 获取帖子详情，并添加一个观看量
+     */
     fun findById(id: Int): PostResponse {
         val result = postMapper.selectByPrimaryKey(id) ?: error("帖子id不存在")
         result.images = result.imgs?.split(" ") ?: emptyList()
+        postMapper.incrBrowses(id)
         return result
     }
 
@@ -75,8 +80,13 @@ class PostService {
      */
     fun incrBrowses(id: Int) = postMapper.incrBrowses(id)
 
+    /**
+     * 添加帖子赞
+     */
     fun addLike(id: Int) {
-
+        val userId = getCurrentUser().id
+        likeMapper.insertSelective(Like(userId = userId, postId = id, status = Like.VALID))
+        postMapper.incrLikes(id)
     }
 
     fun deletePost(id: Int): Int {

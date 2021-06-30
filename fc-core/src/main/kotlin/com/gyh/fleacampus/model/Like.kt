@@ -30,5 +30,10 @@ class Like(
     /**
      * 点赞状态0--取消赞   1--有效赞
      */
-    var status: Short? = null,
-)
+    var status: Int? = null,
+) {
+    companion object {
+        const val VALID = 1
+        const val INVALID = 0
+    }
+}
