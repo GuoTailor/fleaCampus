@@ -41,7 +41,6 @@ class PostService {
      */
     fun findById(id: Int): PostResponse {
         val result = postMapper.selectByPrimaryKey(id) ?: error("帖子id不存在")
-        result.images = result.imgs?.split(" ") ?: emptyList()
         postMapper.incrBrowses(id)
         result.imgToImageList()
         return result

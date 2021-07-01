@@ -1,8 +1,10 @@
 package com.gyh.fleacampus
 
-import com.gyh.fleacampus.common.ThreadManager
 import com.gyh.fleacampus.mapper.PostMapper
+import com.gyh.fleacampus.model.Post
+import com.gyh.fleacampus.service.lucene.Document
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import javax.annotation.Resource
 
@@ -14,12 +16,14 @@ import javax.annotation.Resource
 class TFTest {
     @Resource
     lateinit var postMapper: PostMapper
+    @Autowired
+    lateinit var document: Document
 
     @Test
     fun nmka() {
-        for (i in 1..10000) {
-            ThreadManager.getInstance().execute { postMapper.incrComments(2) }
-        }
-        Thread.sleep(10_000)
+        document.createIndex(Post(id = 1, title = "我爱总共", content = "中国是我家"))
+        document.createIndex(Post(id = 3, title = "我爱中国", content = "总共是我家"))
+        println(document.searchText("中国"))
+        println(document.searchText("3"))
     }
 }
