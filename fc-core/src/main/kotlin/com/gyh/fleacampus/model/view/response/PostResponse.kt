@@ -13,4 +13,10 @@ data class PostResponse(
     var photo: String,
     @Schema(description = "图片列表")
     var images: List<String>,
-): Post()
+): Post() {
+
+    fun imgToImageList(): PostResponse {
+        images = imgs?.split(" ") ?: emptyList()
+        return this
+    }
+}

@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper
 import com.gyh.fleacampus.common.getCurrentUser
 import com.gyh.fleacampus.mapper.LikeMapper
 import com.gyh.fleacampus.mapper.PostMapper
+import com.gyh.fleacampus.model.Like
 import com.gyh.fleacampus.model.PageView
 import com.gyh.fleacampus.model.Post
 import com.gyh.fleacampus.model.Role
@@ -20,6 +21,7 @@ import javax.annotation.Resource
 class PostService {
     @Resource
     lateinit var postMapper: PostMapper
+
     @Resource
     lateinit var likeMapper: LikeMapper
 
@@ -37,16 +39,13 @@ class PostService {
 
     fun findById(id: Int): PostResponse {
         val result = postMapper.selectByPrimaryKey(id) ?: error("帖子id不存在")
-        result.images = result.imgs?.split(" ") ?: emptyList()
+        result.imgToImageList()
         return result
     }
 
     fun findByPage(pageNum: Int, pageSize: Int): PageView<PostResponse> {
         PageHelper.startPage<Any>(pageNum, pageSize)
-        return PageView.build(postMapper.findAll().map {
-            it.images = it.imgs?.split(" ") ?: emptyList()
-            it
-        })
+        return PageView.build(postMapper.findAll().map(PostResponse::imgToImageList))
     }
 
     /**
@@ -75,8 +74,13 @@ class PostService {
      */
     fun incrBrowses(id: Int) = postMapper.incrBrowses(id)
 
+    /**
+     * 添加点赞
+     */
     fun addLike(id: Int) {
-
+        val userId = getCurrentUser().id
+        likeMapper.insertSelective(Like(userId = userId, postId = id, status = 1))
+        postMapper.incrLikes(id)
     }
 
     fun deletePost(id: Int): Int {
