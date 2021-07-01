@@ -13,11 +13,20 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>fleaCampus</name>
     <packaging>pom</packaging>
-    <description>Demo project for Spring Boot</description>
+    <description>社区交友、二手app后台</description>
     <properties>
         <java.version>11</java.version>
         <kotlin.version>1.5.10</kotlin.version>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+        </dependency>
+    </dependencies>
+
+
     <modules>
         <module>fc-core</module>
         <module>fc-socket</module>

@@ -50,10 +50,11 @@ class PostController {
         return ResponseInfo.ok(postService.updatePost(post))
     }
 
-    @Operation(summary = "添加一个浏览量", security = [SecurityRequirement(name = "Authorization")])
-    @PutMapping("/browses")
-    fun incrBrowses(@Parameter(description = "帖子id", required = true) @RequestParam id: Int): ResponseInfo<Int> {
-        return ResponseInfo.ok(postService.incrBrowses(id))
+    @Operation(summary = "添加一个点赞", security = [SecurityRequirement(name = "Authorization")])
+    @PutMapping("/like")
+    fun addLike(@Parameter(description = "帖子id", required = true) @RequestParam id: Int): ResponseInfo<Unit> {
+        postService.addLike(id)
+        return ResponseInfo.ok()
     }
 
     @Operation(summary = "删除帖子", security = [SecurityRequirement(name = "Authorization")])

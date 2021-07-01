@@ -21,7 +21,6 @@ import javax.annotation.Resource
 class PostService {
     @Resource
     lateinit var postMapper: PostMapper
-
     @Resource
     lateinit var likeMapper: LikeMapper
 
@@ -37,8 +36,13 @@ class PostService {
         return post
     }
 
+    /**
+     * 获取帖子详情，并添加一个观看量
+     */
     fun findById(id: Int): PostResponse {
         val result = postMapper.selectByPrimaryKey(id) ?: error("帖子id不存在")
+        result.images = result.imgs?.split(" ") ?: emptyList()
+        postMapper.incrBrowses(id)
         result.imgToImageList()
         return result
     }
@@ -75,11 +79,11 @@ class PostService {
     fun incrBrowses(id: Int) = postMapper.incrBrowses(id)
 
     /**
-     * 添加点赞
+     * 添加帖子赞
      */
     fun addLike(id: Int) {
         val userId = getCurrentUser().id
-        likeMapper.insertSelective(Like(userId = userId, postId = id, status = 1))
+        likeMapper.insertSelective(Like(userId = userId, postId = id, status = Like.VALID))
         postMapper.incrLikes(id)
     }
 
