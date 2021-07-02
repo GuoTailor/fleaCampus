@@ -1,11 +1,11 @@
 package com.gyh.fleacampus.core.controller
 
-import com.gyh.fleacampus.model.PageView
-import com.gyh.fleacampus.model.Post
-import com.gyh.fleacampus.model.ResponseInfo
-import com.gyh.fleacampus.model.view.request.PostRequest
-import com.gyh.fleacampus.model.view.response.PostResponse
-import com.gyh.fleacampus.service.PostService
+import com.gyh.fleacampus.core.model.PageView
+import com.gyh.fleacampus.core.model.Post
+import com.gyh.fleacampus.core.model.ResponseInfo
+import com.gyh.fleacampus.core.model.view.request.PostRequest
+import com.gyh.fleacampus.core.model.view.response.PostResponse
+import com.gyh.fleacampus.core.service.PostService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.security.SecurityRequirement

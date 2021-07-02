@@ -1,6 +1,6 @@
 package com.gyh.fleacampus.core.config
 
-import com.gyh.fleacampus.common.JwtUtil
+import com.gyh.fleacampus.core.common.JwtUtil
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken

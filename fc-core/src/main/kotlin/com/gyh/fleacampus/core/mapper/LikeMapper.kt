@@ -1,6 +1,6 @@
 package com.gyh.fleacampus.core.mapper
 
-import com.gyh.fleacampus.model.Like
+import com.gyh.fleacampus.core.model.Like
 
 interface LikeMapper {
     fun deleteByPrimaryKey(id: Int): Int

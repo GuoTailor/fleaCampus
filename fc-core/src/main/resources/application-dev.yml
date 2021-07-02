@@ -21,7 +21,7 @@ logging:
 
 mybatis:
   mapper-locations: classpath:/mapper/*Mapper.xml
-  type-aliases-package: com.gyh.fleacampus.mapper
+  type-aliases-package: com.gyh.fleacampus.core.mapper
 
 knife4j:
   enable: true

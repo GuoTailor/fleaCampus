@@ -1,15 +1,15 @@
 package com.gyh.fleacampus.core.service
 
 import com.github.pagehelper.PageHelper
-import com.gyh.fleacampus.common.getCurrentUser
-import com.gyh.fleacampus.mapper.CommentMapper
-import com.gyh.fleacampus.mapper.PostMapper
-import com.gyh.fleacampus.mapper.ReplyMapper
-import com.gyh.fleacampus.model.Comment
-import com.gyh.fleacampus.model.PageView
-import com.gyh.fleacampus.model.Reply
-import com.gyh.fleacampus.model.view.response.CommentResponse
-import com.gyh.fleacampus.model.view.response.ReplyResponse
+import com.gyh.fleacampus.core.common.getCurrentUser
+import com.gyh.fleacampus.core.mapper.CommentMapper
+import com.gyh.fleacampus.core.mapper.PostMapper
+import com.gyh.fleacampus.core.mapper.ReplyMapper
+import com.gyh.fleacampus.core.model.Comment
+import com.gyh.fleacampus.core.model.PageView
+import com.gyh.fleacampus.core.model.Reply
+import com.gyh.fleacampus.core.model.view.response.CommentResponse
+import com.gyh.fleacampus.core.model.view.response.ReplyResponse
 import org.springframework.stereotype.Service
 import javax.annotation.Resource
 

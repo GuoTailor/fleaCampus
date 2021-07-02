@@ -1,9 +1,9 @@
 package com.gyh.fleacampus.core.service
 
-import com.gyh.fleacampus.common.getCurrentUser
-import com.gyh.fleacampus.mapper.UserMapper
-import com.gyh.fleacampus.model.Role
-import com.gyh.fleacampus.model.User
+import com.gyh.fleacampus.core.common.getCurrentUser
+import com.gyh.fleacampus.core.mapper.UserMapper
+import com.gyh.fleacampus.core.model.Role
+import com.gyh.fleacampus.core.model.User
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService

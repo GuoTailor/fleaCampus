@@ -1,8 +1,8 @@
 package com.gyh.fleacampus.core.service
 
-import com.gyh.fleacampus.mapper.RoleMapper
-import com.gyh.fleacampus.model.Role
-import com.gyh.fleacampus.model.UserRole
+import com.gyh.fleacampus.core.mapper.RoleMapper
+import com.gyh.fleacampus.core.model.Role
+import com.gyh.fleacampus.core.model.UserRole
 import org.springframework.stereotype.Service
 import javax.annotation.Resource
 

@@ -1,7 +1,7 @@
 package com.gyh.fleacampus.core.service.lucene
 
 import com.gyh.fleacampus.common.toEpochMilli
-import com.gyh.fleacampus.model.Post
+import com.gyh.fleacampus.core.model.Post
 import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.document.*
 import org.apache.lucene.document.Document

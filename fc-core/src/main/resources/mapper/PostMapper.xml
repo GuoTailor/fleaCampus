@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.gyh.fleacampus.mapper.PostMapper">
-    <resultMap id="BaseResultMap" type="com.gyh.fleacampus.model.Post">
+<mapper namespace="com.gyh.fleacampus.core.mapper.PostMapper">
+    <resultMap id="BaseResultMap" type="com.gyh.fleacampus.core.model.Post">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="user_id" jdbcType="INTEGER" property="userId"/>
         <result column="title" jdbcType="VARCHAR" property="title"/>
@@ -17,7 +17,7 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
     </resultMap>
 
-    <resultMap id="postResponse" type="com.gyh.fleacampus.model.view.response.PostResponse" extends="BaseResultMap">
+    <resultMap id="postResponse" type="com.gyh.fleacampus.core.model.view.response.PostResponse" extends="BaseResultMap">
         <result property="username" column="username"/>
         <result property="photo" column="photo"/>
     </resultMap>
@@ -101,7 +101,7 @@
         from "fc_post"
         where id = #{id,jdbcType=INTEGER}
     </delete>
-    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.model.Post"
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.core.model.Post"
             useGeneratedKeys="true">
         insert into "fc_post" (user_id, title, content,
                                "state", release_time, "type",
@@ -112,7 +112,7 @@
                 #{likes,jdbcType=INTEGER}, #{comments,jdbcType=INTEGER}, #{collects,jdbcType=INTEGER},
                 #{flag,jdbcType=INTEGER}, #{topOrder,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP})
     </insert>
-    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.model.Post"
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.core.model.Post"
             useGeneratedKeys="true">
         insert into "fc_post"
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -144,7 +144,7 @@
             <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.model.Post">
+    <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.core.model.Post">
         update "fc_post"
         <set>
             <if test="userId != null">user_id = #{userId,jdbcType=INTEGER},</if>
@@ -162,7 +162,7 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.gyh.fleacampus.model.Post">
+    <update id="updateByPrimaryKey" parameterType="com.gyh.fleacampus.core.model.Post">
         update "fc_post"
         set user_id      = #{userId,jdbcType=INTEGER},
             title        = #{title,jdbcType=VARCHAR},

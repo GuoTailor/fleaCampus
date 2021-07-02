@@ -1,9 +1,9 @@
 package com.gyh.fleacampus.core.controller
 
-import com.gyh.fleacampus.common.getCurrentUser
-import com.gyh.fleacampus.model.ResponseInfo
-import com.gyh.fleacampus.model.User
-import com.gyh.fleacampus.service.UserService
+import com.gyh.fleacampus.core.common.getCurrentUser
+import com.gyh.fleacampus.core.model.ResponseInfo
+import com.gyh.fleacampus.core.model.User
+import com.gyh.fleacampus.core.service.UserService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag

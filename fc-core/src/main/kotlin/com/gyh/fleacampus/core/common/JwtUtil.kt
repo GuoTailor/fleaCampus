@@ -1,6 +1,6 @@
 package com.gyh.fleacampus.core.common
 
-import com.gyh.fleacampus.model.User
+import com.gyh.fleacampus.core.model.User
 import io.jsonwebtoken.*
 import java.security.Key
 import java.util.*
@@ -29,6 +29,7 @@ object JwtUtil {
      * @return the User object extracted from specified token or null if a token is invalid.
      */
     @JvmStatic
+    @Suppress("UNCHECKED_CAST")
     fun parseToken(token: String?): User {
         val claims = Jwts.parserBuilder()
             .setSigningKey(key)

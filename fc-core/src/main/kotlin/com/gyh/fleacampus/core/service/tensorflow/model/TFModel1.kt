@@ -1,7 +1,7 @@
 package com.gyh.fleacampus.core.service.tensorflow.model
 
-import com.gyh.fleacampus.service.tensorflow.TFPrediction
-import com.gyh.fleacampus.service.tensorflow.TFPredictionResult
+import com.gyh.fleacampus.core.service.tensorflow.TFPrediction
+import com.gyh.fleacampus.core.service.tensorflow.TFPredictionResult
 import org.springframework.core.io.ClassPathResource
 import org.tensorflow.Graph
 import org.tensorflow.Operand

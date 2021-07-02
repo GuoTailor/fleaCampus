@@ -1,12 +1,12 @@
 package com.gyh.fleacampus.core.controller
 
-import com.gyh.fleacampus.model.Comment
-import com.gyh.fleacampus.model.PageView
-import com.gyh.fleacampus.model.Reply
-import com.gyh.fleacampus.model.ResponseInfo
-import com.gyh.fleacampus.model.view.response.CommentResponse
-import com.gyh.fleacampus.model.view.response.ReplyResponse
-import com.gyh.fleacampus.service.CommentService
+import com.gyh.fleacampus.core.model.Comment
+import com.gyh.fleacampus.core.model.PageView
+import com.gyh.fleacampus.core.model.Reply
+import com.gyh.fleacampus.core.model.ResponseInfo
+import com.gyh.fleacampus.core.model.view.response.CommentResponse
+import com.gyh.fleacampus.core.model.view.response.ReplyResponse
+import com.gyh.fleacampus.core.service.CommentService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.security.SecurityRequirement

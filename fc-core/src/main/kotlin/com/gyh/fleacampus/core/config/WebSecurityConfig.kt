@@ -3,7 +3,7 @@ package com.gyh.fleacampus.core.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.gyh.fleacampus.core.model.ResponseInfo
 import com.gyh.fleacampus.core.model.Role
-import com.gyh.fleacampus.service.UserService
+import com.gyh.fleacampus.core.service.UserService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean

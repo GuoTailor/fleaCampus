@@ -1,8 +1,8 @@
 package com.gyh.fleacampus.core.service.tensorflow
 
-import com.gyh.fleacampus.service.tensorflow.model.TFModel1
-import com.gyh.fleacampus.service.tensorflow.model.TFModel2
-import com.gyh.fleacampus.service.tensorflow.model.TFModel3
+import com.gyh.fleacampus.core.service.tensorflow.model.TFModel1
+import com.gyh.fleacampus.core.service.tensorflow.model.TFModel2
+import com.gyh.fleacampus.core.service.tensorflow.model.TFModel3
 import org.tensorflow.Graph
 import org.tensorflow.Session
 import org.tensorflow.op.Ops
