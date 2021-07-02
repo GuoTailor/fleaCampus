@@ -8,14 +8,14 @@
         <version>2.5.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.gyh.fleacampus</groupId>
+    <groupId>com.gyh</groupId>
     <artifactId>fc-core</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>fc-core</name>
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>11</java.version>
-        <kotlin.version>1.5.10</kotlin.version>
+        <kotlin.version>1.5.20</kotlin.version>
     </properties>
     <dependencies>
         <dependency>
@@ -105,6 +105,11 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-kotlin</artifactId>
             <version>1.5.9</version>
+        </dependency>
+        <dependency>
+            <groupId>com.gyh</groupId>
+            <artifactId>fc-common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>

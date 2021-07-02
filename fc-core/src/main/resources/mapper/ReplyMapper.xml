@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.gyh.fleacampus.mapper.ReplyMapper">
-    <resultMap id="BaseResultMap" type="com.gyh.fleacampus.model.Reply">
+<mapper namespace="com.gyh.fleacampus.core.mapper.ReplyMapper">
+    <resultMap id="BaseResultMap" type="com.gyh.fleacampus.core.model.Reply">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="comment_id" jdbcType="INTEGER" property="commentId"/>
         <result column="reply_id" jdbcType="INTEGER" property="replyId"/>
@@ -19,7 +19,7 @@
         id, comment_id, reply_id, reply_type, content, user_id, to_uid, likes, create_time,
     flag, post_id, remark
     </sql>
-    <resultMap id="replyResponse" type="com.gyh.fleacampus.model.view.response.ReplyResponse" extends="BaseResultMap">
+    <resultMap id="replyResponse" type="com.gyh.fleacampus.core.model.view.response.ReplyResponse" extends="BaseResultMap">
         <result property="username" column="username"/>
         <result property="toUsername" column="toUsername"/>
         <result property="photo" column="photo"/>
@@ -82,7 +82,7 @@
         from "fc_reply"
         where id = #{id,jdbcType=INTEGER}
     </delete>
-    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.model.Reply"
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.core.model.Reply"
             useGeneratedKeys="true">
         insert into "fc_reply" (comment_id, reply_id, reply_type,
                                 content, user_id, to_uid,
@@ -93,7 +93,7 @@
                 #{likes,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{flag,jdbcType=SMALLINT},
                 #{postId,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR})
     </insert>
-    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.model.Reply"
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.core.model.Reply"
             useGeneratedKeys="true">
         insert into "fc_reply"
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -123,7 +123,7 @@
             <if test="remark != null">#{remark,jdbcType=VARCHAR},</if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.model.Reply">
+    <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.core.model.Reply">
         update "fc_reply"
         <set>
             <if test="commentId != null">comment_id = #{commentId,jdbcType=INTEGER},</if>
@@ -140,7 +140,7 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.gyh.fleacampus.model.Reply">
+    <update id="updateByPrimaryKey" parameterType="com.gyh.fleacampus.core.model.Reply">
         update "fc_reply"
         set comment_id  = #{commentId,jdbcType=INTEGER},
             reply_id    = #{replyId,jdbcType=INTEGER},
