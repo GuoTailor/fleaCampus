@@ -54,8 +54,6 @@ open class Post(
      */
     @Schema(
         description = "帖子类型" +
-                "     * buy：买" +
-                "     * sell:卖" +
                 "     * confess：表白" +
                 "     * game: 游戏" +
                 "     * other：其他"

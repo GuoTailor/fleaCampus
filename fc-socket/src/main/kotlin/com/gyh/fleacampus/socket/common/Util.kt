@@ -1,7 +1,12 @@
 package com.gyh.fleacampus.socket.common
 
+import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.*
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.gyh.fleacampus.common.toLocalDateTime
 import org.slf4j.LoggerFactory
 import org.springframework.util.StringUtils
 import reactor.core.publisher.Mono
@@ -17,7 +22,27 @@ import java.time.ZoneId
 object Util {
     private val logger = LoggerFactory.getLogger(Util::class.java)
 
-    fun Long.toLocalDateTime(): LocalDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(this), ZoneId.systemDefault())
+    val json: ObjectMapper = jacksonObjectMapper().registerModule(getJavaTimeModule())
+
+    fun getJavaTimeModule(): JavaTimeModule {
+        val javaTimeModule = JavaTimeModule()
+        javaTimeModule.addSerializer(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime>() {
+            override fun serialize(value: LocalDateTime, gen: JsonGenerator, serializers: SerializerProvider) {
+                val timestamp = value.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                gen.writeNumber(timestamp)
+            }
+        })
+        javaTimeModule.addDeserializer(LocalDateTime::class.java, object : JsonDeserializer<LocalDateTime>() {
+            override fun deserialize(jsonParser: JsonParser, ctxt: DeserializationContext): LocalDateTime {
+                val timestamp = jsonParser.valueAsLong
+                return timestamp.toLocalDateTime()
+            }
+        })
+        return javaTimeModule
+    }
+
+    fun Long.toLocalDateTime(): LocalDateTime =
+        LocalDateTime.ofInstant(Instant.ofEpochMilli(this), ZoneId.systemDefault())
 
     fun <T> wrapBlock(block: () -> T): Mono<T> {
         val blockingWrapper = Mono.fromCallable { block() }

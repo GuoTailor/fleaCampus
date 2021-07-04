@@ -17,4 +17,7 @@ class ReplyResponse : Reply() {
 
     @Schema(description = "回复目标用户名")
     var toUsername: String? = null
+
+    @Schema(defaultValue = "0:没有点赞，1:点赞")
+    var liked: Int? = null
 }

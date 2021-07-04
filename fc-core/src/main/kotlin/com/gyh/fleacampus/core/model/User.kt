@@ -1,6 +1,7 @@
 package com.gyh.fleacampus.core.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.gyh.fleacampus.common.BaseUser
 import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
@@ -15,7 +16,7 @@ import java.util.stream.Collectors
 data class User(
 
     @Schema(description = "id")
-    var id: Int? = null,
+    private var id: Int? = null,
 
     /**
      * 用户名
@@ -96,58 +97,50 @@ data class User(
      */
     @Schema(description = "创建时间")
     var createTime: LocalDateTime? = null,
-) : UserDetails {
+) : BaseUser, UserDetails {
+
+    override fun getId() = id
+
+    override fun setId(id: Int) {
+        this.id = id
+    }
 
     @JsonIgnore
-    fun getRoles(): Set<String> {
+    override fun getRoles(): Set<String> {
         return (roles ?: emptySet()).stream()
             .map { obj: Role -> obj.name!! }
             .collect(Collectors.toSet())
     }
 
-    override fun getAuthorities(): Collection<GrantedAuthority> {
-        return roles ?: emptyList()
-    }
+    override fun getAuthorities() = roles ?: emptyList()
 
-    override fun getPassword(): String? {
-        return password
-    }
+    override fun getPassword() = password
 
     fun setPassword(password: String) {
         this.password = password
     }
 
-    fun setRoles(roles: Collection<String>) {
+    override fun setRoles(roles: Collection<String>) {
         this.roles = roles.stream()
             .map { name: String -> Role(name) }
             .collect(Collectors.toSet())
     }
 
-    override fun getUsername(): String? {
-        return username
-    }
+    override fun getUsername() = username
 
-    fun setUsername(username: String) {
+    override fun setUsername(username: String) {
         this.username = username
     }
 
     @JsonIgnore
-    override fun isAccountNonExpired(): Boolean {
-        return true
-    }
+    override fun isAccountNonExpired() = true
 
     @JsonIgnore
-    override fun isAccountNonLocked(): Boolean {
-        return true
-    }
+    override fun isAccountNonLocked() = true
 
     @JsonIgnore
-    override fun isCredentialsNonExpired(): Boolean {
-        return true
-    }
+    override fun isCredentialsNonExpired() = true
 
     @JsonIgnore
-    override fun isEnabled(): Boolean {
-        return true
-    }
+    override fun isEnabled() = true
 }

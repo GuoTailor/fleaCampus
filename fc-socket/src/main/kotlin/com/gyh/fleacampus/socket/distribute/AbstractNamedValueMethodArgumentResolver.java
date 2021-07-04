@@ -2,7 +2,6 @@ package com.gyh.fleacampus.socket.distribute;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gyh.fleacampus.socket.distribute.exception.ServletRequestBindingException;
-import com.gyh.fleacampus.socket.distribute.exception.ServletRequestBindingException;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;

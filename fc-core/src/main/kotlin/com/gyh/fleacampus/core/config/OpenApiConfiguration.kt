@@ -28,8 +28,8 @@ class OpenApiConfiguration {
     fun springShopOpenAPI(): OpenAPI {
         return OpenAPI()
             .info(
-                Info().title("蚤园 API")
-                    .description("蚤园app的api接口文档 ")
+                Info().title("找有👉 API")
+                    .description("啊猫app的api接口文档 ")
                     .version("v0.0.1")
             )
             .components(

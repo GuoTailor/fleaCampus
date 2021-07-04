@@ -14,5 +14,9 @@ class CommentResponse : Comment() {
 
     @Schema(description = "用户头像")
     var photo: String? = null
-    var replyList: List<Reply>? = listOf()
+
+    @Schema(defaultValue = "0:没有点赞，1:点赞")
+    var liked: Int? = null
+
+    var replyList: List<ReplyResponse>? = listOf()
 }

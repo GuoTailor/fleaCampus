@@ -7,6 +7,7 @@ import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.log.LogFormatUtils;
 import org.springframework.lang.Nullable;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
@@ -44,29 +45,19 @@ public abstract class AbstractMessageConverterMethodArgumentResolver implements 
      * @param targetType   the target type, not necessarily the same as the method
      *                     parameter type, e.g. for {@code HttpEntity<String>}.
      * @return the created method argument value
-     * @throws IOException if the reading from the request fails
      */
     @Nullable
-    protected Object readWithMessageConverters(ServiceRequestInfo inputMessage, MethodParameter parameter,
-                                               Type targetType) throws IOException {
-
+    protected Object readWithMessageConverters(ServiceRequestInfo inputMessage, MethodParameter parameter, Type targetType) {
         Class<?> contextClass = parameter.getContainingClass();
         Object body = NO_VALUE;
-        try {
-            if (messageConverter.canRead(targetType, contextClass)) {
-                if (!StringUtils.isEmpty(inputMessage.getBody())) {
-                    body = messageConverter.read(targetType, contextClass, inputMessage);
-                }
+        if (messageConverter.canRead(targetType, contextClass)) {
+            if (!ObjectUtils.isEmpty(inputMessage.getBody())) {
+                body = messageConverter.read(targetType, contextClass, inputMessage);
             }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            throw new IOException("I/O error while reading input message");
         }
-
         if (body == NO_VALUE) {
             return null;
         }
-
         Object theBody = body;
         LogFormatUtils.traceDebug(logger, traceOn -> {
             String formatted = LogFormatUtils.formatValue(theBody, !traceOn);

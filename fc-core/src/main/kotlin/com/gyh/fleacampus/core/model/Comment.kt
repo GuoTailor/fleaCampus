@@ -1,6 +1,7 @@
 package com.gyh.fleacampus.core.model
 
 import io.swagger.v3.oas.annotations.media.Schema
+import java.time.LocalDateTime
 import java.util.*
 
 /**
@@ -40,7 +41,7 @@ open class Comment(
      * 创建时间
      */
     @Schema(description = "创建时间")
-    var createTime: Date? = null,
+    var createTime: LocalDateTime? = null,
 
     /**
      * 0:隐藏，1:展示

@@ -25,9 +25,9 @@ import kotlin.io.path.Path
 @Service
 class Document {
     @Value("\${fileUploadPath}")
-    lateinit var rootPath: String
-    val directory: Directory by lazy { FSDirectory.open(Path(rootPath + File.separator + "indedx")) }
-    val indexWriter: IndexWriter by lazy {
+    private lateinit var rootPath: String
+    private val directory: Directory by lazy { FSDirectory.open(Path(rootPath + File.separator + "indedx")) }
+    private val indexWriter: IndexWriter by lazy {
         val config = SegmenterConfig()
         //创建默认单例词库实现，并且按照config配置加载词库
         val dic = DictionaryFactory.createSingletonDictionary(config)
@@ -40,9 +40,9 @@ class Document {
         // 创建索引的写出工具类。参数：索引的目录和配置信息
         IndexWriter(directory, conf)
     }
-    val reader: IndexReader by lazy { DirectoryReader.open(directory) }
-    val searcher: IndexSearcher by lazy { IndexSearcher(reader) }
-    val parser: MultiFieldQueryParser by lazy {
+    private val reader: IndexReader by lazy { DirectoryReader.open(directory) }
+    private val searcher: IndexSearcher by lazy { IndexSearcher(reader) }
+    private val parser: MultiFieldQueryParser by lazy {
         val config = SegmenterConfig(true)
         //创建默认单例词库实现，并且按照config配置加载词库
         val dic = DictionaryFactory.createSingletonDictionary(config)
@@ -64,7 +64,6 @@ class Document {
     }
 
     fun createIndex(post: Post) {
-        // 创建文档对象
         val document = createDocument(post)
         // 把文档集合交给IndexWriter
         indexWriter.addDocument(document)
@@ -87,8 +86,6 @@ class Document {
         indexWriter.updateDocument(Term(Post::id.name, post.id.toString()), document)
         indexWriter.commit()
     }
-    // TODO 更新索引
-    // TODO 删除索引
 
     fun deleteIndex(id: Int) {
         indexWriter.deleteDocuments(Term(Post::id.name, id.toString()))

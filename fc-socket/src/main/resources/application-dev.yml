@@ -1,0 +1,24 @@
+spring:
+  r2dbc:
+    username: postgres
+    password: admin
+    url: r2dbc:postgres://localhost:5432/flea_campus
+    pool:
+      enabled: true
+  web:
+    resources:
+      static-locations: file:file/, classpath:/static
+  redis:
+    host: localhost
+    port: 6379
+    timeout: 5000
+
+logging:
+  level:
+    io.r2dbc.postgresql.QUERY: DEBUG
+    io.r2dbc.postgresql.PARAM: DEBUG
+    org.springframework.r2dbc: DEBUG
+
+server:
+  port: 82
+

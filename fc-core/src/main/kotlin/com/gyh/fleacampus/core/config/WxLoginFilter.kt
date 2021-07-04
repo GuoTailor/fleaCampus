@@ -1,7 +1,7 @@
 package com.gyh.fleacampus.core.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.gyh.fleacampus.core.common.JwtUtil
+import com.gyh.fleacampus.common.JwtUtil
 import com.gyh.fleacampus.core.model.ResponseInfo
 import com.gyh.fleacampus.core.model.User
 import org.springframework.http.HttpMethod

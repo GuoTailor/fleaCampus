@@ -14,14 +14,12 @@ class RoomSocketHandler : SocketHandler() {
 
 
     override fun onConnect(queryMap: Map<String, String>, sessionHandler: WebSocketSessionHandler): Mono<*> {
-        val userName = queryMap["username"] ?: return sessionHandler.send("错误，不支持的参数列表$queryMap")
-            .then(sessionHandler.connectionClosed())
         val id = queryMap["id"] ?: return sessionHandler.send("错误，不支持的参数列表$queryMap")
             .then(sessionHandler.connectionClosed())
-        return SocketSessionStore.addUser(sessionHandler, id.toInt(), userName)
+        return SocketSessionStore.addUser(sessionHandler, id.toInt(), "userName")
             .onErrorResume {
                 sessionHandler.send(ResponseInfo.failed("错误: ${it.message}"), NotifyOrder.errorNotify)
-                    .doOnNext { msg -> logger.info("send $msg") }.flatMap { Mono.empty<Unit>() }
+                    .doOnNext { msg -> logger.info("send $msg") }.flatMap { Mono.empty() }
             }
     }
 

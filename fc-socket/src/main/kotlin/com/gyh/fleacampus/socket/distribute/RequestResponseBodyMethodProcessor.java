@@ -34,7 +34,6 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
      */
     @Override
     public Object resolveArgument(MethodParameter parameter, ServiceRequestInfo webRequest) throws Exception {
-
         parameter = parameter.nestedIfOptional();
         Object arg = readWithMessageConverters(webRequest, parameter, parameter.getNestedGenericParameterType());
         String name = Conventions.getVariableNameForParameter(parameter);
@@ -45,7 +44,6 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
                 throw new MethodArgumentNotValidException(parameter, binder.getBindingResult());
             }
         }
-
         return adaptArgumentIfNecessary(arg, parameter);
     }
 

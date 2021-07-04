@@ -1,7 +1,7 @@
 spring:
   datasource:
     username: postgres
-    password: root
+    password: admin
     url: jdbc:postgresql://localhost:5432/flea_campus
     driver-class-name: org.postgresql.Driver
   redis:

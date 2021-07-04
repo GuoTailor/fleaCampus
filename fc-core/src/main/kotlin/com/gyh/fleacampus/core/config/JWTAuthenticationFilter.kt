@@ -1,6 +1,7 @@
 package com.gyh.fleacampus.core.config
 
-import com.gyh.fleacampus.core.common.JwtUtil
+import com.gyh.fleacampus.common.JwtUtil
+import com.gyh.fleacampus.core.model.User
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -22,7 +23,7 @@ class JWTAuthenticationFilter(authenticationManager: AuthenticationManager) :
         response.contentType = "application/json;charset=utf-8"
         if (!ObjectUtils.isEmpty(authHeader) && authHeader.startsWith("Bearer ")) {
             val authToken = authHeader.replaceFirst("Bearer ", "")
-            val user = JwtUtil.parseToken(authToken)
+            val user = JwtUtil.parseToken(authToken, User())
             val authentication = UsernamePasswordAuthenticationToken(user, null, user.authorities)
             logger.info("authenticated user " + user.username + ", setting security context")
             SecurityContextHolder.getContext().authentication = authentication

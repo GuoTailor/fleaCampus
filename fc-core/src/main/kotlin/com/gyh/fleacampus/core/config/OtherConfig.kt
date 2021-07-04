@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
+import com.gyh.fleacampus.common.toEpochMilli
+import com.gyh.fleacampus.common.toLocalDateTime
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -22,21 +24,23 @@ class OtherConfig {
     fun jackson2ObjectMapperBuilderCustomizer(): Jackson2ObjectMapperBuilderCustomizer {
         return Jackson2ObjectMapperBuilderCustomizer { builder ->
             builder.serializerByType(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime>() {
-                override fun serialize(     // 序列化
+                // 序列化
+                override fun serialize(
                     localDateTime: LocalDateTime,
                     jsonGenerator: JsonGenerator,
                     serializerProvider: SerializerProvider
                 ) {
-                    val timestamp = localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                    val timestamp = localDateTime.toEpochMilli()
                     jsonGenerator.writeNumber(timestamp)
                 }
             }).deserializerByType(LocalDateTime::class.java, object : JsonDeserializer<LocalDateTime>() {
-                override fun deserialize(   // 反序列化
+                // 反序列化
+                override fun deserialize(
                     jsonParser: JsonParser,
                     deserializationContext: DeserializationContext
                 ): LocalDateTime {
                     val timestamp = jsonParser.valueAsLong
-                    return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault())
+                    return timestamp.toLocalDateTime()
                 }
             })
         }

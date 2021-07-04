@@ -10,6 +10,6 @@ interface ReplyMapper {
     fun selectByPrimaryKey(id: Int): Reply?
     fun updateByPrimaryKeySelective(record: Reply): Int
     fun updateByPrimaryKey(record: Reply): Int
-    fun findTopThree(id: Int): List<ReplyResponse>
-    fun findByPage(id: Int): List<ReplyResponse>
+    fun findTopThree(id: Int, userId: Int): List<ReplyResponse>
+    fun findByPage(id: Int, userId: Int): List<ReplyResponse>
 }

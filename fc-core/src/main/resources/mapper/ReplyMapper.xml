@@ -23,6 +23,7 @@
         <result property="username" column="username"/>
         <result property="toUsername" column="toUsername"/>
         <result property="photo" column="photo"/>
+        <result property="liked" column="liked"/>
     </resultMap>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -46,11 +47,13 @@
                fr.remark,
                fu.username,
                fu2.username as toUsername,
-               fu.phone
+               fu.phone,
+               case when fl is null then 0 else 1 end as liked
         from fc_reply fr
                  left join fc_user fu on fr.user_id = fu.id
                  left join fc_user fu2 on fr.to_uid = fu2.id
-        where comment_id = #{id}
+                 left join fc_like fl on fr.id = fl.reply_id and fl.user_id = #{userId}
+        where fr.comment_id = #{id}
         order by create_time desc
     </select>
 
@@ -69,11 +72,13 @@
                fr.remark,
                fu.username,
                fu2.username as toUsername,
-               fu.phone
+               fu.phone,
+               case when fl is null then 0 else 1 end as liked
         from fc_reply fr
                  left join fc_user fu on fr.user_id = fu.id
                  left join fc_user fu2 on fr.to_uid = fu2.id
-        where comment_id = #{id}
+                 left join fc_like fl on fr.id = fl.reply_id and fl.user_id = #{userId}
+        where fr.comment_id = #{id}
         order by create_time desc
         limit 3
     </select>

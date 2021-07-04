@@ -51,7 +51,7 @@ abstract class SocketHandler : WebSocketHandler {
     override fun handle(session: WebSocketSession): Mono<Void> {
         val sessionHandler = WebSocketSessionHandler(session)
         val watchDog = WebSocketWatchDog().start(sessionHandler, 5000)
-        val queryMap = Util.getQueryMap(sessionHandler.getSession().handshakeInfo.uri.query)
+        val queryMap = Util.getQueryMap(sessionHandler.session.handshakeInfo.uri.query)
         val connect = sessionHandler.connected().flatMap { onConnect(queryMap, sessionHandler) }
             .flatMap { sessionHandler.send(ResponseInfo.ok<Unit>("连接成功"), NotifyOrder.connectSucceed, true) }
         sessionHandler.disconnected{ onDisconnected(queryMap, sessionHandler) }
@@ -80,6 +80,7 @@ abstract class SocketHandler : WebSocketHandler {
             .zipWith(watchDog)
             .zipWith(output)
             .then()
+            .doOnError { logger.error(it.message, it) }
     }
 
     /**

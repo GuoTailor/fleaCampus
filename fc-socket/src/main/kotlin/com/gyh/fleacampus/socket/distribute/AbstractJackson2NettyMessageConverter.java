@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.kotlin.KotlinModule;
 import com.gyh.fleacampus.socket.common.Util;
-import com.gyh.fleacampus.socket.common.Util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.GenericTypeResolver;
@@ -39,20 +38,7 @@ public class AbstractJackson2NettyMessageConverter {
 
     protected AbstractJackson2NettyMessageConverter(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-        JavaTimeModule javaTimeModule = new JavaTimeModule();
-        javaTimeModule.addSerializer(LocalDateTime.class, new JsonSerializer<LocalDateTime>() {
-            public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-                long timestamp = value.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                gen.writeNumber(timestamp);
-            }
-        });
-        javaTimeModule.addDeserializer(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
-            public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-                long timestamp = p.getLongValue();
-                return Util.INSTANCE.toLocalDateTime(timestamp);
-            }
-        });
-        this.objectMapper.registerModule(javaTimeModule);
+        this.objectMapper.registerModule(Util.INSTANCE.getJavaTimeModule());
         this.objectMapper.registerModule(new KotlinModule());
         this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
@@ -97,15 +83,13 @@ public class AbstractJackson2NettyMessageConverter {
         }
     }
 
-    public Object read(Type type, @Nullable Class<?> contextClass, ServiceRequestInfo inputMessage)
-            throws IOException {
-
+    public Object read(Type type, @Nullable Class<?> contextClass, ServiceRequestInfo inputMessage) {
         JavaType javaType = getJavaType(type, contextClass);
         return readJavaType(javaType, inputMessage);
     }
 
-    private Object readJavaType(JavaType javaType, ServiceRequestInfo inputMessage) throws IOException {
-        return inputMessage.getBody();
+    private Object readJavaType(JavaType javaType, ServiceRequestInfo inputMessage) {
+        return objectMapper.convertValue(inputMessage.getBody(), javaType);
     }
 
     /**

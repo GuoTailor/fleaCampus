@@ -79,7 +79,7 @@ class FleaCampusApplicationTests {
         val options = DecodeImage.channels(3L)
         val decodeImage = tf.image.decodeImage(readFile.contents(), options)
         (runner.fetch(decodeImage).run()[0] as TUint8).use { outputImage ->
-            val reshape = _root_ide_package_.com.gyh.fleacampus.core.common.LoadBirdsearchModel.reshapeTensor(outputImage)
+            val reshape = LoadBirdsearchModel.reshapeTensor(outputImage)
 
             //fresh runner for reshape
             runner = session.runner()
@@ -119,7 +119,7 @@ class FleaCampusApplicationTests {
         val options = DecodeImage.channels(3L)
         val decodeImage = tf.image.decodeImage(readFile.contents(), options)
         (runner.fetch(decodeImage).run()[0] as TUint8).use { outputImage ->
-            val reshape = _root_ide_package_.com.gyh.fleacampus.core.common.LoadBirdsearchModel.reshapeTensor(outputImage)
+            val reshape = LoadBirdsearchModel.reshapeTensor(outputImage)
 
             //fresh runner for reshape
             runner = session.runner()
@@ -152,7 +152,7 @@ class FleaCampusApplicationTests {
         val options = DecodeImage.channels(3L)
         val decodeImage = tf.image.decodeImage(readFile.contents(), options)
         (runner.fetch(decodeImage).run()[0] as TUint8).use { outputImage ->
-            val reshape = _root_ide_package_.com.gyh.fleacampus.core.common.LoadBirdsearchModel.reshapeTensor(outputImage)
+            val reshape = LoadBirdsearchModel.reshapeTensor(outputImage)
 
             //fresh runner for reshape
             runner = session2.runner()

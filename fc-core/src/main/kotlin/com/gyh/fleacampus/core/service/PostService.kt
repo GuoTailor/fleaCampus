@@ -42,6 +42,7 @@ class PostService {
         postMapper.insertSelective(post)
         async {
             document.createIndex(post)
+            // TODO 图片鉴黄
         }
         return post
     }
@@ -79,13 +80,12 @@ class PostService {
         post.userId = null
         post.type = post.type?.lowercase(Locale.getDefault())
         AtomicInteger().incrementAndGet()
+        async {
+            document.updateIndex(post)
+            // TODO 图片鉴黄
+        }
         return postMapper.updateByPrimaryKeySelective(post)
     }
-
-    /**
-     * 增加浏览量
-     */
-    fun incrBrowses(id: Int) = postMapper.incrBrowses(id)
 
     /**
      * 添加帖子赞
@@ -102,6 +102,7 @@ class PostService {
         if (user.id!! != postMapper.selectByPrimaryKey(id)?.userId && !user.getRoles().contains(Role.SUPER_ADMIN)) {
             error("帖子的创建者才能删除该帖子")
         }
+        async { document.deleteIndex(id) }
         return postMapper.deleteByPrimaryKey(id)
     }
 }

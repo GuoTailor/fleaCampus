@@ -14,9 +14,11 @@
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
     </resultMap>
 
-    <resultMap id="commentResponse" type="com.gyh.fleacampus.core.model.view.response.CommentResponse" extends="BaseResultMap">
+    <resultMap id="commentResponse" type="com.gyh.fleacampus.core.model.view.response.CommentResponse"
+               extends="BaseResultMap">
         <result property="username" column="username"/>
         <result property="photo" column="photo"/>
+        <result property="liked" column="liked"/>
         <collection property="replyList" column="id" javaType="list"
                     ofType="com.gyh.fleacampus.core.model.Reply"
                     select="com.gyh.fleacampus.core.mapper.ReplyMapper.findTopThree"/>
@@ -37,9 +39,11 @@
                c.top_order,
                c.remark,
                fu.username,
-               fu.phone
+               fu.phone,
+               case when fl is null then 0 else 1 end as liked
         from "fc_comment" c
                  left join fc_user fu on c.user_id = fu.id
+                 left join fc_like fl on c.id = fl.comment_id and fl.user_id = #{userId}
         where c.id = #{id,jdbcType=INTEGER}
     </select>
 
@@ -55,9 +59,11 @@
                c.top_order,
                c.remark,
                fu.username,
-               fu.phone
+               fu.phone,
+               case when fl is null then 0 else 1 end as liked
         from "fc_comment" c
                  left join fc_user fu on c.user_id = fu.id
+                 left join fc_like fl on c.id = fl.comment_id and fl.user_id = #{userId}
         where c.post_id = #{postId}
     </select>
     <update id="incrReplys" parameterType="int">

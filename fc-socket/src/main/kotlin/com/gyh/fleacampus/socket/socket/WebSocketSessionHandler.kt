@@ -1,22 +1,17 @@
 package com.gyh.fleacampus.socket.socket
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.gyh.fleacampus.socket.common.Util
 import com.gyh.fleacampus.socket.distribute.ServiceResponseInfo
 import org.slf4j.LoggerFactory
 import org.springframework.web.reactive.socket.WebSocketSession
 import reactor.core.Disposable
-import reactor.core.publisher.*
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
+import reactor.core.publisher.Sinks
 import reactor.core.scheduler.Schedulers
 import reactor.netty.channel.AbortedException
 import java.nio.channels.ClosedChannelException
 import java.time.Duration
-import java.time.LocalDateTime
-import java.time.ZoneId
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
@@ -25,35 +20,17 @@ import java.util.function.Consumer
 /**
  * Created by gyh on 2020/4/7.
  */
-class WebSocketSessionHandler {
+class WebSocketSessionHandler(val session: WebSocketSession) {
     private val logger = LoggerFactory.getLogger(this.javaClass)
-    private val receiveProcessor: Sinks.Many<String>
-    private val connectedProcessor: Sinks.One<WebSocketSession>
-    private val json = jacksonObjectMapper()
-    private var webSocketConnected = false
-    private val session: WebSocketSession
+    private val receiveProcessor: Sinks.Many<String> = Sinks.many().multicast().onBackpressureBuffer()
+    private val connectedProcessor: Sinks.One<WebSocketSession> = Sinks.one()
+    private val json = Util.json
+    private var webSocketConnected = true
     private val responseCount = AtomicInteger(1)
     private val responseMap = ConcurrentHashMap<Int, SendInfo>()
     private var retryCount = 3
     private var retryTimeout = 1L
     private var disconnectedProcessor: Consumer<WebSocketSession>? = null
-
-    constructor(session: WebSocketSession) : this(50, session)
-
-    constructor(historySize: Int, session: WebSocketSession) {
-        receiveProcessor = Sinks.many().replay().limit(historySize)
-        connectedProcessor = Sinks.one()
-        webSocketConnected = true
-        val javaTimeModule = JavaTimeModule()
-        javaTimeModule.addSerializer(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime>() {
-            override fun serialize(value: LocalDateTime, gen: JsonGenerator, serializers: SerializerProvider) {
-                val timestamp = value.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-                gen.writeNumber(timestamp)
-            }
-        })
-        json.registerModule(javaTimeModule)
-        this.session = session
-    }
 
     fun handle(): Mono<Void> {
         return session.receive()
@@ -84,8 +61,6 @@ class WebSocketSessionHandler {
 
     fun getId(): String = session.id
 
-    fun getSession() = session
-
     fun send(message: String): Mono<String> {
         return if (webSocketConnected) {
             session.send(Mono.just(session.textMessage(message)))
@@ -104,7 +79,8 @@ class WebSocketSessionHandler {
                     if (it > retryCount) reqIncrement(req)
                     processor.tryEmitNext(it.toInt() + 1)
                     it
-                }.subscribe()
+                }.subscribeOn(Schedulers.boundedElastic())
+                .subscribe()
             val info = SendInfo(req, processor, cycle)
             responseMap[req] = info
             processor.tryEmitNext(0)
@@ -128,7 +104,7 @@ class WebSocketSessionHandler {
     }
 
     fun send(data: ServiceResponseInfo.DataResponse, confirm: Boolean = false): Mono<String> {
-        return Util.wrapBlock { json.writeValueAsString(data) }.flatMap { send(it, data.req, confirm)}
+        return Util.wrapBlock { json.writeValueAsString(data) }.flatMap { send(it, data.req, confirm) }
     }
 
     fun connectionClosed(): Mono<Void> {

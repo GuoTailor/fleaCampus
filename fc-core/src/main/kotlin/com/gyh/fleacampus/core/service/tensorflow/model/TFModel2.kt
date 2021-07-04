@@ -3,6 +3,7 @@ package com.gyh.fleacampus.core.service.tensorflow.model
 import com.gyh.fleacampus.core.service.tensorflow.TFPrediction
 import com.gyh.fleacampus.core.service.tensorflow.TFPredictionResult
 import org.springframework.core.io.ClassPathResource
+import org.springframework.core.io.FileSystemResource
 import org.tensorflow.Graph
 import org.tensorflow.Operand
 import org.tensorflow.Session
@@ -18,7 +19,7 @@ import org.tensorflow.types.TUint8
 class TFModel2 : TFPrediction {
     override fun loadModel(): Session {
         val graph = Graph()
-        val parseFrom = GraphDef.parseFrom(ClassPathResource("model/frozen_nsfw.pb").inputStream)
+        val parseFrom = GraphDef.parseFrom(FileSystemResource("./model/frozen_nsfw.pb").inputStream)
         graph.importGraphDef(parseFrom)
         return Session(graph)
     }

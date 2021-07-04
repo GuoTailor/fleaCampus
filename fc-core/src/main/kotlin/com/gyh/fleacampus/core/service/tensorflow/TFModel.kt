@@ -42,7 +42,7 @@ object TFModel {
             return prophets.entries
                 .parallelStream()
                 .map { (k, v) ->
-                    println(Thread.currentThread().name + System.currentTimeMillis())
+                    //println(Thread.currentThread().name + System.currentTimeMillis())
                     val graph2 = Graph()
                     val session2 = Session(graph2)
                     val tf2 = Ops.create(graph2)

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.gyh.fleacampus.mapper.UserMapper">
-    <resultMap id="BaseResultMap" type="com.gyh.fleacampus.model.User">
+<mapper namespace="com.gyh.fleacampus.core.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.gyh.fleacampus.core.model.User">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="username" jdbcType="VARCHAR" property="username"/>
         <result column="password" jdbcType="VARCHAR" property="password"/>
@@ -37,7 +37,7 @@
         from "fc_user"
         where id = #{id,jdbcType=INTEGER}
     </delete>
-    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.model.User"
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.core.model.User"
             useGeneratedKeys="true">
         insert into "fc_user" (username, "password", signature,
                                photo, phone, sex,
@@ -50,7 +50,7 @@
                 #{schoolAreaId,jdbcType=INTEGER}, #{grade,jdbcType=VARCHAR}, #{specialty,jdbcType=VARCHAR},
                 #{createTime,jdbcType=TIMESTAMP})
     </insert>
-    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.model.User"
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.core.model.User"
             useGeneratedKeys="true">
         insert into "fc_user"
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -84,7 +84,7 @@
             <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.model.User">
+    <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.core.model.User">
         update "fc_user"
         <set>
             <if test="username != null">username = #{username,jdbcType=VARCHAR},</if>
@@ -103,7 +103,7 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.gyh.fleacampus.model.User">
+    <update id="updateByPrimaryKey" parameterType="com.gyh.fleacampus.core.model.User">
         update "fc_user"
         set username       = #{username,jdbcType=VARCHAR},
             "password"     = #{password,jdbcType=VARCHAR},

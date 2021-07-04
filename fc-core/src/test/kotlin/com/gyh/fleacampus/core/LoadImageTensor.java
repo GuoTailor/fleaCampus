@@ -1,13 +1,15 @@
 package com.gyh.fleacampus.core;
 
+import com.gyh.fleacampus.core.service.tensorflow.TFModel;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.io.File;
 
 public class LoadImageTensor {
     @Test
     public void test() {
-        System.out.println(new BigDecimal(7).divide(new BigDecimal(3), 2, RoundingMode.HALF_UP).toPlainString());
+        File file = new File("./");
+        System.out.println(file.getAbsolutePath());
+        TFModel.INSTANCE.classify("F:\\新建文件夹\\IMG_0420.JPG").forEach(it -> System.out.println(it.getPorn()));
     }
 }

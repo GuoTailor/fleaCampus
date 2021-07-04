@@ -1,8 +1,8 @@
 spring:
   r2dbc:
     username: postgres
-    password: root
-    url: r2dbc:postgres://localhost:5432/socket_chart
+    password: admin
+    url: r2dbc:postgres://localhost:5432/flea_campus
     pool:
       enabled: true
   web:

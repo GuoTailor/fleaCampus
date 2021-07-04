@@ -66,11 +66,11 @@ class CommentService {
 
     fun findCommentByPage(pageNum: Int, pageSize: Int, postId: Int): PageView<CommentResponse> {
         PageHelper.startPage<Any>(pageNum, pageSize)
-        return PageView.build(commentMapper.findByPage(postId))
+        return PageView.build(commentMapper.findByPage(postId, getCurrentUser().id!!))
     }
 
     fun findReplyByPage(pageNum: Int, pageSize: Int, commentId: Int): PageView<ReplyResponse> {
         PageHelper.startPage<Any>(pageNum, pageSize)
-        return PageView.build(replyMapper.findByPage(commentId))
+        return PageView.build(replyMapper.findByPage(commentId, getCurrentUser().id!!))
     }
 }
