@@ -4,9 +4,7 @@ package com.gyh.fleacampus.common
  * Created by gyh on 2021/7/3
  */
 interface BaseUser {
-    fun getId(): Int?
-
-    fun setId(id: Int)
+    var id: Int?
 
     fun getUsername(): String?
 

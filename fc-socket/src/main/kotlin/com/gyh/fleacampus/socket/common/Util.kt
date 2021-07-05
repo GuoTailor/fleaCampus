@@ -6,8 +6,12 @@ import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.gyh.fleacampus.common.BaseUser
 import com.gyh.fleacampus.common.toLocalDateTime
+import com.gyh.fleacampus.socket.entity.User
 import org.slf4j.LoggerFactory
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.ReactiveSecurityContextHolder
 import org.springframework.util.StringUtils
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
@@ -47,6 +51,12 @@ object Util {
     fun <T> wrapBlock(block: () -> T): Mono<T> {
         val blockingWrapper = Mono.fromCallable { block() }
         return blockingWrapper.subscribeOn(Schedulers.boundedElastic())
+    }
+
+    fun getcurrentUser(): Mono<User> {
+        return ReactiveSecurityContextHolder
+            .getContext()
+            .map { it.authentication.principal as User }
     }
 
     /**

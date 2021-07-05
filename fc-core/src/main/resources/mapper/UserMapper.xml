@@ -12,14 +12,14 @@
         <result column="exp" jdbcType="INTEGER" property="exp"/>
         <result column="score" jdbcType="INTEGER" property="score"/>
         <result column="horoscope" jdbcType="VARCHAR" property="horoscope"/>
-        <result column="school_area_id" jdbcType="INTEGER" property="schoolAreaId"/>
+        <result column="area_id" jdbcType="INTEGER" property="areaId"/>
         <result column="grade" jdbcType="VARCHAR" property="grade"/>
         <result column="specialty" jdbcType="VARCHAR" property="specialty"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
     </resultMap>
     <sql id="Base_Column_List">
         id, username, "password", signature, photo, phone, sex, "exp", score, horoscope,
-    school_area_id, grade, specialty, create_time
+    area_id, grade, specialty, create_time
     </sql>
     <select id="loadUserByUsername" resultMap="BaseResultMap">
         select
@@ -42,12 +42,12 @@
         insert into "fc_user" (username, "password", signature,
                                photo, phone, sex,
                                "exp", score, horoscope,
-                               school_area_id, grade, specialty,
+                               area_id, grade, specialty,
                                create_time)
         values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{signature,jdbcType=VARCHAR},
                 #{photo,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{sex,jdbcType=SMALLINT},
                 #{exp,jdbcType=INTEGER}, #{score,jdbcType=INTEGER}, #{horoscope,jdbcType=VARCHAR},
-                #{schoolAreaId,jdbcType=INTEGER}, #{grade,jdbcType=VARCHAR}, #{specialty,jdbcType=VARCHAR},
+                #{areaId,jdbcType=INTEGER}, #{grade,jdbcType=VARCHAR}, #{specialty,jdbcType=VARCHAR},
                 #{createTime,jdbcType=TIMESTAMP})
     </insert>
     <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.core.model.User"
@@ -63,7 +63,7 @@
             <if test="exp != null">"exp",</if>
             <if test="score != null">score,</if>
             <if test="horoscope != null">horoscope,</if>
-            <if test="schoolAreaId != null">school_area_id,</if>
+            <if test="areaId != null">area_id,</if>
             <if test="grade != null">grade,</if>
             <if test="specialty != null">specialty,</if>
             <if test="createTime != null">create_time,</if>
@@ -78,7 +78,7 @@
             <if test="exp != null">#{exp,jdbcType=INTEGER},</if>
             <if test="score != null">#{score,jdbcType=INTEGER},</if>
             <if test="horoscope != null">#{horoscope,jdbcType=VARCHAR},</if>
-            <if test="schoolAreaId != null">#{schoolAreaId,jdbcType=INTEGER},</if>
+            <if test="areaId != null">#{areaId,jdbcType=INTEGER},</if>
             <if test="grade != null">#{grade,jdbcType=VARCHAR},</if>
             <if test="specialty != null">#{specialty,jdbcType=VARCHAR},</if>
             <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
@@ -96,7 +96,7 @@
             <if test="exp != null">"exp" = #{exp,jdbcType=INTEGER},</if>
             <if test="score != null">score = #{score,jdbcType=INTEGER},</if>
             <if test="horoscope != null">horoscope = #{horoscope,jdbcType=VARCHAR},</if>
-            <if test="schoolAreaId != null">school_area_id = #{schoolAreaId,jdbcType=INTEGER},</if>
+            <if test="areaId != null">area_id = #{areaId,jdbcType=INTEGER},</if>
             <if test="grade != null">grade = #{grade,jdbcType=VARCHAR},</if>
             <if test="specialty != null">specialty = #{specialty,jdbcType=VARCHAR},</if>
             <if test="createTime != null">create_time = #{createTime,jdbcType=TIMESTAMP},</if>
@@ -105,18 +105,18 @@
     </update>
     <update id="updateByPrimaryKey" parameterType="com.gyh.fleacampus.core.model.User">
         update "fc_user"
-        set username       = #{username,jdbcType=VARCHAR},
-            "password"     = #{password,jdbcType=VARCHAR},
-            signature      = #{signature,jdbcType=VARCHAR},
-            photo          = #{photo,jdbcType=VARCHAR},
-            phone          = #{phone,jdbcType=VARCHAR},
-            sex            = #{sex,jdbcType=SMALLINT},
-            "exp"          = #{exp,jdbcType=INTEGER},
-            score          = #{score,jdbcType=INTEGER},
-            horoscope      = #{horoscope,jdbcType=VARCHAR},
-            school_area_id = #{schoolAreaId,jdbcType=INTEGER},
-            grade          = #{grade,jdbcType=VARCHAR},
-            specialty      = #{specialty,jdbcType=VARCHAR},
-            create_time    = #{createTime,jdbcType=TIMESTAMP}
+        set username    = #{username,jdbcType=VARCHAR},
+            "password"  = #{password,jdbcType=VARCHAR},
+            signature   = #{signature,jdbcType=VARCHAR},
+            photo       = #{photo,jdbcType=VARCHAR},
+            phone       = #{phone,jdbcType=VARCHAR},
+            sex         = #{sex,jdbcType=SMALLINT},
+            "exp"       = #{exp,jdbcType=INTEGER},
+            score       = #{score,jdbcType=INTEGER},
+            horoscope   = #{horoscope,jdbcType=VARCHAR},
+            area_id     = #{areaId,jdbcType=INTEGER},
+            grade       = #{grade,jdbcType=VARCHAR},
+            specialty   = #{specialty,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP}
         where id = #{id,jdbcType=INTEGER}    </update>
 </mapper>

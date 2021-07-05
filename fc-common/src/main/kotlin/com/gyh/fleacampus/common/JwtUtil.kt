@@ -11,9 +11,11 @@ import javax.crypto.spec.SecretKeySpec
 object JwtUtil {
     @JvmStatic
     private val key: Key = SecretKeySpec(
-        """TUlHZk1BMEdDU3FHU0liM0RRRUJBUVVBQTRHTkFEQ0JpUUtCZ1FEZGxhdFJqUmpvZ28zV29qZ0dIRkhZTHVnZApVV0FZOWlSM2Z5NGFyV05BM
-            |UtvUzhrVnczM2NKaWJYcjhidndVQVVwYXJDd2x2ZGJINmR2RU9mb3UwL2dDRlFzCkhVZlFyU0R2K011U1VNQWU4anpLRTRxVytqSyt4UVU5
-            |YTAzR1VuS0hra2xlK1EwcFgvZzZqWFo3cjEveEFLNUQKbzJrUStYNXhLOWNpcFJnRUt3SURBUUFC""".trimMargin().toByteArray(),
+        """VFVsSFprMUJNRWREVTNGSFUwbGlNMFJSUlVKQlVWVkJRVFJIVGtGRVEwSnBVVXRDWjFGRVpHeGhkRkpxVW1wdloyOHpWMjlxWjB
+            |kSVJraFpUSFZuWkFwVlYwRlpPV2xTTTJaNU5HRnlWMDVCTVV0dlV6aHJWbmN6TTJOS2FXSlljamhpZG5kVlFWVndZWEpEZDJ4
+            |MlpHSklObVIyUlU5bWIzVXdMMmREUmxGekNraFZabEZ5VTBSMkswMTFVMVZOUVdVNGFucExSVFJ4Vnl0cVN5dDRVVlU1WVRBe
+            |lIxVnVTMGhyYTJ4bEsxRXdjRmd2WnpacVdGbzNjakV2ZUVGTE5VUUtiekpyVVN0WU5YaExPV05wY0ZKblJVdDNTVVJCVVVGQwog"""
+            .trimMargin().toByteArray(),
         SignatureAlgorithm.HS256.jcaName
     )
 
@@ -35,7 +37,7 @@ object JwtUtil {
             .build()
             .parseClaimsJws(token)
             .body
-        user.setId(claims["id"] as Int)
+        user.id = (claims["id"] as Int)
         user.setUsername(claims["username"] as String)
         user.setRoles(claims["roles"] as Collection<String>)
         return user
@@ -51,7 +53,7 @@ object JwtUtil {
     @JvmStatic
     fun generateToken(u: BaseUser): String {
         val claims = Jwts.claims()
-        claims["id"] = u.getId()
+        claims["id"] = u.id
         claims["username"] = u.getUsername()
         claims["roles"] = u.getRoles()
         val now = System.currentTimeMillis()

@@ -42,7 +42,7 @@ class ServerHttpBearerAuthenticationConverter : ServerAuthenticationConverter {
                 val token = getQueryMap(request.uri.query)["bearer"]
                 val user = JwtUtil.parseToken(token, User())
                 logger.info("authenticated user " + user.getUsername() + ", setting security context")
-                UsernamePasswordAuthenticationToken(user, null, user.getRoles()?.map { GrantedAuthority { it } })
+                UsernamePasswordAuthenticationToken(user, null, user.getAuthorities())
             }
         } else Mono.empty()
     }

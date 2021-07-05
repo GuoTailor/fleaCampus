@@ -16,7 +16,7 @@ import java.util.stream.Collectors
 data class User(
 
     @Schema(description = "id")
-    private var id: Int? = null,
+    override var id: Int? = null,
 
     /**
      * 用户名
@@ -78,7 +78,7 @@ data class User(
      * 学校区域id
      */
     @Schema(description = "学校区域id")
-    var schoolAreaId: Int? = null,
+    var areaId: Int? = null,
 
     /**
      * 年纪
@@ -98,12 +98,6 @@ data class User(
     @Schema(description = "创建时间")
     var createTime: LocalDateTime? = null,
 ) : BaseUser, UserDetails {
-
-    override fun getId() = id
-
-    override fun setId(id: Int) {
-        this.id = id
-    }
 
     @JsonIgnore
     override fun getRoles(): Set<String> {

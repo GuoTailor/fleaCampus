@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.gyh.fleacampus.common.BaseUser
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
+import org.springframework.security.core.GrantedAuthority
 import java.time.LocalDateTime
 import java.util.stream.Collectors
 
@@ -12,17 +13,13 @@ import java.util.stream.Collectors
  */
 @Table("fc_user")
 data class User(
-    @Id private var id: Int? = null,
+    @Id override var id: Int? = null,
     private var username: String? = null,
     private var roles: Collection<String>? = null,
     var photo: String? = null,
+    var areaId: Int? = null,
     var createTime: LocalDateTime? = null
 ) : BaseUser {
-    override fun getId() = id
-
-    override fun setId(id: Int) {
-        this.id = id
-    }
 
     @JsonIgnore
     override fun getRoles() = roles
@@ -35,6 +32,10 @@ data class User(
 
     override fun setUsername(username: String) {
         this.username = username
+    }
+
+    fun getAuthorities(): List<GrantedAuthority> {
+        return (roles ?: emptySet()).map { GrantedAuthority { it } }
     }
 }
 

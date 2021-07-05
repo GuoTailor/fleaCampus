@@ -1,4 +1,4 @@
-package com.gyh.fleacampus.socket.service
+package com.gyh.fleacampus.socket.controller
 
 import com.gyh.fleacampus.socket.entity.ResponseInfo
 import org.springframework.stereotype.Controller
@@ -10,10 +10,11 @@ import reactor.core.publisher.Mono
  * Created by gyh on 2021/7/3
  */
 @Controller
-class ChartService {
+class ChartController {
 
     @RequestMapping("/echo")
     fun echo(@RequestParam value: String): Mono<ResponseInfo<Map<String, String>>> {
         return ResponseInfo.ok(Mono.just(mapOf("value" to value)))
     }
+
 }
