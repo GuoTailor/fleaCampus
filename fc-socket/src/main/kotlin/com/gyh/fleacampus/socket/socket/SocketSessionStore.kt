@@ -13,8 +13,8 @@ object SocketSessionStore {
     private val logger = LoggerFactory.getLogger(this.javaClass)
     internal val userInfoMap = ConcurrentHashMap<Int, UserRoomInfo>()
 
-    fun addUser(session: WebSocketSessionHandler, id: Int, userName: String): Mono<Unit> {
-        val userInfo = UserRoomInfo(session, id, userName)
+    fun addUser(session: WebSocketSessionHandler, id: Int, roomId: Int): Mono<Unit> {
+        val userInfo = UserRoomInfo(session, id, roomId)
         val old = userInfoMap.put(id, userInfo)
         logger.info("添加用户 $id ${session.getId()}")
         return if (old != null) {
@@ -22,6 +22,14 @@ object SocketSessionStore {
             old.session.send(ResponseInfo.ok<Unit>("用户账号在其他地方登陆"), NotifyOrder.differentPlaceLogin)
                 .flatMap { old.session.connectionClosed() }.map { Unit }.log()
         } else Mono.just(Unit)
+    }
+
+    fun joinRoom(userId: Int) {
+        userInfoMap[userId]?.isJoin = true
+    }
+
+    fun quitRoom(userId: Int) {
+        userInfoMap[userId]?.isJoin = false
     }
 
     fun removeUser(userId: Int?) {
@@ -34,12 +42,20 @@ object SocketSessionStore {
     }
 
     fun getOnLineSize(roomId: Int): Int {
-        return userInfoMap.count { true }
+        return userInfoMap.count { it.value.roomId == roomId }
+    }
+
+    /**
+     * 在自己的房间广播消息
+     */
+    fun broadcastMag() {
+
     }
 
     data class UserRoomInfo(
         val session: WebSocketSessionHandler,
         val userId: Int,
-        val userName: String
+        val roomId: Int,
+        var isJoin: Boolean = false
     )
 }

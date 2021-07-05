@@ -26,7 +26,7 @@ class UserService {
     }
 
     fun findArea(id: Int): Mono<Area> {
-        return areaDao.findById(id)
+        return areaDao.findById(id).switchIfEmpty(Mono.error(IllegalAccessException("该用户没有加入任圈子")))
     }
 
 }

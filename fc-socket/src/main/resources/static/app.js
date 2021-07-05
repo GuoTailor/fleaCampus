@@ -13,7 +13,7 @@ function connect() {
     var path = document.getElementById('path').value;
     var url = "ws://" + host.toString() + path
     var roomId = document.getElementById('roomId').value;
-    ws = new WebSocket(url + "?id=" + roomId + "&bearer=" + token + "&username=账务");
+    ws = new WebSocket(url + "?bearer=" + token);
 
     ws.onopen = function () {
         setConnected(true);

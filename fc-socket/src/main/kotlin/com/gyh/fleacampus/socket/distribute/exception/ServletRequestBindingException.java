@@ -11,7 +11,6 @@ package com.gyh.fleacampus.socket.distribute.exception;
  * @author Rod Johnson
  * @author Juergen Hoeller
  */
-@SuppressWarnings("serial")
 public class ServletRequestBindingException extends Exception {
 
     /**

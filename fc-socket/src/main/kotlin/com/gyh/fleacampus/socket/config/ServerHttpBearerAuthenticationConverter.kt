@@ -23,7 +23,7 @@ import java.util.regex.Pattern
 
 class ServerHttpBearerAuthenticationConverter : ServerAuthenticationConverter {
     private val logger = LoggerFactory.getLogger(javaClass)
-    private val skipAuthUrls = listOf(Pattern.compile(".*index\\.html"), Pattern.compile(".*app\\.js"))
+    private val skipAuthUrls = listOf(Pattern.compile(".*index\\.html"), Pattern.compile(".*app\\.js"), Pattern.compile("/favicon\\.ico"))
     private val json = jacksonObjectMapper()
 
     fun match(input: CharSequence): Boolean {

@@ -1,7 +1,7 @@
 spring:
   datasource:
     username: postgres
-    password: root
+    password: admin
     url: jdbc:postgresql://localhost:5432/flea_campus
     driver-class-name: org.postgresql.Driver
   redis:
@@ -11,6 +11,8 @@ spring:
   servlet:
     multipart:
       max-file-size: 1000MB
+  application:
+    name: fc-core
 
 logging:
   level:
@@ -18,6 +20,15 @@ logging:
       gyh:
         fleacampus:
           mapper: DEBUG
+  file:
+    path: logger
+  logback:
+    rollingpolicy:
+      max-file-size: 20MB
+      max-history: 60
+  pattern:
+    file: "${FILE_LOG_PATTERN:%d{${LOG_DATEFORMAT_PATTERN:yyyy-MM-dd HH:mm:ss.SSS}} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } --- [%t] %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}}"
+
 
 mybatis:
   mapper-locations: classpath:/mapper/*Mapper.xml

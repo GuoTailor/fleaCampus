@@ -32,20 +32,7 @@ abstract class SocketHandler : WebSocketHandler {
 
     init {
         json.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        val javaTimeModule = JavaTimeModule()
-        javaTimeModule.addSerializer(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime>() {
-            override fun serialize(value: LocalDateTime, gen: JsonGenerator, serializers: SerializerProvider) {
-                val timestamp = value.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-                gen.writeNumber(timestamp)
-            }
-        })
-        javaTimeModule.addDeserializer(LocalDateTime::class.java, object : JsonDeserializer<LocalDateTime>() {
-            override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LocalDateTime {
-                val temp = p.valueAsLong
-                return LocalDateTime.ofInstant(Instant.ofEpochMilli(temp), ZoneId.systemDefault())
-            }
-        })
-        json.registerModule(javaTimeModule)
+        json.registerModule(Util.getJavaTimeModule())
     }
 
     override fun handle(session: WebSocketSession): Mono<Void> {
