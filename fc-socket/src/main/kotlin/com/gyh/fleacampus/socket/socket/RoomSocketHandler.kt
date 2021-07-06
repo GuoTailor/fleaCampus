@@ -23,8 +23,7 @@ class RoomSocketHandler : SocketHandler() {
             .flatMap {
                 if (it.areaId == null) Mono.error(IllegalAccessException("该用户没有加入任圈子"))
                 else userService.findArea(it.areaId!!)
-            }.zipWith(Util.getcurrentUser()) { o1, o2 ->
-                SocketSessionStore.addUser(sessionHandler, o2.id!!, o1.id!!)
+                    .flatMap { area -> SocketSessionStore.addUser(sessionHandler, it.id!!, area.id!!) }
             }.onErrorResume {
                 sessionHandler.send(ResponseInfo.failed("错误: ${it.message}"), NotifyOrder.errorNotify)
                     .doOnNext { msg -> logger.info("send $msg") }.flatMap { Mono.empty() }

@@ -32,18 +32,18 @@ class WebSocketSessionHandler(val session: WebSocketSession) {
     private var retryTimeout = 1L
     private var disconnectedProcessor: Consumer<WebSocketSession>? = null
 
-    fun handle(): Mono<Void> {
+    fun handle(): Flux<String> {
         return session.receive()
             .map { obj -> obj.payloadAsText }
             .doOnNext { t -> receiveProcessor.tryEmitNext(t) }
-            //.doOnComplete { connectionClosed().subscribe() }
+            .doOnComplete { connectionClosed().subscribe() }
             //.doOnCancel { connectionClosed().subscribe() }
             .doOnDiscard(Objects::class.java) { println("doOnDiscard $it") }
             .doOnTerminate { connectionClosed().subscribe() }
             .doOnRequest {
                 webSocketConnected = true
                 connectedProcessor.tryEmitValue(session)
-            }.then()
+            }.log()
     }
 
     fun connected(): Mono<WebSocketSession> {

@@ -105,7 +105,7 @@ object Util {
         return null
     }
 
-    fun getQueryMap(queryStr: String): Map<String, String> {
+    fun getQueryMap(queryStr: String): MutableMap<String, String> {
         val queryMap: MutableMap<String, String> = HashMap()
         if (StringUtils.hasLength(queryStr)) {
             val queryParam = queryStr.split("&")

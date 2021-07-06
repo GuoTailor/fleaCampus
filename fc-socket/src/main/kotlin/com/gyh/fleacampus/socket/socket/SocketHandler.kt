@@ -1,9 +1,6 @@
 package com.gyh.fleacampus.socket.socket
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.gyh.fleacampus.socket.common.NotifyOrder
@@ -17,9 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.reactive.socket.WebSocketHandler
 import org.springframework.web.reactive.socket.WebSocketSession
 import reactor.core.publisher.Mono
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
 
 /**
  * Created by gyh on 2020/5/19.
@@ -27,6 +21,7 @@ import java.time.ZoneId
 abstract class SocketHandler : WebSocketHandler {
     private val logger = LoggerFactory.getLogger(this.javaClass)
     private val json = jacksonObjectMapper()
+
     @Autowired
     private lateinit var dispatcherServlet: DispatcherServlet
 
@@ -38,10 +33,13 @@ abstract class SocketHandler : WebSocketHandler {
     override fun handle(session: WebSocketSession): Mono<Void> {
         val sessionHandler = WebSocketSessionHandler(session)
         val watchDog = WebSocketWatchDog().start(sessionHandler, 5000)
-        val queryMap = Util.getQueryMap(sessionHandler.session.handshakeInfo.uri.query)
-        val connect = sessionHandler.connected().flatMap { onConnect(queryMap, sessionHandler) }
+        val queryMap = Util.getQueryMap(sessionHandler.session.handshakeInfo.uri.query) // TODO 删除
+        val connect = sessionHandler.connected()
+            .flatMap { Util.getcurrentUser() }
+            .map { queryMap["id"] = it.id!!.toString(); logger.info(it.toString()); it }
+            .flatMap { onConnect(queryMap, sessionHandler) }
             .flatMap { sessionHandler.send(ResponseInfo.ok<Unit>("连接成功"), NotifyOrder.connectSucceed, true) }
-        sessionHandler.disconnected{ onDisconnected(queryMap, sessionHandler) }
+        sessionHandler.disconnected { onDisconnected(queryMap, sessionHandler) }
         val output = sessionHandler.receive()
             .map(::toServiceRequestInfo)
             .map(::printLog)
@@ -58,7 +56,7 @@ abstract class SocketHandler : WebSocketHandler {
                     NotifyOrder.errorNotify,
                     NotifyOrder.requestReq
                 ).getMono()
-            }.flatMap{ sessionHandler.send(it,true) }
+            }.flatMap { sessionHandler.send(it, true) }
             .doOnNext { logger.info("send> $it") }
             .then()
 
@@ -85,7 +83,7 @@ abstract class SocketHandler : WebSocketHandler {
     }
 
     private fun printLog(info: ServiceRequestInfo): ServiceRequestInfo {
-        if (info.order != "/echo" && info.order != "/ping")
+        if (info.order != "/echo")
             logger.info("接收到数据order:{} req:{} data:{}", info.order, info.req, info.body)
         return info
     }
