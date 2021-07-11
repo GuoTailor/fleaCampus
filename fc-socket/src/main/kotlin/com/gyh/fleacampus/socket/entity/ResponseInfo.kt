@@ -18,14 +18,17 @@ class ResponseInfo<T>(var code: Int, var msg: String) : Serializable {
     }
 
     companion object {
+        const val OK_CODE = 0
+        const val FAILED_CODE = 1
+
         @JvmStatic
         fun <T> ok(monoBody: Mono<T>): Mono<ResponseInfo<T>> {
-            return responseBodyCreate(monoBody, 0, "成功")
+            return responseBodyCreate(monoBody, OK_CODE, "成功")
         }
 
         @JvmStatic
         fun <T> ok(monoBody: Mono<T>, msg: String): Mono<ResponseInfo<T>> {
-            return responseBodyCreate(monoBody, 0, msg)
+            return responseBodyCreate(monoBody, OK_CODE, msg)
         }
 
         @JvmStatic
@@ -35,27 +38,27 @@ class ResponseInfo<T>(var code: Int, var msg: String) : Serializable {
 
         @JvmStatic
         fun <T> ok(msg: String, data: T): Mono<ResponseInfo<T>> {
-            return Mono.just(ResponseInfo(0, msg, data))
+            return Mono.just(ResponseInfo(OK_CODE, msg, data))
         }
 
         @JvmStatic
         fun <T> ok(msg: String): Mono<ResponseInfo<T>> {
-            return Mono.just(ResponseInfo(0, msg))
+            return Mono.just(ResponseInfo(OK_CODE, msg))
         }
 
         @JvmStatic
         fun failed(msg: String): Mono<ResponseInfo<Void>> {
-            return Mono.just(ResponseInfo(1, msg))
+            return Mono.just(ResponseInfo(FAILED_CODE, msg))
         }
 
         @JvmStatic
         fun <T> failed(monoBody: Mono<T>): Mono<ResponseInfo<T>> {
-            return responseBodyCreate(monoBody, 1, "失败")
+            return responseBodyCreate(monoBody, FAILED_CODE, "失败")
         }
 
         @JvmStatic
         fun <T> failed(monoBody: Mono<T>, msg: String): Mono<ResponseInfo<T>> {
-            return responseBodyCreate(monoBody, 1, msg)
+            return responseBodyCreate(monoBody, FAILED_CODE, msg)
         }
 
         @JvmStatic
@@ -71,7 +74,7 @@ class ResponseInfo<T>(var code: Int, var msg: String) : Serializable {
                 responseInfo
             }.onErrorResume {
                 it.printStackTrace()
-                val responseInfo = ResponseInfo<T>(1, it.message ?: "失败")
+                val responseInfo = ResponseInfo<T>(FAILED_CODE, it.message ?: "失败")
                 responseInfo.toMono()
             }
         }
@@ -80,7 +83,7 @@ class ResponseInfo<T>(var code: Int, var msg: String) : Serializable {
 
         @JvmStatic
         fun <T> ok(monoBody: Flux<T>): Mono<ResponseInfo<List<T>>> {
-            return responseBodyCreate(monoBody, 0, "成功")
+            return responseBodyCreate(monoBody, OK_CODE, "成功")
         }
 
         @JvmStatic
@@ -90,7 +93,7 @@ class ResponseInfo<T>(var code: Int, var msg: String) : Serializable {
                 responseInfo.data = data
                 responseInfo
             }.onErrorResume {
-                val responseInfo = ResponseInfo<List<T>>(1, it.message ?: "失败")
+                val responseInfo = ResponseInfo<List<T>>(FAILED_CODE, it.message ?: "失败")
                 responseInfo.toMono()
             }
         }

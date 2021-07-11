@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.gyh.fleacampus.common.getJavaTimeModule
 import com.gyh.fleacampus.common.toLocalDateTime
 import com.gyh.fleacampus.socket.common.Util
 import org.springframework.context.annotation.Bean
@@ -40,7 +41,7 @@ class ReactiveRedisConfiguration {
         om.registerModule(KotlinModule())
         val jackson2JsonRedisSerializer = GenericJackson2JsonRedisSerializer(om)
         val stringRedisSerializer = StringRedisSerializer()
-        om.registerModule(Util.getJavaTimeModule())
+        om.registerModule(getJavaTimeModule())
         val context = RedisSerializationContext.newSerializationContext<String, Any>()
             .key(stringRedisSerializer)             // key采用String的序列化方式
             .value(jackson2JsonRedisSerializer)     // value序列化方式采用jackson

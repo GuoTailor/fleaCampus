@@ -2,6 +2,7 @@ package com.gyh.fleacampus.socket.controller
 
 import com.gyh.fleacampus.socket.common.Util
 import com.gyh.fleacampus.socket.entity.GroupMessage
+import com.gyh.fleacampus.socket.entity.Message
 import com.gyh.fleacampus.socket.entity.ResponseInfo
 import com.gyh.fleacampus.socket.service.UserService
 import com.gyh.fleacampus.socket.socket.SocketSessionStore
@@ -26,14 +27,26 @@ class ChartController {
         return ResponseInfo.ok(Mono.just(mapOf("value" to value)))
     }
 
-    @RequestMapping("/group")
-    fun groupMassage(@RequestBody msg: GroupMessage): Mono<ResponseInfo<Unit>> {
-        return Util.getcurrentUser()
-            .map {
-                msg.userId = it.id
+    @RequestMapping("/message/group")
+    fun groupMessage(@RequestBody msg: GroupMessage): Mono<ResponseInfo<Unit>> {
+        return userService.loadUser()
+            .map { user ->
+                msg.userId = user.id
                 msg.date = LocalDateTime.now()
+                msg.headImg = user.photo
                 msg
             }.flatMap { SocketSessionStore.broadcastMag(it) }
+            .flatMap { ResponseInfo.ok("成功") }
+    }
+
+    @RequestMapping("/message/user")
+    fun userMessage(@RequestBody msg: Message): Mono<ResponseInfo<Unit>> {
+        return Util.getcurrentUser()
+            .map {
+                msg.userId = msg.toUid
+                msg.toUid = it.id
+                msg
+            }.flatMap { SocketSessionStore.sendMsgToUser(it.userId!!, it) }
             .flatMap { ResponseInfo.ok("成功") }
     }
 

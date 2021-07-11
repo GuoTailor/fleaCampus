@@ -1,7 +1,9 @@
 package com.gyh.fleacampus.core.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.gyh.fleacampus.common.JwtUtil
+import com.gyh.fleacampus.common.getJavaTimeModule
 import com.gyh.fleacampus.core.model.ResponseInfo
 import com.gyh.fleacampus.core.model.User
 import org.springframework.http.HttpMethod
@@ -21,7 +23,7 @@ import javax.servlet.http.HttpServletResponse
  */
 class WxLoginFilter(private val authManager: AuthenticationManager) :
     AbstractAuthenticationProcessingFilter(AntPathRequestMatcher("/login", HttpMethod.POST.name)) {
-    private val json = ObjectMapper()
+    private val json: ObjectMapper = jacksonObjectMapper().registerModule(getJavaTimeModule())
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
         val username = request.getParameter("username") ?: ""
@@ -43,10 +45,12 @@ class WxLoginFilter(private val authManager: AuthenticationManager) :
         authResult: Authentication
     ) {
         //super.successfulAuthentication(request, response, chain, authResult)
-        val user = authResult as UsernamePasswordAuthenticationToken
-        val token = JwtUtil.generateToken(user.principal as User)
+        val user = (authResult as UsernamePasswordAuthenticationToken).principal
+        val accessToken = JwtUtil.generateToken(user as User)
+        val expiresTime = System.currentTimeMillis() + JwtUtil.ttlMillis
+        val data = mapOf("accessToken" to accessToken, "expiresTime" to expiresTime, "userInfo" to user)
         response.contentType = "application/json;charset=utf-8"
-        response.writer.write(json.writeValueAsString(ResponseInfo.ok("成功", token)))
+        response.writer.write(json.writeValueAsString(ResponseInfo.ok("成功", data)))
     }
 
     override fun unsuccessfulAuthentication(

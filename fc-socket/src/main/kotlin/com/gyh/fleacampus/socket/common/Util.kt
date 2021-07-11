@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.gyh.fleacampus.common.BaseUser
+import com.gyh.fleacampus.common.getJavaTimeModule
 import com.gyh.fleacampus.common.toLocalDateTime
 import com.gyh.fleacampus.socket.entity.User
 import org.slf4j.LoggerFactory
@@ -27,23 +28,6 @@ object Util {
     private val logger = LoggerFactory.getLogger(Util::class.java)
 
     val json: ObjectMapper = jacksonObjectMapper().registerModule(getJavaTimeModule())
-
-    fun getJavaTimeModule(): JavaTimeModule {
-        val javaTimeModule = JavaTimeModule()
-        javaTimeModule.addSerializer(LocalDateTime::class.java, object : JsonSerializer<LocalDateTime>() {
-            override fun serialize(value: LocalDateTime, gen: JsonGenerator, serializers: SerializerProvider) {
-                val timestamp = value.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-                gen.writeNumber(timestamp)
-            }
-        })
-        javaTimeModule.addDeserializer(LocalDateTime::class.java, object : JsonDeserializer<LocalDateTime>() {
-            override fun deserialize(jsonParser: JsonParser, ctxt: DeserializationContext): LocalDateTime {
-                val timestamp = jsonParser.valueAsLong
-                return timestamp.toLocalDateTime()
-            }
-        })
-        return javaTimeModule
-    }
 
     fun Long.toLocalDateTime(): LocalDateTime =
         LocalDateTime.ofInstant(Instant.ofEpochMilli(this), ZoneId.systemDefault())

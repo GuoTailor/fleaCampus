@@ -16,6 +16,7 @@ interface PostMapper {
     fun incrBrowses(id: Int): Int
     fun incrLikes(id: Int): Int
     fun incrCollects(id: Int): Int
+    fun decrCollects(id: Int): Int
     fun decrComments(id: Int): Int
     fun minusComments(id: Int, postId: Int): Int
     fun updateByPrimaryKeySelective(record: Post): Int

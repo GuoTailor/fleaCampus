@@ -9,17 +9,15 @@ import java.time.LocalDateTime
 /**
  * Created by gyh on 2021/1/10
  */
-@Table("sc_room_message")
-data class Message(
+@Table("fc_user_message")
+open class Message(
     @Id
-    val id: Int?,
-    val userId: Int,
-    val msgType: Int,
-    val content: String,
-    val path: String,
-    val name: String,
-    val avatar: String,
-    val roomId: Int,
+    var id: Int? = null,
+    var userId: Int? = null,
+    var msgType: Int? = null,
+    var content: String? = null,
+    var path: String? = null,
+    var toUid: Int? = null,
     @get:JsonSerialize(using = CustomLocalDateTimeSerializer::class)
-    val date: LocalDateTime
+    var date: LocalDateTime? = null
 )

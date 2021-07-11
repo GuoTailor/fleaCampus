@@ -20,7 +20,9 @@ object JwtUtil {
     )
 
     //60秒     分    时   天
-    private const val ttlMillis = (60000 * 60 * 24 * 7).toLong()
+    const val ttlMillis = 30000L
+
+    private const val refreshTtl = 60000L
 
     /**
      * Tries to parse specified String as a JWT token. If successful, returns BaseUser object with username, id and role prefilled (extracted from token).
@@ -52,6 +54,31 @@ object JwtUtil {
      */
     @JvmStatic
     fun generateToken(u: BaseUser): String {
+        return generateToken(u, ttlMillis, key)
+    }
+
+    @JvmStatic
+    @Suppress("UNCHECKED_CAST")
+    fun generateRefreshToken(u: BaseUser, token: String?): String? {
+        val claims = try {
+            Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .body
+        } catch (e: ExpiredJwtException) {
+            e.claims
+        }
+        u.id = (claims["id"] as Int)
+        u.setUsername(claims["username"] as String)
+        u.setRoles(claims["roles"] as Collection<String>)
+        return if (claims.expiration > Date(System.currentTimeMillis() - refreshTtl)) {
+            generateToken(u)
+        } else null
+    }
+
+    @JvmStatic
+    fun generateToken(u: BaseUser, ttl: Long, key: Key): String {
         val claims = Jwts.claims()
         claims["id"] = u.id
         claims["username"] = u.getUsername()
@@ -59,7 +86,7 @@ object JwtUtil {
         val now = System.currentTimeMillis()
         return Jwts.builder()
             .setIssuedAt(Date(now))
-            .setExpiration(Date(now + ttlMillis))
+            .setExpiration(Date(now + ttl))
             .addClaims(claims)
             .signWith(key, SignatureAlgorithm.HS256)
             .compact()

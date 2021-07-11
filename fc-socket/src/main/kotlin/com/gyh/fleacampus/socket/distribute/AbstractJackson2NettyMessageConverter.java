@@ -1,22 +1,20 @@
 package com.gyh.fleacampus.socket.distribute;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.kotlin.KotlinModule;
-import com.gyh.fleacampus.socket.common.Util;
+import com.gyh.fleacampus.common.UtilKt;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.lang.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.concurrent.atomic.AtomicReference;
+
 
 /**
  * Abstract base class for Jackson based and content type independent
@@ -38,7 +36,7 @@ public class AbstractJackson2NettyMessageConverter {
 
     protected AbstractJackson2NettyMessageConverter(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-        this.objectMapper.registerModule(Util.INSTANCE.getJavaTimeModule());
+        this.objectMapper.registerModule(UtilKt.getJavaTimeModule());
         this.objectMapper.registerModule(new KotlinModule());
         this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }

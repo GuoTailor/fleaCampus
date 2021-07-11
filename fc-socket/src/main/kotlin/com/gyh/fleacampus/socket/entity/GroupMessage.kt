@@ -12,6 +12,7 @@ import java.time.LocalDateTime
 data class GroupMessage(
     var userId: Int? = null,
     val msgType: Int,
+    var headImg: String? = null,
     val content: String,
     val areaId: Int,
     @get:JsonSerialize(using = CustomLocalDateTimeSerializer::class)

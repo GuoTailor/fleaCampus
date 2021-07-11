@@ -3,8 +3,8 @@ package com.gyh.fleacampus.socket.socket
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.gyh.fleacampus.common.getJavaTimeModule
 import com.gyh.fleacampus.socket.common.NotifyOrder
-import com.gyh.fleacampus.socket.common.Util
 import com.gyh.fleacampus.socket.distribute.DispatcherServlet
 import com.gyh.fleacampus.socket.distribute.ServiceRequestInfo
 import com.gyh.fleacampus.socket.distribute.ServiceResponseInfo
@@ -27,56 +27,50 @@ abstract class SocketHandler : WebSocketHandler {
 
     init {
         json.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        json.registerModule(Util.getJavaTimeModule())
+        json.registerModule(getJavaTimeModule())
     }
 
     override fun handle(session: WebSocketSession): Mono<Void> {
-        val sessionHandler = WebSocketSessionHandler(session)
-        val watchDog = WebSocketWatchDog().start(sessionHandler, 5000)
-        val queryMap = Util.getQueryMap(sessionHandler.session.handshakeInfo.uri.query) // TODO 删除
-        val connect = sessionHandler.connected()
-            .flatMap { Util.getcurrentUser() }
-            .map { queryMap["id"] = it.id!!.toString(); logger.info(it.toString()); it }
-            .flatMap { onConnect(queryMap, sessionHandler) }
-            .flatMap { sessionHandler.send(ResponseInfo.ok<Unit>("连接成功"), NotifyOrder.connectSucceed, true) }
-        sessionHandler.disconnected { onDisconnected(queryMap, sessionHandler) }
-        val output = sessionHandler.receive()
+        val sessionHandler = SessionHandler()
+        sessionHandler.setSessionId(session.id)
+        val input = session.receive()
+            .map { it.payloadAsText }
             .map(::toServiceRequestInfo)
-            .map(::printLog)
-            .filter { it.order != "/ping" }    // 心跳就不回应
+            .filter { it.order != "/ping" }
             .filter { filterConfirm(it, sessionHandler) }
+            .doOnNext(::printLog)
             .flatMap {
                 val resp = ServiceResponseInfo(req = it.req, order = NotifyOrder.requestReq)
                 dispatcherServlet.doDispatch(it, resp)
-                resp.getMono()
-            }.onErrorResume {
-                it.printStackTrace()
-                ServiceResponseInfo(
-                    ResponseInfo.failed("错误 ${it.message}"),
-                    NotifyOrder.errorNotify,
-                    NotifyOrder.requestReq
-                ).getMono()
-            }.flatMap { sessionHandler.send(it, true) }
-            .doOnNext { logger.info("send> $it") }
-            .then()
-
-        return sessionHandler.handle()
-            .zipWith(connect)
-            .zipWith(watchDog)
-            .zipWith(output)
-            .then()
-            .doOnError { logger.error(it.message, it) }
+                resp.getMono().onErrorResume { e ->
+                    logger.info("错误 {}", e.message)
+                    ServiceResponseInfo(
+                        ResponseInfo.failed("错误 ${e.message}"),
+                        NotifyOrder.errorNotify,
+                        NotifyOrder.requestReq
+                    ).getMono()
+                }
+            }
+            .map { sessionHandler.send(it, true) }
+            .doOnTerminate { onDisconnected(sessionHandler); sessionHandler.tryEmitComplete() }
+            .then()//.log()
+        val output = session.send(sessionHandler.asFlux()
+            .map { json.writeValueAsString(it) }
+            .doOnError { logger.info("错误 {}", it.message) }
+            .map { session.textMessage(it) })
+        val onCon = onConnect(sessionHandler)
+        return Mono.zip(onCon, input, output).then()
     }
 
     /**
      * 当socket连接时
      */
-    abstract fun onConnect(queryMap: Map<String, String>, sessionHandler: WebSocketSessionHandler): Mono<*>
+    abstract fun onConnect(sessionHandler: SessionHandler): Mono<*>
 
     /**
      * 当socket断开连接时
      */
-    abstract fun onDisconnected(queryMap: Map<String, String>, sessionHandler: WebSocketSessionHandler)
+    abstract fun onDisconnected(sessionHandler: SessionHandler)
 
     private fun toServiceRequestInfo(data: String): ServiceRequestInfo {
         return this.json.readValue(data)
@@ -88,7 +82,7 @@ abstract class SocketHandler : WebSocketHandler {
         return info
     }
 
-    private fun filterConfirm(info: ServiceRequestInfo, sessionHandler: WebSocketSessionHandler): Boolean {
+    private fun filterConfirm(info: ServiceRequestInfo, sessionHandler: SessionHandler): Boolean {
         if (info.order == "/ok") {
             sessionHandler.reqIncrement(info.req)
             return false

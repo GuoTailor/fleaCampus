@@ -25,6 +25,11 @@ class UserService {
             .flatMap { userDao.findById(it.id!!) }
     }
 
+    fun findPhotoById(): Mono<String> {
+        return loadUser()
+            .map { it.photo ?: "" }
+    }
+
     fun findArea(id: Int): Mono<Area> {
         return areaDao.findById(id).switchIfEmpty(Mono.error(IllegalAccessException("该用户没有加入任圈子")))
     }

@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.gyh.fleacampus.core.mapper.PostMapper">
-    <resultMap id="BaseResultMap" type="com.gyh.fleacampus.core.model.Post">
+<mapper namespace="com.gyh.fleacampus.core.mapper.DealMapper">
+    <resultMap id="BaseResultMap" type="com.gyh.fleacampus.core.model.Deal">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="user_id" jdbcType="INTEGER" property="userId"/>
         <result column="title" jdbcType="VARCHAR" property="title"/>
         <result column="content" jdbcType="VARCHAR" property="content"/>
         <result column="state" jdbcType="VARCHAR" property="state"/>
+        <result column="price" jdbcType="NUMERIC" property="price"/>
+        <result column="original_price" jdbcType="NUMERIC" property="originalPrice"/>
+        <result column="want" jdbcType="INTEGER" property="want"/>
         <result column="release_time" jdbcType="TIMESTAMP" property="releaseTime"/>
         <result column="type" jdbcType="VARCHAR" property="type"/>
         <result column="likes" jdbcType="INTEGER" property="likes"/>
@@ -21,64 +24,71 @@
         <result column="browses" jdbcType="INTEGER" property="browses"/>
     </resultMap>
 
-    <resultMap id="postResponse" type="com.gyh.fleacampus.core.model.view.response.PostResponse"
+    <resultMap id="postResponse" type="com.gyh.fleacampus.core.model.view.response.DealResponse"
                extends="BaseResultMap">
         <result property="username" column="username"/>
         <result property="photo" column="photo"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, user_id, title, "content", "state", release_time, "type", likes, "comments", collects,
-    flag, top_order, create_time, "location", imgs,  coordinate, browses
+        id, user_id, title, content, "state", price, original_price, want, release_time,
+    "type", likes, comments, collects, flag, top_order, create_time, "location", imgs, 
+    coordinate, browses
     </sql>
     <select id="findAll" resultMap="postResponse">
-        select p.id,
-               p.user_id,
-               p.title,
-               p."content",
-               p."state",
-               p.release_time,
-               p."type",
-               p.likes,
-               p."comments",
-               p.collects,
-               p.flag,
-               p.top_order,
-               p.create_time,
-               p."location",
-               p.imgs,
-               p.coordinate,
-               p.browses,
+        select d.id,
+               d.user_id,
+               d.title,
+               d.content,
+               d."state",
+               d.price,
+               d.original_price,
+               d.want,
+               d.release_time,
+               d."type",
+               d.likes,
+               d.comments,
+               d.collects,
+               d.flag,
+               d.top_order,
+               d.create_time,
+               d."location",
+               d.imgs,
+               d.coordinate,
+               d.browses,
                u.username,
                u.photo
-        from fc_post p
-                 left join fc_user u on u.id = p.user_id
+        from fc_deal d
+                 left join fc_user u on u.id = d.user_id
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select d.id,
+               d.user_id,
+               d.title,
+               d.content,
+               d."state",
+               d.price,
+               d.original_price,
+               d.want,
+               d.release_time,
+               d."type",
+               d.likes,
+               d.comments,
+               d.collects,
+               d.flag,
+               d.top_order,
+               d.create_time,
+               d."location",
+               d.imgs,
+               d.coordinate,
+               d.browses,
+               u.username,
+               u.photo
+        from fc_deal d
+                 left join fc_user u on u.id = d.user_id
+        where d.id = #{id,jdbcType=INTEGER}
     </select>
 
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="postResponse">
-        select p.id,
-               p.user_id,
-               p.title,
-               p."content",
-               p."state",
-               p.release_time,
-               p."type",
-               p.likes,
-               p."comments",
-               p.collects,
-               p.flag,
-               p.top_order,
-               p.create_time,
-               p."location",
-               p.imgs,
-               p.coordinate,
-               p.browses,
-               u.username,
-               u.photo
-        from fc_post p
-                 left join fc_user u on u.id = p.user_id
-        where p.id = #{id,jdbcType=INTEGER}
-    </select>
     <update id="incrComments" parameterType="int">
         update fc_post
         set comments = comments + 1
@@ -116,32 +126,37 @@
     </update>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete
-        from "fc_post"
+        from "fc_deal"
         where id = #{id,jdbcType=INTEGER}
     </delete>
-    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.core.model.Post"
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.core.model.Deal"
             useGeneratedKeys="true">
-        insert into "fc_post" (user_id, title, content,
-                               "state", release_time, "type",
+        insert into "fc_deal" (user_id, title, content,
+                               "state", price, original_price,
+                               want, release_time, "type",
                                likes, comments, collects,
                                flag, top_order, create_time,
                                "location", imgs, coordinate,
                                browses)
         values (#{userId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
-                #{state,jdbcType=VARCHAR}, #{releaseTime,jdbcType=TIMESTAMP}, #{type,jdbcType=VARCHAR},
+                #{state,jdbcType=VARCHAR}, #{price,jdbcType=NUMERIC}, #{originalPrice,jdbcType=NUMERIC},
+                #{want,jdbcType=INTEGER}, #{releaseTime,jdbcType=TIMESTAMP}, #{type,jdbcType=VARCHAR},
                 #{likes,jdbcType=INTEGER}, #{comments,jdbcType=INTEGER}, #{collects,jdbcType=INTEGER},
                 #{flag,jdbcType=INTEGER}, #{topOrder,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
                 #{location,jdbcType=VARCHAR}, #{imgs,jdbcType=VARCHAR}, #{coordinate,jdbcType=VARCHAR},
                 #{browses,jdbcType=INTEGER})
     </insert>
-    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.core.model.Post"
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.core.model.Deal"
             useGeneratedKeys="true">
-        insert into "fc_post"
+        insert into "fc_deal"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="userId != null">user_id,</if>
             <if test="title != null">title,</if>
             <if test="content != null">content,</if>
             <if test="state != null">"state",</if>
+            <if test="price != null">price,</if>
+            <if test="originalPrice != null">original_price,</if>
+            <if test="want != null">want,</if>
             <if test="releaseTime != null">release_time,</if>
             <if test="type != null">"type",</if>
             <if test="likes != null">likes,</if>
@@ -160,6 +175,9 @@
             <if test="title != null">#{title,jdbcType=VARCHAR},</if>
             <if test="content != null">#{content,jdbcType=VARCHAR},</if>
             <if test="state != null">#{state,jdbcType=VARCHAR},</if>
+            <if test="price != null">#{price,jdbcType=NUMERIC},</if>
+            <if test="originalPrice != null">#{originalPrice,jdbcType=NUMERIC},</if>
+            <if test="want != null">#{want,jdbcType=INTEGER},</if>
             <if test="releaseTime != null">#{releaseTime,jdbcType=TIMESTAMP},</if>
             <if test="type != null">#{type,jdbcType=VARCHAR},</if>
             <if test="likes != null">#{likes,jdbcType=INTEGER},</if>
@@ -174,13 +192,16 @@
             <if test="browses != null">#{browses,jdbcType=INTEGER},</if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.core.model.Post">
-        update "fc_post"
+    <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.core.model.Deal">
+        update "fc_deal"
         <set>
             <if test="userId != null">user_id = #{userId,jdbcType=INTEGER},</if>
             <if test="title != null">title = #{title,jdbcType=VARCHAR},</if>
             <if test="content != null">content = #{content,jdbcType=VARCHAR},</if>
             <if test="state != null">"state" = #{state,jdbcType=VARCHAR},</if>
+            <if test="price != null">price = #{price,jdbcType=NUMERIC},</if>
+            <if test="originalPrice != null">original_price = #{originalPrice,jdbcType=NUMERIC},</if>
+            <if test="want != null">want = #{want,jdbcType=INTEGER},</if>
             <if test="releaseTime != null">release_time = #{releaseTime,jdbcType=TIMESTAMP},</if>
             <if test="type != null">"type" = #{type,jdbcType=VARCHAR},</if>
             <if test="likes != null">likes = #{likes,jdbcType=INTEGER},</if>
@@ -196,23 +217,27 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.gyh.fleacampus.core.model.Post">
-        update "fc_post"
-        set user_id      = #{userId,jdbcType=INTEGER},
-            title        = #{title,jdbcType=VARCHAR},
-            content      = #{content,jdbcType=VARCHAR},
-            "state"      = #{state,jdbcType=VARCHAR},
-            release_time = #{releaseTime,jdbcType=TIMESTAMP},
-            "type"       = #{type,jdbcType=VARCHAR},
-            likes        = #{likes,jdbcType=INTEGER},
-            comments     = #{comments,jdbcType=INTEGER},
-            collects     = #{collects,jdbcType=INTEGER},
-            flag         = #{flag,jdbcType=INTEGER},
-            top_order    = #{topOrder,jdbcType=INTEGER},
-            create_time  = #{createTime,jdbcType=TIMESTAMP},
-            "location"   = #{location,jdbcType=VARCHAR},
-            imgs         = #{imgs,jdbcType=VARCHAR},
-            coordinate   = #{coordinate,jdbcType=VARCHAR},
-            browses      = #{browses,jdbcType=INTEGER}
-        where id = #{id,jdbcType=INTEGER}    </update>
+    <update id="updateByPrimaryKey" parameterType="com.gyh.fleacampus.core.model.Deal">
+        update "fc_deal"
+        set user_id        = #{userId,jdbcType=INTEGER},
+            title          = #{title,jdbcType=VARCHAR},
+            content        = #{content,jdbcType=VARCHAR},
+            "state"        = #{state,jdbcType=VARCHAR},
+            price          = #{price,jdbcType=NUMERIC},
+            original_price = #{originalPrice,jdbcType=NUMERIC},
+            want           = #{want,jdbcType=INTEGER},
+            release_time   = #{releaseTime,jdbcType=TIMESTAMP},
+            "type"         = #{type,jdbcType=VARCHAR},
+            likes          = #{likes,jdbcType=INTEGER},
+            comments       = #{comments,jdbcType=INTEGER},
+            collects       = #{collects,jdbcType=INTEGER},
+            flag           = #{flag,jdbcType=INTEGER},
+            top_order      = #{topOrder,jdbcType=INTEGER},
+            create_time    = #{createTime,jdbcType=TIMESTAMP},
+            "location"     = #{location,jdbcType=VARCHAR},
+            imgs           = #{imgs,jdbcType=VARCHAR},
+            coordinate     = #{coordinate,jdbcType=VARCHAR},
+            browses        = #{browses,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
 </mapper>

@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import reactor.core.publisher.Mono
 
 /**
- * Created by gyh on 2020/4/5.
+ * Created by gyh on 2021/7/5.
  */
 @WebSocketMapping("/room")
 class RoomSocketHandler : SocketHandler() {
@@ -18,20 +18,19 @@ class RoomSocketHandler : SocketHandler() {
     @Autowired
     lateinit var userService: UserService
 
-    override fun onConnect(queryMap: Map<String, String>, sessionHandler: WebSocketSessionHandler): Mono<*> {
+    override fun onConnect(sessionHandler: SessionHandler): Mono<*> {
         return userService.loadUser()
             .flatMap {
-                if (it.areaId == null) Mono.error(IllegalAccessException("该用户没有加入任圈子"))
-                else userService.findArea(it.areaId!!)
-                    .flatMap { area -> SocketSessionStore.addUser(sessionHandler, it.id!!, area.id!!) }
+                sessionHandler.dataMap["id"] = it.id!!
+                SocketSessionStore.addUser(sessionHandler, it.id!!, it.areaId)
             }.onErrorResume {
+                it.printStackTrace()
                 sessionHandler.send(ResponseInfo.failed("错误: ${it.message}"), NotifyOrder.errorNotify)
-                    .doOnNext { msg -> logger.info("send $msg") }.flatMap { Mono.empty() }
             }
     }
 
-    override fun onDisconnected(queryMap: Map<String, String>, sessionHandler: WebSocketSessionHandler) {
-        val id = queryMap["id"]?.toInt()
+    override fun onDisconnected(sessionHandler: SessionHandler) {
+        val id = sessionHandler.dataMap["id"] as Int
         SocketSessionStore.removeUser(id)
     }
 
