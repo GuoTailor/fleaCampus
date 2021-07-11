@@ -15,7 +15,7 @@ object NotifyOrder {
     const val notifyRoomClose = -6      // 房间关闭通知
     const val notifyTopThree = -5       // 前三档报价通知
     const val notifyFirstOrder = -4     // 最新一笔报价通知
-    const val userMsg = -3   // 房间人数变化通知
+    const val userMsg = -3              // 私聊消息通知
     const val groupMag = -2             // 群消息通知
     const val errorNotify = -1          // 错误通知
     const val requestReq = 0            // 正常响应

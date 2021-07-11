@@ -20,9 +20,9 @@ object JwtUtil {
     )
 
     //60秒     分    时   天
-    const val ttlMillis = 30000L
+    const val ttlMillis = 60000L * 60 * 24 * 3
 
-    private const val refreshTtl = 60000L
+    private const val refreshTtl = 60000L * 60 * 24 * 30
 
     /**
      * Tries to parse specified String as a JWT token. If successful, returns BaseUser object with username, id and role prefilled (extracted from token).

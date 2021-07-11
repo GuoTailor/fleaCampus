@@ -1,0 +1,17 @@
+{
+  "name": "api文档",
+  "version": "0.0.1",
+  "description": "找有app socket通信文档",
+  "title": "找有app socket通信文档",
+  "url": "http://47.107.178.147:82/room",
+  "sampleUrl": "http://47.107.178.147:82/room",
+
+  "header": {
+    "title": "找有 socket通信文档说明",
+    "filename": "header.md"
+  },
+  "template": {
+  	"withCompare": true,
+  	"withGenerator": true
+  }
+}

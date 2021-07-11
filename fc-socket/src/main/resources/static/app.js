@@ -11,8 +11,7 @@ function connect() {
     var host = window.location.host;
     log(host.toString());
     var path = document.getElementById('path').value;
-    var url = "ws://" + host.toString() + path
-    var roomId = document.getElementById('roomId').value;
+    var url = "ws://" + host.toString() + path;
     ws = new WebSocket(url + "?bearer=" + token);
 
     ws.onopen = function () {

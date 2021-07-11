@@ -8,6 +8,10 @@ import java.time.LocalDateTime
 
 /**
  * Created by gyh on 2021/1/10
+ * @apiDefine Message
+ * @apiParam {Int} msgType 消息类型，暂时还未定义，预计有图片消息，文字消息，语言消息，现在瞎几把传，没做区分
+ * @apiParam {String} content 消息内容
+ * @apiParam {Int} toUid 对方用户id
  */
 @Table("fc_user_message")
 open class Message(
@@ -16,7 +20,6 @@ open class Message(
     var userId: Int? = null,
     var msgType: Int? = null,
     var content: String? = null,
-    var path: String? = null,
     var toUid: Int? = null,
     @get:JsonSerialize(using = CustomLocalDateTimeSerializer::class)
     var date: LocalDateTime? = null

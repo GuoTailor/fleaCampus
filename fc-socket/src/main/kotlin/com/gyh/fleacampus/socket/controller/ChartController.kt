@@ -22,11 +22,35 @@ class ChartController {
     @Autowired
     lateinit var userService: UserService
 
+    /**
+     * @api {connect} /echo 测试接口
+     * @apiDescription  测试接口，该接口的[value]字段传什么就放回什么
+     * @apiName echo
+     * @apiParam {String} value 任意字符
+     * @apiVersion 0.0.1
+     * @apiParamExample {json} 请求-例子:
+     * {"order":"/echo", "body": {"value": "123"}, "req":12}
+     * @apiSuccessExample {json} 成功返回:
+     * {"body":{"code":0,"msg":"成功","data":{"value":"123"}},"req":12,"order":0}
+     * @apiGroup Socket
+     * @apiPermission user
+     */
     @RequestMapping("/echo")
     fun echo(@RequestParam value: String): Mono<ResponseInfo<Map<String, String>>> {
         return ResponseInfo.ok(Mono.just(mapOf("value" to value)))
     }
 
+    /**
+     * @api {connect} /message/group 发送群消息
+     * @apiDescription 发送群消息
+     * @apiName groupMessage
+     * @apiUse GroupMessage
+     * @apiVersion 0.0.1
+     * @apiSuccessExample {json} 成功返回:
+     * {"body":{"code":0,"msg":"成功","data":null},"req":12,"order":0}
+     * @apiGroup Socket
+     * @apiPermission user
+     */
     @RequestMapping("/message/group")
     fun groupMessage(@RequestBody msg: GroupMessage): Mono<ResponseInfo<Unit>> {
         return userService.loadUser()
@@ -39,6 +63,17 @@ class ChartController {
             .flatMap { ResponseInfo.ok("成功") }
     }
 
+    /**
+     * @api {connect} /message/user 私发消息
+     * @apiDescription 私发消息
+     * @apiName userMessage
+     * @apiUse Message
+     * @apiVersion 0.0.1
+     * @apiSuccessExample {json} 成功返回:
+     * {"body":{"code":0,"msg":"成功","data":null},"req":12,"order":0}
+     * @apiGroup Socket
+     * @apiPermission user
+     */
     @RequestMapping("/message/user")
     fun userMessage(@RequestBody msg: Message): Mono<ResponseInfo<Unit>> {
         return Util.getcurrentUser()

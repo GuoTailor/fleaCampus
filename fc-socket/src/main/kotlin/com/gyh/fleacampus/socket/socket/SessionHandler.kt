@@ -1,6 +1,5 @@
 package com.gyh.fleacampus.socket.socket
 
-import com.gyh.fleacampus.socket.common.Util
 import com.gyh.fleacampus.socket.distribute.ServiceResponseInfo
 import org.slf4j.LoggerFactory
 import reactor.core.Disposable
@@ -24,31 +23,31 @@ class SessionHandler {
     private val source: Sinks.Many<ServiceResponseInfo.DataResponse> = Sinks.many().multicast().onBackpressureBuffer()
     val dataMap = HashMap<String, Any>()
 
+    /**
+     * 被动回应调用
+     */
     fun send(message: ServiceResponseInfo.DataResponse, confirm: Boolean = false) {
         if (confirm) {
-            val processor = Sinks.many().multicast().onBackpressureBuffer<Int>(8)
             val cycle = Flux.interval(Duration.ofSeconds(retryTimeout))
                 .map {
-                    if (it > retryCount) reqIncrement(message.req)
-                    processor.tryEmitNext(it.toInt() + 1)
+                    if (false != responseMap[message.req]?.ack || it >= retryCount) {
+                        val remove = responseMap.remove(message.req)
+                        remove?.cycle?.dispose()
+                        reqIncrement(message.req)
+                        Mono.just(message)
+                    } else {
+                        source.tryEmitNext(message)
+                    }
                 }.subscribeOn(Schedulers.boundedElastic())
                 .subscribe()
-            val info = SendInfo(message.req, processor, cycle)
-            responseMap[message.req] = info
-            processor.tryEmitNext(0)
-            processor.asFlux().map {
-                if (false != responseMap[message.req]?.ack || it > retryCount) {
-                    responseMap.remove(message.req)
-                    cycle.dispose()
-                    processor.tryEmitComplete()
-                    Mono.just(message)
-                } else source.tryEmitNext(message)
-            }.subscribeOn(Schedulers.boundedElastic())
-                .subscribe()
+            responseMap[message.req] = SendInfo(message.req, cycle)
         }
         source.tryEmitNext(message)
     }
 
+    /**
+     * 主动发送请调用该方法
+     */
     fun <T> send(data: Mono<T>, order: Int, confirm: Boolean = false): Mono<Unit> {
         val req = responseCount.getAndIncrement()
         return ServiceResponseInfo(data, req, order).getMono()
@@ -76,7 +75,6 @@ class SessionHandler {
         if (value != null) {
             value.ack = true
             value.cycle.dispose()
-            value.processor.tryEmitComplete()
             logger.info("取消 {} ", req)
             responseMap.remove(req)
         }
@@ -84,7 +82,6 @@ class SessionHandler {
 
     data class SendInfo(
         val req: Int,
-        val processor: Sinks.Many<Int>,
         val cycle: Disposable,
         var ack: Boolean = false
     )
