@@ -22,4 +22,5 @@ open class Deal(
      * 想要
      */
     var want: Int? = null,
-): Post()
+    imgs: String? = null,
+): Post(imgs = imgs)

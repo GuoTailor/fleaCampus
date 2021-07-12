@@ -58,7 +58,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
                 "/common/**", "/login",
                 "/swagger-ui/*", "/swagger-resources/**", "/v3/api-docs/**", "/webjars/**",
                 "/**/*.html", "/**/*.js", "/**/*.css", "/**/*.png", "/**/*.ico", "/static/**",
-                "/post/all", "/get/accesstoken",
+                "/post/all", "/post", "/get/accesstoken", "/deal/all", "/deal",
             ).permitAll()
             .antMatchers(HttpMethod.GET, "/post").permitAll()
             .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()

@@ -7,6 +7,8 @@ import com.gyh.fleacampus.core.service.UserService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
@@ -21,6 +23,7 @@ import java.util.*
 @Tag(name = "通用")
 @RestController
 class CommonController(val userService: UserService) {
+    val logger: Logger = LoggerFactory.getLogger(this.javaClass)
     @Value("\${fileUploadPath}")
     lateinit var fileUploadPath: String
 
@@ -47,9 +50,18 @@ class CommonController(val userService: UserService) {
                 if (!result) return ResponseInfo.failed("文件创建失败")
             }
             file.transferTo(dest.toPath())
+            logger.info(dest.path)
             return ResponseInfo.ok(dest.path)
         }
         return ResponseInfo.failed("文件为空")
+    }
+
+    @Operation(summary = "删除文件", security = [SecurityRequirement(name = "Authorization")])
+    @DeleteMapping("/file")
+    fun deleteFile(@RequestParam path: String): ResponseInfo<Unit> {
+        val dest = File(path)
+        dest.delete()
+        return ResponseInfo.ok()
     }
 
     @Operation(summary = "注册")

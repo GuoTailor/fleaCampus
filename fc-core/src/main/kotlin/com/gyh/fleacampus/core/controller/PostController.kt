@@ -40,7 +40,7 @@ class PostController {
     fun findAll(
         @Parameter(description = "第几页，默认从1开始") @RequestParam(required = false) pageNum: Int?,
         @Parameter(description = "每页数量，默认30") @RequestParam(required = false) pageSize: Int?
-    ): ResponseInfo<PageView<PostResponse>> {
+    ): ResponseInfo<PageView<in PostResponse>> {
         return ResponseInfo.ok(postService.findByPage(pageNum ?: 1, pageSize ?: 30))
     }
 

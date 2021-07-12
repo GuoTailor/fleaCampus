@@ -13,13 +13,17 @@ spring:
       max-file-size: 1000MB
   application:
     name: fc-core
+  web:
+    resources:
+      static-locations: file:file/, classpath:/static
 
 logging:
   level:
     com:
       gyh:
         fleacampus:
-          mapper: DEBUG
+          core:
+            mapper: DEBUG
 
 mybatis:
   mapper-locations: classpath:/mapper/*Mapper.xml
