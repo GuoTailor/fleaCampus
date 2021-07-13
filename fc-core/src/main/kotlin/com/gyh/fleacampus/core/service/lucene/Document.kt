@@ -26,7 +26,7 @@ import kotlin.io.path.Path
 class Document {
     @Value("\${fileUploadPath}")
     private lateinit var rootPath: String
-    private val directory: Directory by lazy { FSDirectory.open(Path(rootPath + File.separator + "indedx")) }
+    private val directory: Directory by lazy { FSDirectory.open(Path(rootPath + File.separator + "index")) }
     private val indexWriter: IndexWriter by lazy {
         val config = SegmenterConfig()
         //创建默认单例词库实现，并且按照config配置加载词库

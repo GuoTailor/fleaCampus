@@ -26,6 +26,8 @@ class CommonController(val userService: UserService) {
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
     @Value("\${fileUploadPath}")
     lateinit var fileUploadPath: String
+    val imgPath = "imgs"
+    val directory : String by lazy { fileUploadPath + File.separator + imgPath }
 
     @Operation(summary = "test", security = [SecurityRequirement(name = "Authorization")])
     @GetMapping("/common")
@@ -44,14 +46,14 @@ class CommonController(val userService: UserService) {
                 if (it.lastIndex > 0) "." + it[it.lastIndex] else null
             }
             val fileName = userId.toString() + File.separator + UUID.randomUUID().toString() + (suffix ?: "")
-            val dest = File("$fileUploadPath${File.separator}$fileName")
+            val dest = File("$directory${File.separator}$fileName")
             if (!dest.parentFile.exists()) {
                 val result = dest.parentFile.mkdirs()  //新建文件夹
                 if (!result) return ResponseInfo.failed("文件创建失败")
             }
             file.transferTo(dest.toPath())
             logger.info(dest.path)
-            return ResponseInfo.ok(dest.path)
+            return ResponseInfo.ok(imgPath + File.separator + fileName)
         }
         return ResponseInfo.failed("文件为空")
     }
@@ -59,7 +61,7 @@ class CommonController(val userService: UserService) {
     @Operation(summary = "删除文件", security = [SecurityRequirement(name = "Authorization")])
     @DeleteMapping("/file")
     fun deleteFile(@RequestParam path: String): ResponseInfo<Unit> {
-        val dest = File(path)
+        val dest = File(fileUploadPath + File.separator + path)
         dest.delete()
         return ResponseInfo.ok()
     }

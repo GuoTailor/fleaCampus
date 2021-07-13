@@ -50,4 +50,4 @@ springdoc:
       enabled: true
   show-actuator: true
 
-fileUploadPath: file/
+fileUploadPath: file
