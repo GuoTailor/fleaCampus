@@ -33,9 +33,9 @@ open class Post(
     var content: String? = null,
 
     /**
-     * 状态 draft：草稿，normal：发布，timing：定时发布
+     * 状态 normal：发布，timing：定时发布
      */
-    @Schema(description = "状态 DRAFT：草稿，NORMAL：发布，TIMING：定时发布")
+    @Schema(description = "状态 NORMAL：发布，TIMING：定时发布")
     var state: String? = null,
 
     /**

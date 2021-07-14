@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.http.HttpMethod
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl
+import org.springframework.security.authentication.InsufficientAuthenticationException
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
@@ -66,7 +67,11 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
             .exceptionHandling()
             .authenticationEntryPoint { _, response, ex ->
                 response.contentType = "application/json;charset=utf-8"
-                response.writer.write(objectMapper.writeValueAsString(ResponseInfo.failed<String>(ex.message)))
+                if (ex is InsufficientAuthenticationException) {
+                    response.writer.write(objectMapper.writeValueAsString(ResponseInfo(ResponseInfo.ACCESS_TOKEN_EXPIRES,ex.message, null)))
+                } else {
+                    response.writer.write(objectMapper.writeValueAsString(ResponseInfo.failed<String>(ex.message)))
+                }
             }.and()
             .addFilterBefore(WxLoginFilter(authenticationManager()), UsernamePasswordAuthenticationFilter::class.java)
             .addFilter(JWTAuthenticationFilter(authenticationManager()))

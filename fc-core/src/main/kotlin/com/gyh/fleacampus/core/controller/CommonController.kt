@@ -24,22 +24,30 @@ import java.util.*
 @RestController
 class CommonController(val userService: UserService) {
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
+
     @Value("\${fileUploadPath}")
     lateinit var fileUploadPath: String
     val imgPath = "imgs"
-    val directory : String by lazy { fileUploadPath + File.separator + imgPath }
-
-    @Operation(summary = "test", security = [SecurityRequirement(name = "Authorization")])
-    @GetMapping("/common")
-    fun test(): ResponseInfo<User> {
-        val user = User()
-        user.createTime = LocalDateTime.now()
-        return ResponseInfo.ok(user)
-    }
+    val directory: String by lazy { fileUploadPath + File.separator + imgPath }
 
     @Operation(summary = "文件上传", security = [SecurityRequirement(name = "Authorization")])
     @PostMapping("/upload", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun uploadFile(@RequestPart("file") file: MultipartFile): ResponseInfo<String> {
+        if (saveFile(file).second != "failed") return ResponseInfo.ok(saveFile(file).second)
+        return ResponseInfo.failed("文件为空")
+    }
+
+    @Operation(summary = "批量文件上传", security = [SecurityRequirement(name = "Authorization")])
+    @PostMapping("/uploads", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    fun uploadFiles(@RequestPart("file") file: Array<MultipartFile>): ResponseInfo<List<Pair<String?, String>>> {
+        if (file.isNotEmpty()) {
+            val map = file.map { f -> saveFile(f) }
+            return ResponseInfo.ok(map)
+        }
+        return ResponseInfo.failed("文件为空")
+    }
+
+    fun saveFile(file: MultipartFile): Pair<String?, String> {
         val userId = getCurrentUser().id
         if (!file.isEmpty) {
             val suffix = file.originalFilename?.split(".")?.let {
@@ -49,13 +57,13 @@ class CommonController(val userService: UserService) {
             val dest = File("$directory${File.separator}$fileName")
             if (!dest.parentFile.exists()) {
                 val result = dest.parentFile.mkdirs()  //新建文件夹
-                if (!result) return ResponseInfo.failed("文件创建失败")
+                if (!result) file.originalFilename to "failed"
             }
             file.transferTo(dest.toPath())
             logger.info(dest.path)
-            return ResponseInfo.ok(imgPath + File.separator + fileName)
+            return file.originalFilename to (imgPath + File.separator + fileName)
         }
-        return ResponseInfo.failed("文件为空")
+        return file.originalFilename to "failed"
     }
 
     @Operation(summary = "删除文件", security = [SecurityRequirement(name = "Authorization")])

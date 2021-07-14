@@ -50,9 +50,12 @@
                p.coordinate,
                p.browses,
                u.username,
-               u.photo
+               u.photo,
+               case when fl is null then 0 else 1 end as liked
         from fc_post p
                  left join fc_user u on u.id = p.user_id
+                 left join fc_like fl on p.id = fl.post_id and fl.user_id = #{userId}
+        order by p.create_time DESC
     </select>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="postResponse">
@@ -74,9 +77,11 @@
                p.coordinate,
                p.browses,
                u.username,
-               u.photo
+               u.photo,
+               case when fl is null then 0 else 1 end as liked
         from fc_post p
                  left join fc_user u on u.id = p.user_id
+                 left join fc_like fl on p.id = fl.post_id and fl.user_id = #{userId}
         where p.id = #{id,jdbcType=INTEGER}
     </select>
     <update id="incrComments" parameterType="int">

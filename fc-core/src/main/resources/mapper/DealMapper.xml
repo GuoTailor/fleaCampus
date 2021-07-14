@@ -57,9 +57,12 @@
                d.coordinate,
                d.browses,
                u.username,
-               u.photo
+               u.photo,
+               case when fl is null then 0 else 1 end as liked
         from fc_deal d
                  left join fc_user u on u.id = d.user_id
+                 left join fc_like fl on d.id = fl.post_id and fl.user_id = #{userId}
+        order by d.create_time DESC
     </select>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select d.id,
@@ -83,9 +86,11 @@
                d.coordinate,
                d.browses,
                u.username,
-               u.photo
+               u.photo,
+               case when fl is null then 0 else 1 end as liked
         from fc_deal d
                  left join fc_user u on u.id = d.user_id
+                 left join fc_like fl on d.id = fl.post_id and fl.user_id = #{userId}
         where d.id = #{id,jdbcType=INTEGER}
     </select>
 

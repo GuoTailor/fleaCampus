@@ -45,6 +45,7 @@
                  left join fc_user fu on c.user_id = fu.id
                  left join fc_like fl on c.id = fl.comment_id and fl.user_id = #{userId}
         where c.id = #{id,jdbcType=INTEGER}
+        order by c.create_time DESC
     </select>
 
     <select id="findByPage" resultMap="commentResponse">
@@ -65,6 +66,7 @@
                  left join fc_user fu on c.user_id = fu.id
                  left join fc_like fl on c.id = fl.comment_id and fl.user_id = #{userId}
         where c.post_id = #{postId}
+        order by c.create_time DESC
     </select>
     <update id="incrReplys" parameterType="int">
         update fc_comment

@@ -13,6 +13,8 @@ open class PostResponse(
     var photo: String? = null,
     @Schema(description = "图片列表")
     var images: List<String>? = null,
+    @Schema(defaultValue = "0:没有点赞，1:点赞")
+    var liked: Int? = null,
 ): Post() {
 
     fun imgToImageList(): PostResponse {
