@@ -4,6 +4,7 @@ import com.gyh.fleacampus.socket.common.Util
 import com.gyh.fleacampus.socket.entity.GroupMessage
 import com.gyh.fleacampus.socket.entity.Message
 import com.gyh.fleacampus.socket.entity.ResponseInfo
+import com.gyh.fleacampus.socket.service.RedisUtil
 import com.gyh.fleacampus.socket.service.UserService
 import com.gyh.fleacampus.socket.socket.SocketSessionStore
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,6 +22,9 @@ import java.time.LocalDateTime
 class ChartController {
     @Autowired
     lateinit var userService: UserService
+
+    @Autowired
+    lateinit var redisUtil: RedisUtil
 
     /**
      * @api {connect} /echo 测试接口
@@ -60,7 +64,30 @@ class ChartController {
                 msg.headImg = user.photo
                 msg
             }.flatMap { SocketSessionStore.broadcastMag(it) }
+            .flatMap { redisUtil.pushGroupMsg(msg) }
             .flatMap { ResponseInfo.ok("成功") }
+    }
+
+    /**
+     * @api {connect} /message/page 获取群历史消息
+     * @apiDescription 获取群历史消息
+     * @apiName findPageMessage
+     * @apiParam {Int} areaId 区域id
+     * @apiParam {Int} [pageSize] 每页大小，默认30
+     * @apiParam {Int} [pageNum] 第几页，从1开始，默认第一页
+     * @apiVersion 0.0.1
+     * @apiSuccessExample {json} 成功返回:
+     * {"body":{"code":0,"msg":"成功","data":null},"req":12,"order":0}
+     * @apiGroup Socket
+     * @apiPermission user
+     */
+    @RequestMapping("/message/page")
+    fun findPageMessage(
+        @RequestParam areaId: Int,
+        @RequestParam(required = false) pageSize: Int?,
+        @RequestParam(required = false) pageNum: Int?
+    ): Mono<ResponseInfo<List<GroupMessage>>> {
+        return ResponseInfo.ok(redisUtil.getGroupMsg(areaId, pageSize ?: 30, pageNum ?: 1))
     }
 
     /**

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gyh.fleacampus.core.mapper.AreaMapper">
+    <resultMap id="BaseResultMap" type="com.gyh.fleacampus.core.model.Area">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="area_name" jdbcType="VARCHAR" property="areaName"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="geom" jdbcType="OTHER" property="geom"/>
+        <result column="population" jdbcType="INTEGER" property="population"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, area_name, create_time, user_id, geom, population
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from "fc_area"
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="contains" parameterType="com.gyh.fleacampus.core.model.view.request.AreaRequest"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from fc_area
+        where ST_Contains(geom, st_geometryfromtext('POINT(${longitude} ${latitude})', 4326));
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from "fc_area"
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.core.model.Area"
+            useGeneratedKeys="true">
+        insert into "fc_area" (area_name, create_time, user_id, geom, population)
+        values (#{areaName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{userId,jdbcType=INTEGER},
+                ST_Hexagon(0.01, 0, 0, st_geometryfromtext('POINT(120.1 30.1)', 4326)), #{population,jdbcType=INTEGER})
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.core.model.Area"
+            useGeneratedKeys="true">
+        insert into "fc_area"
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="areaName != null">area_name,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="geom != null">geom,</if>
+            <if test="population != null">population,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="areaName != null">#{areaName,jdbcType=VARCHAR},</if>
+            <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
+            <if test="userId != null">#{userId,jdbcType=INTEGER},</if>
+            <if test="geom != null">#{geom,jdbcType=OTHER},</if>
+            <if test="population != null">#{population,jdbcType=INTEGER},</if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.core.model.Area">
+        update "fc_area"
+        <set>
+            <if test="areaName != null">area_name = #{areaName,jdbcType=VARCHAR},</if>
+            <if test="createTime != null">create_time = #{createTime,jdbcType=TIMESTAMP},</if>
+            <if test="userId != null">user_id = #{userId,jdbcType=INTEGER},</if>
+            <if test="geom != null">geom = #{geom,jdbcType=OTHER},</if>
+            <if test="population != null">population = #{population,jdbcType=INTEGER},</if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.gyh.fleacampus.core.model.Area">
+        update "fc_area"
+        set area_name   = #{areaName,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            user_id     = #{userId,jdbcType=INTEGER},
+            geom        = #{geom,jdbcType=OTHER},
+            population  = #{population,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>
