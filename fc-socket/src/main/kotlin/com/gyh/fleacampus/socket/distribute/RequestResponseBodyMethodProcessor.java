@@ -1,7 +1,6 @@
 package com.gyh.fleacampus.socket.distribute;
 
 import com.gyh.fleacampus.socket.distribute.exception.MethodArgumentNotValidException;
-import com.gyh.fleacampus.socket.distribute.exception.MethodArgumentNotValidException;
 import org.springframework.core.Conventions;
 import org.springframework.core.MethodParameter;
 import org.springframework.validation.DataBinder;

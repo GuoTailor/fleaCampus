@@ -25,7 +25,7 @@ class ResponseInfo<T> {
         this.msg = msg
     }
 
-    constructor() {}
+    constructor()
 
     companion object {
         const val ACCESS_TOKEN_EXPIRES = 4001

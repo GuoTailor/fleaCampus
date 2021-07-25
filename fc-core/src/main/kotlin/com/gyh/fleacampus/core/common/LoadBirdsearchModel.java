@@ -2,7 +2,6 @@ package com.gyh.fleacampus.core.common;
 
 
 import org.tensorflow.op.Ops;
-import org.tensorflow.types.TFloat32;
 import org.tensorflow.types.TUint8;
 
 

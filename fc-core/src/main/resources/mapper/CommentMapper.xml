@@ -39,7 +39,7 @@
                c.top_order,
                c.remark,
                fu.username,
-               fu.phone,
+               fu.photo,
                case when fl is null then 0 else 1 end as liked
         from "fc_comment" c
                  left join fc_user fu on c.user_id = fu.id
@@ -60,7 +60,7 @@
                c.top_order,
                c.remark,
                fu.username,
-               fu.phone,
+               fu.photo,
                case when fl is null then 0 else 1 end as liked
         from "fc_comment" c
                  left join fc_user fu on c.user_id = fu.id
