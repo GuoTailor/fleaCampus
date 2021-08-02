@@ -87,6 +87,11 @@
         from "fc_reply"
         where id = #{id,jdbcType=INTEGER}
     </delete>
+    <delete id="deleteByPostId" parameterType="java.lang.Integer">
+        delete
+        from "fc_reply"
+        where post_id = #{id,jdbcType=INTEGER}
+    </delete>
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.core.model.Reply"
             useGeneratedKeys="true">
         insert into "fc_reply" (comment_id, reply_id, reply_type,

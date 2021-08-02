@@ -50,7 +50,7 @@ class PostController {
         return ResponseInfo.ok(postService.updatePost(post))
     }
 
-    @Operation(summary = "添加一个点赞", security = [SecurityRequirement(name = "Authorization")])
+    @Operation(summary = "添加一个点赞，再次点击取消", security = [SecurityRequirement(name = "Authorization")])
     @PutMapping("/like")
     fun addLike(@Parameter(description = "帖子id", required = true) @RequestParam id: Int): ResponseInfo<Unit> {
         postService.addLike(id)

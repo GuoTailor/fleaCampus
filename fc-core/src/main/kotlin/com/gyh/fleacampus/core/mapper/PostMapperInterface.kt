@@ -15,6 +15,7 @@ interface PostMapperInterface<I: Post, O: PostResponse> {
     fun incrComments(id: Int): Int
     fun incrBrowses(id: Int): Int
     fun incrLikes(id: Int): Int
+    fun decrLikes(id: Int): Int
     fun incrCollects(id: Int): Int
     fun decrCollects(id: Int): Int
     fun decrComments(id: Int): Int

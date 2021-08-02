@@ -18,10 +18,27 @@
         from "fc_like"
         where id = #{id,jdbcType=INTEGER}
     </select>
+    <select id="findSelectiveForUpdate" parameterType="com.gyh.fleacampus.core.model.Like" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from "fc_like"
+        where
+        AND user_id = #{userId,jdbcType=INTEGER}
+        AND post_id = #{postId,jdbcType=INTEGER}
+        AND comment_id = #{commentId,jdbcType=INTEGER}
+        AND reply_id = #{replyId,jdbcType=INTEGER}
+        AND "status" = #{status,jdbcType=SMALLINT}
+        for update
+    </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete
         from "fc_like"
         where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <delete id="deleteByPostId" parameterType="java.lang.Integer">
+        delete
+        from "fc_like"
+        where post_id = #{id,jdbcType=INTEGER}
     </delete>
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.core.model.Like"
             useGeneratedKeys="true">

@@ -73,10 +73,20 @@
         set replys = replys + 1
         where id = #{id}
     </update>
+    <update id="decrReplys" parameterType="int">
+        update fc_comment
+        set replys = replys - 1
+        where id = #{id}
+    </update>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete
         from "fc_comment"
         where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <delete id="deleteByPostId" parameterType="java.lang.Integer">
+        delete
+        from "fc_comment"
+        where post_id = #{id,jdbcType=INTEGER}
     </delete>
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.core.model.Comment"
             useGeneratedKeys="true">

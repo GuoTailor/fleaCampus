@@ -50,7 +50,7 @@ class DealController {
         return ResponseInfo.ok(dealService.updatePost(deal))
     }
 
-    @Operation(summary = "添加一个点赞", security = [SecurityRequirement(name = "Authorization")])
+    @Operation(summary = "添加一个点赞，再次点击取消", security = [SecurityRequirement(name = "Authorization")])
     @PutMapping("/like")
     fun addLike(@Parameter(description = "二手id", required = true) @RequestParam id: Int): ResponseInfo<Unit> {
         dealService.addLike(id)

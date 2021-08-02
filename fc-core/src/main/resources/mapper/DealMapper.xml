@@ -119,6 +119,11 @@
         set likes = likes + 1
         where id = #{id}
     </update>
+    <update id="decrLikes" parameterType="int">
+        update fc_post
+        set likes = likes - 1
+        where id = #{id}
+    </update>
     <update id="incrCollects" parameterType="int">
         update fc_post
         set collects = collects + 1

@@ -10,7 +10,7 @@
     <description>社区交友、二手app后台</description>
     <properties>
         <java.version>11</java.version>
-        <kotlin.version>1.5.20</kotlin.version>
+        <kotlin.version>1.5.21</kotlin.version>
     </properties>
 
     <dependencies>

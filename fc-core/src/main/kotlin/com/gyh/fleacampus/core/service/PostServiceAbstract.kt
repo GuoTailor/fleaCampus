@@ -3,8 +3,10 @@ package com.gyh.fleacampus.core.service
 import com.github.pagehelper.PageHelper
 import com.gyh.fleacampus.common.async
 import com.gyh.fleacampus.core.common.getCurrentUser
+import com.gyh.fleacampus.core.mapper.CommentMapper
 import com.gyh.fleacampus.core.mapper.LikeMapper
 import com.gyh.fleacampus.core.mapper.PostMapperInterface
+import com.gyh.fleacampus.core.mapper.ReplyMapper
 import com.gyh.fleacampus.core.model.Like
 import com.gyh.fleacampus.core.model.PageView
 import com.gyh.fleacampus.core.model.Post
@@ -12,6 +14,7 @@ import com.gyh.fleacampus.core.model.Role
 import com.gyh.fleacampus.core.model.view.response.PostResponse
 import com.gyh.fleacampus.core.service.lucene.Document
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import javax.annotation.Resource
@@ -23,7 +26,10 @@ abstract class PostServiceAbstract<I : Post, O: PostResponse> {
 
     @Resource
     lateinit var likeMapper: LikeMapper
-
+    @Resource
+    lateinit var commentMapper: CommentMapper
+    @Resource
+    lateinit var replyMapper: ReplyMapper
     @Autowired
     lateinit var document: Document
 
@@ -86,12 +92,27 @@ abstract class PostServiceAbstract<I : Post, O: PostResponse> {
     }
 
     /**
-     * 添加帖子赞
+     * 添加帖子赞,再次点击取消
      */
-    fun addLike(id: Int) {
+    @Transactional
+    open fun addLike(id: Int) {
         val userId = getCurrentUser().id
-        likeMapper.insertSelective(Like(userId = userId, postId = id, status = Like.VALID))
-        getMapper().incrLikes(id)
+        val like = Like(userId = userId, postId = id)
+        val oldLike = likeMapper.findSelectiveForUpdate(like)
+        // 如果还没有点过赞
+        if (oldLike == null) {
+            like.status = Like.VALID
+            likeMapper.insertSelective(like)
+            getMapper().incrLikes(id)
+        } else if (oldLike.status == Like.INVALID) {    // 如果点过赞，但是取消了
+            oldLike.status = Like.VALID
+            likeMapper.updateByPrimaryKeySelective(oldLike)
+            getMapper().incrLikes(id)
+        } else if (oldLike.status == Like.VALID) {      // 如果点过赞，也没有取消，就取消掉
+            oldLike.status = Like.INVALID
+            likeMapper.updateByPrimaryKeySelective(oldLike)
+            getMapper().decrLikes(id)
+        }
     }
 
     fun deletePost(id: Int): Int {
@@ -101,6 +122,9 @@ abstract class PostServiceAbstract<I : Post, O: PostResponse> {
             error("帖子的创建者才能删除该帖子")
         }
         async { document.deleteIndex(id) }
+        likeMapper.deleteByPostId(id)
+        commentMapper.deleteByPostId(id)
+        replyMapper.deleteByPostId(id)
         return getMapper().deleteByPrimaryKey(id)
     }
 }
