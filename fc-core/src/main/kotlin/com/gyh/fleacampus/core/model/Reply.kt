@@ -2,7 +2,6 @@ package com.gyh.fleacampus.core.model
 
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
-import java.util.*
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
 
@@ -39,7 +38,7 @@ open class Reply(
      * 回复类型 COMMENT：回复的评论，REPLY：回复的回复
      */
     @Schema(description = "回复类型 COMMENT：回复的评论，REPLY：回复的回复")
-    var replyType: String? = null,
+    var replyType: ReplyType? = null,
 
     /**
      * 回复内容
@@ -86,6 +85,7 @@ open class Reply(
     var remark: String? = null,
 
     ) {
+
     enum class ReplyType {
         COMMENT, REPLY
     }
@@ -93,8 +93,6 @@ open class Reply(
     fun checkStatus() {
         postId ?: error("帖子id不能为空")
         commentId ?: error("评论的id不能为空")
-        if (!ReplyType.values().map { it.name }.contains(replyType)) {
-            error("帖子状态是未定义的 {$replyType}")
-        }
+        replyType ?: error("回复类型是未定义的 {$replyType}")
     }
 }

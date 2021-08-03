@@ -78,6 +78,16 @@
         set replys = replys - 1
         where id = #{id}
     </update>
+    <update id="incrLikes" parameterType="int">
+        update fc_comment
+        set likes = likes + 1
+        where id = #{id}
+    </update>
+    <update id="decrLikes" parameterType="int">
+        update fc_comment
+        set likes = likes - 1
+        where id = #{id}
+    </update>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete
         from "fc_comment"

@@ -44,9 +44,9 @@ open class Comment(
     var createTime: LocalDateTime? = null,
 
     /**
-     * 0:隐藏，1:展示, 2:删除
+     * 0:隐藏，1:展示
      */
-    @Schema(description = "0:隐藏，1:展示, 2:删除")
+    @Schema(description = "0:隐藏，1:展示")
     var flag: Int? = null,
 
     /**
@@ -70,6 +70,5 @@ open class Comment(
     companion object {
         const val HIDE = 0
         const val SHOW = 1
-        const val DELETE = 2
     }
 }

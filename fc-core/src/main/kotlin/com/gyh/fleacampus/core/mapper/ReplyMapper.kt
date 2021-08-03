@@ -9,6 +9,8 @@ interface ReplyMapper {
     fun insert(record: Reply): Int
     fun insertSelective(record: Reply): Int
     fun selectByPrimaryKey(id: Int): Reply?
+    fun incrLikes(id: Int): Int
+    fun decrLikes(id: Int): Int
     fun updateByPrimaryKeySelective(record: Reply): Int
     fun updateByPrimaryKey(record: Reply): Int
     fun findTopThree(id: Int, userId: Int): List<ReplyResponse>

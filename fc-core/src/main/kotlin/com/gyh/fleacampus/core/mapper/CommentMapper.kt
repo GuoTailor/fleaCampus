@@ -12,6 +12,8 @@ interface CommentMapper {
     fun findByPage(postId: Int, userId: Int): List<CommentResponse>
     fun incrReplys(id: Int): Int
     fun decrReplys(id: Int): Int
+    fun incrLikes(id: Int): Int
+    fun decrLikes(id: Int): Int
     fun updateByPrimaryKeySelective(record: Comment): Int
     fun updateByPrimaryKey(record: Comment): Int
 }
