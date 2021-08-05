@@ -99,19 +99,25 @@ abstract class PostServiceAbstract<I : Post, O: PostResponse> {
         val userId = getCurrentUser().id
         val like = Like(userId = userId, postId = id)
         val oldLike = likeMapper.findSelectiveForUpdate(like)
-        // 如果还没有点过赞
-        if (oldLike == null) {
-            like.status = Like.VALID
-            likeMapper.insertSelective(like)
-            getMapper().incrLikes(id)
-        } else if (oldLike.status == Like.INVALID) {    // 如果点过赞，但是取消了
-            oldLike.status = Like.VALID
-            likeMapper.updateByPrimaryKeySelective(oldLike)
-            getMapper().incrLikes(id)
-        } else if (oldLike.status == Like.VALID) {      // 如果点过赞，也没有取消，就取消掉
-            oldLike.status = Like.INVALID
-            likeMapper.updateByPrimaryKeySelective(oldLike)
-            getMapper().decrLikes(id)
+        when {
+            // 如果还没有点过赞
+            oldLike == null -> {
+                like.status = Like.VALID
+                likeMapper.insertSelective(like)
+                getMapper().incrLikes(id)
+            }
+            // 如果点过赞，但是取消了
+            oldLike.status == Like.INVALID -> {
+                oldLike.status = Like.VALID
+                likeMapper.updateByPrimaryKeySelective(oldLike)
+                getMapper().incrLikes(id)
+            }
+            // 如果点过赞，也没有取消，就取消掉
+            oldLike.status == Like.VALID -> {      // 如果点过赞，也没有取消，就取消掉
+                oldLike.status = Like.INVALID
+                likeMapper.updateByPrimaryKeySelective(oldLike)
+                getMapper().decrLikes(id)
+            }
         }
     }
 
