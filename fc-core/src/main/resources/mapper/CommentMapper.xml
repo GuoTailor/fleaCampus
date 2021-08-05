@@ -40,7 +40,7 @@
                c.remark,
                fu.username,
                fu.photo,
-               case when fl is null then 0 else 1 end as liked
+               COALESCE(fl.status, 0) as liked
         from "fc_comment" c
                  left join fc_user fu on c.user_id = fu.id
                  left join fc_like fl on c.id = fl.comment_id and fl.user_id = #{userId}
@@ -61,7 +61,7 @@
                c.remark,
                fu.username,
                fu.photo,
-               case when fl is null then 0 else 1 end as liked
+               COALESCE(fl.status, 0) as liked
         from "fc_comment" c
                  left join fc_user fu on c.user_id = fu.id
                  left join fc_like fl on c.id = fl.comment_id and fl.user_id = #{userId}

@@ -51,10 +51,10 @@
                p.browses,
                u.username,
                u.photo,
-               case when fl is null then 0 else 1 end as liked
+               COALESCE(fl.status, 0) as liked
         from fc_post p
                  left join fc_user u on u.id = p.user_id
-                 left join fc_like fl on p.id = fl.post_id and fl.user_id = #{userId}
+                 left join fc_like fl on p.id = fl.post_id and fl.user_id = #{userId} and fl.comment_id isnull and fl.reply_id isnull
         order by p.create_time DESC
     </select>
 
@@ -78,10 +78,10 @@
                p.browses,
                u.username,
                u.photo,
-               case when fl is null then 0 else 1 end as liked
+               COALESCE(fl.status, 0) as liked
         from fc_post p
                  left join fc_user u on u.id = p.user_id
-                 left join fc_like fl on p.id = fl.post_id and fl.user_id = #{userId}
+                 left join fc_like fl on p.id = fl.post_id and fl.user_id = #{userId} and fl.comment_id isnull and fl.reply_id isnull
         where p.id = #{id,jdbcType=INTEGER}
     </select>
     <update id="incrComments" parameterType="int">

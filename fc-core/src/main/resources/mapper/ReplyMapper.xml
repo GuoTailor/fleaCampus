@@ -47,9 +47,9 @@
                fr.post_id,
                fr.remark,
                fu.username,
-               fu2.username                           as toUsername,
+               fu2.username           as toUsername,
                fu.photo,
-               case when fl is null then 0 else 1 end as liked
+               COALESCE(fl.status, 0) as liked
         from fc_reply fr
                  left join fc_user fu on fr.user_id = fu.id
                  left join fc_user fu2 on fr.to_uid = fu2.id
@@ -72,9 +72,9 @@
                fr.post_id,
                fr.remark,
                fu.username,
-               fu2.username                           as toUsername,
+               fu2.username           as toUsername,
                fu.photo,
-               case when fl is null then 0 else 1 end as liked
+               COALESCE(fl.status, 0) as liked
         from fc_reply fr
                  left join fc_user fu on fr.user_id = fu.id
                  left join fc_user fu2 on fr.to_uid = fu2.id
