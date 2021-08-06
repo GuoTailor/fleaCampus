@@ -1,8 +1,10 @@
 package com.gyh.fleacampus.core.controller
 
 import com.gyh.fleacampus.core.model.Deal
+import com.gyh.fleacampus.core.model.Favorite
 import com.gyh.fleacampus.core.model.PageView
 import com.gyh.fleacampus.core.model.ResponseInfo
+import com.gyh.fleacampus.core.model.view.request.CommentRequest
 import com.gyh.fleacampus.core.model.view.request.DealRequest
 import com.gyh.fleacampus.core.model.view.response.DealResponse
 import com.gyh.fleacampus.core.service.DealService
@@ -61,5 +63,12 @@ class DealController {
     @DeleteMapping
     fun deleteDeal(@Parameter(description = "二手id", required = true) @RequestParam id: Int): ResponseInfo<Int> {
         return ResponseInfo.ok(dealService.deletePost(id))
+    }
+
+    @Operation(summary = "添加一个收藏，再次点击取消", security = [SecurityRequirement(name = "Authorization")])
+    @PutMapping("/favorite")
+    fun addFavorite(@Parameter(description = "帖子id", required = true) @RequestParam id: Int): ResponseInfo<Int> {
+        val favorite = Favorite(postId = id, type = CommentRequest.CommentType.DEAL.name)
+        return ResponseInfo.ok(dealService.addFavorite(favorite))
     }
 }

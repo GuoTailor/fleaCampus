@@ -1,8 +1,10 @@
 package com.gyh.fleacampus.core.controller
 
+import com.gyh.fleacampus.core.model.Favorite
 import com.gyh.fleacampus.core.model.PageView
 import com.gyh.fleacampus.core.model.Post
 import com.gyh.fleacampus.core.model.ResponseInfo
+import com.gyh.fleacampus.core.model.view.request.CommentRequest
 import com.gyh.fleacampus.core.model.view.request.PostRequest
 import com.gyh.fleacampus.core.model.view.response.PostResponse
 import com.gyh.fleacampus.core.service.PostService
@@ -61,5 +63,12 @@ class PostController {
     @DeleteMapping
     fun deletePost(@Parameter(description = "帖子id", required = true) @RequestParam id: Int): ResponseInfo<Int> {
         return ResponseInfo.ok(postService.deletePost(id))
+    }
+
+    @Operation(summary = "添加一个收藏，再次点击取消", security = [SecurityRequirement(name = "Authorization")])
+    @PutMapping("/favorite")
+    fun addFavorite(@Parameter(description = "帖子id", required = true) @RequestParam id: Int): ResponseInfo<Int> {
+        val favorite = Favorite(postId = id, type = CommentRequest.CommentType.POST.name)
+        return ResponseInfo.ok(postService.addFavorite(favorite))
     }
 }

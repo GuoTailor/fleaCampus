@@ -3,14 +3,8 @@ package com.gyh.fleacampus.core.service
 import com.github.pagehelper.PageHelper
 import com.gyh.fleacampus.common.async
 import com.gyh.fleacampus.core.common.getCurrentUser
-import com.gyh.fleacampus.core.mapper.CommentMapper
-import com.gyh.fleacampus.core.mapper.LikeMapper
-import com.gyh.fleacampus.core.mapper.PostMapperInterface
-import com.gyh.fleacampus.core.mapper.ReplyMapper
-import com.gyh.fleacampus.core.model.Like
-import com.gyh.fleacampus.core.model.PageView
-import com.gyh.fleacampus.core.model.Post
-import com.gyh.fleacampus.core.model.Role
+import com.gyh.fleacampus.core.mapper.*
+import com.gyh.fleacampus.core.model.*
 import com.gyh.fleacampus.core.model.view.response.PostResponse
 import com.gyh.fleacampus.core.service.lucene.Document
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,6 +24,8 @@ abstract class PostServiceAbstract<I : Post, O: PostResponse> {
     lateinit var commentMapper: CommentMapper
     @Resource
     lateinit var replyMapper: ReplyMapper
+    @Resource
+    lateinit var favoriteMapper: FavoriteMapper
     @Autowired
     lateinit var document: Document
 
@@ -113,11 +109,27 @@ abstract class PostServiceAbstract<I : Post, O: PostResponse> {
                 getMapper().incrLikes(id)
             }
             // 如果点过赞，也没有取消，就取消掉
-            oldLike.status == Like.VALID -> {      // 如果点过赞，也没有取消，就取消掉
+            oldLike.status == Like.VALID -> {
                 oldLike.status = Like.INVALID
                 likeMapper.updateByPrimaryKeySelective(oldLike)
                 getMapper().decrLikes(id)
             }
+        }
+    }
+
+    /**
+     * 添加一个收藏
+     */
+    @Transactional
+    open fun addFavorite(favorite: Favorite): Int {
+        val userId = getCurrentUser().id!!
+        val oldFavorite = favoriteMapper.selectByUserIdAndPostId(favorite.postId!!, userId)
+        return if (oldFavorite == null) {
+            favoriteMapper.insertSelective(favorite)
+            getMapper().incrCollects(favorite.postId!!)
+        } else {
+            favoriteMapper.deleteByPrimaryKey(oldFavorite.id!!)
+            getMapper().decrCollects(oldFavorite.postId!!)
         }
     }
 
