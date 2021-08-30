@@ -26,6 +26,10 @@ class WxLoginFilter(private val authManager: AuthenticationManager) :
     private val json: ObjectMapper = jacksonObjectMapper().registerModule(getJavaTimeModule())
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
+        request
+
+
+
         val username = request.getParameter("username") ?: ""
         val password = request.getParameter("password") ?: ""
         val wxId = request.getParameter("wxId")

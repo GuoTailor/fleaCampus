@@ -92,7 +92,7 @@ class CommentService {
         return replyMapper.deleteByPrimaryKey(id)
     }
 
-    @Transactional
+    @Transactional(rollbackFor = [Exception::class])
     fun like(postId: Int, commentId: Int? = null, replyId: Int? = null) {
         val userId = getCurrentUser().id
         val like = Like(userId = userId, postId = postId, commentId = commentId, replyId = replyId)

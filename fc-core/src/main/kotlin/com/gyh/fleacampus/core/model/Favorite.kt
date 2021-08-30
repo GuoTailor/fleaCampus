@@ -3,8 +3,8 @@ package com.gyh.fleacampus.core.model
 import java.util.*
 
 /**
- * fc_favorite
- * @author
+ * fc_favorite 收藏
+ * @author GYH
  */
 class Favorite(
     var id: Int? = null,
