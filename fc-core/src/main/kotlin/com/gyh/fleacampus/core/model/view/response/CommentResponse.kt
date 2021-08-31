@@ -13,7 +13,7 @@ class CommentResponse : Comment() {
     var username: String? = null
 
     @Schema(description = "用户头像")
-    var photo: String? = null
+    var headimgurl: String? = null
 
     @Schema(defaultValue = "0:没有点赞，1:点赞")
     var liked: Int? = null

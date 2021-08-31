@@ -16,7 +16,7 @@ data class User(
     @Id override var id: Int? = null,
     private var username: String? = null,
     private var roles: Collection<String>? = null,
-    var photo: String? = null,
+    var headimgurl: String? = null,
     var areaId: Int? = null,
     var createTime: LocalDateTime? = null
 ) : BaseUser {

@@ -24,7 +24,7 @@
     <resultMap id="postResponse" type="com.gyh.fleacampus.core.model.view.response.PostResponse"
                extends="BaseResultMap">
         <result property="username" column="username"/>
-        <result property="photo" column="photo"/>
+        <result property="headimgurl" column="headimgurl"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -50,7 +50,7 @@
                p.coordinate,
                p.browses,
                u.username,
-               u.photo,
+               u.headimgurl,
                COALESCE(fl.status, 0) as liked
         from fc_post p
                  left join fc_user u on u.id = p.user_id
@@ -77,7 +77,7 @@
                p.coordinate,
                p.browses,
                u.username,
-               u.photo,
+               u.headimgurl,
                COALESCE(fl.status, 0) as liked
         from fc_post p
                  left join fc_user u on u.id = p.user_id

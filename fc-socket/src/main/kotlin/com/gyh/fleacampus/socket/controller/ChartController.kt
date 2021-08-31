@@ -61,7 +61,7 @@ class ChartController {
             .map { user ->
                 msg.userId = user.id
                 msg.date = LocalDateTime.now()
-                msg.headImg = user.photo
+                msg.headImg = user.headimgurl
                 msg
             }.flatMap { SocketSessionStore.broadcastMag(it) }
             .flatMap { redisUtil.pushGroupMsg(msg) }

@@ -10,7 +10,7 @@ open class PostResponse(
     @Schema(description = "用户名")
     var username: String? = null,
     @Schema(description = "用户头像")
-    var photo: String? = null,
+    var headimgurl: String? = null,
     @Schema(description = "图片列表")
     var images: List<String>? = null,
     @Schema(defaultValue = "0:没有点赞，1:点赞")

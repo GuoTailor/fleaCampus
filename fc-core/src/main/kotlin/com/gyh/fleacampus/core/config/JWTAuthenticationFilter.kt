@@ -2,7 +2,6 @@ package com.gyh.fleacampus.core.config
 
 import com.gyh.fleacampus.common.JwtUtil
 import com.gyh.fleacampus.core.model.ResponseInfo
-import com.gyh.fleacampus.core.model.User
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -13,6 +12,7 @@ import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import com.gyh.fleacampus.core.common.json
+import com.gyh.fleacampus.core.model.User
 
 /**
  * Created by gyh on 2019/8/18.

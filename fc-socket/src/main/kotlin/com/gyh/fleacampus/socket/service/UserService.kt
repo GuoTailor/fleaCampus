@@ -25,9 +25,9 @@ class UserService {
             .flatMap { userDao.findById(it.id!!) }
     }
 
-    fun findPhotoById(): Mono<String> {
+    fun findHeadimgurlById(): Mono<String> {
         return loadUser()
-            .map { it.photo ?: "" }
+            .map { it.headimgurl ?: "" }
     }
 
     fun findArea(id: Int): Mono<Area> {

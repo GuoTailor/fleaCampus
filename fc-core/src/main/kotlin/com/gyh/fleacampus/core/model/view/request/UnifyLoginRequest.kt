@@ -27,4 +27,10 @@ data class UnifyLoginRequest(
     var city: String? = null,
     @Schema(description = "用户头像")
     var headimgurl: String? = null,
-)
+) {
+    companion object {
+        const val PHONE = "PHONE"
+        const val WX = "WX"
+        const val QQ = "QQ"
+    }
+}

@@ -23,7 +23,7 @@
                extends="BaseResultMap">
         <result property="username" column="username"/>
         <result property="toUsername" column="toUsername"/>
-        <result property="photo" column="photo"/>
+        <result property="headimgurl" column="headimgurl"/>
         <result property="liked" column="liked"/>
     </resultMap>
 
@@ -48,7 +48,7 @@
                fr.remark,
                fu.username,
                fu2.username           as toUsername,
-               fu.photo,
+               fu.headimgurl,
                COALESCE(fl.status, 0) as liked
         from fc_reply fr
                  left join fc_user fu on fr.user_id = fu.id
@@ -73,7 +73,7 @@
                fr.remark,
                fu.username,
                fu2.username           as toUsername,
-               fu.photo,
+               fu.headimgurl,
                COALESCE(fl.status, 0) as liked
         from fc_reply fr
                  left join fc_user fu on fr.user_id = fu.id

@@ -13,7 +13,7 @@ class ReplyResponse : Reply() {
     var username: String? = null
 
     @Schema(description = "用户头像")
-    var photo: String? = null
+    var headimgurl: String? = null
 
     @Schema(description = "回复目标用户名")
     var toUsername: String? = null

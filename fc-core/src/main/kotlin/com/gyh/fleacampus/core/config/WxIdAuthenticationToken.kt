@@ -1,23 +1,27 @@
 package com.gyh.fleacampus.core.config
 
+import com.gyh.fleacampus.core.model.User
+import com.gyh.fleacampus.core.model.view.request.UnifyLoginRequest
 import org.springframework.security.authentication.AbstractAuthenticationToken
-import org.springframework.security.core.GrantedAuthority
 import org.springframework.util.Assert
 
 /**
  * Created by GYH on 2021/5/7
  */
 class WxIdAuthenticationToken : AbstractAuthenticationToken {
-    private val principal: String
+    private val principal: UnifyLoginRequest
+    var user: User?
 
-    constructor(principal: String) : super(null) {
+    constructor(principal: UnifyLoginRequest) : super(null) {
         this.principal = principal
         isAuthenticated = false
+        user = null
     }
 
-    constructor(principal: String, authorities: Collection<GrantedAuthority>) : super(authorities) {
+    constructor(principal: UnifyLoginRequest, user: User) : super(user.authorities) {
         this.principal = principal
         super.setAuthenticated(true) // must use super, as we override
+        this.user = user
     }
 
     override fun getCredentials() = null

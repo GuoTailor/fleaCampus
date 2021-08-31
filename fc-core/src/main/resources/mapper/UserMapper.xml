@@ -6,20 +6,24 @@
         <result column="username" jdbcType="VARCHAR" property="username"/>
         <result column="password" jdbcType="VARCHAR" property="password"/>
         <result column="signature" jdbcType="VARCHAR" property="signature"/>
-        <result column="photo" jdbcType="VARCHAR" property="photo"/>
+        <result column="headimgurl" jdbcType="VARCHAR" property="headimgurl"/>
         <result column="phone" jdbcType="VARCHAR" property="phone"/>
         <result column="sex" jdbcType="SMALLINT" property="sex"/>
         <result column="exp" jdbcType="INTEGER" property="exp"/>
         <result column="score" jdbcType="INTEGER" property="score"/>
         <result column="horoscope" jdbcType="VARCHAR" property="horoscope"/>
-        <result column="area_id" jdbcType="INTEGER" property="areaId"/>
-        <result column="grade" jdbcType="VARCHAR" property="grade"/>
-        <result column="specialty" jdbcType="VARCHAR" property="specialty"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="unionid" jdbcType="VARCHAR" property="unionid"/>
+        <result column="realname" jdbcType="VARCHAR" property="realname"/>
+        <result column="qq_openid" jdbcType="VARCHAR" property="qqOpenid"/>
+        <result column="birthday" jdbcType="DATE" property="birthday"/>
+        <result column="affective" jdbcType="VARCHAR" property="affective"/>
+        <result column="hometown" jdbcType="VARCHAR" property="hometown"/>
+        <result column="school" jdbcType="VARCHAR" property="school"/>
     </resultMap>
     <sql id="Base_Column_List">
-        id, username, "password", signature, photo, phone, sex, "exp", score, horoscope,
-    area_id, grade, specialty, create_time
+        id, username, "password", signature, headimgurl, phone, sex, "exp", score, horoscope,
+    create_time, unionid, realname, qq_openid, birthday, affective, hometown, school
     </sql>
     <select id="loadUserByUsername" resultMap="BaseResultMap">
         select
@@ -32,6 +36,24 @@
         from "fc_user"
         where id = #{id,jdbcType=INTEGER}
     </select>
+    <select id="selectByPhone" parameterType="int" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from fc_user
+        where phone = #{phone}
+    </select>
+    <select id="selectByUnionid" parameterType="int" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from fc_user
+        where unionid = #{unionid}
+    </select>
+    <select id="selectByQQOpenId" parameterType="int" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from fc_user
+        where qq_openid = #{qqOpenid}
+    </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete
         from "fc_user"
@@ -40,15 +62,17 @@
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.core.model.User"
             useGeneratedKeys="true">
         insert into "fc_user" (username, "password", signature,
-                               photo, phone, sex,
+                               headimgurl, phone, sex,
                                "exp", score, horoscope,
-                               area_id, grade, specialty,
-                               create_time)
+                               create_time, unionid, realname,
+                               qq_openid, birthday, affective,
+                               hometown, school)
         values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{signature,jdbcType=VARCHAR},
-                #{photo,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{sex,jdbcType=SMALLINT},
+                #{headimgurl,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{sex,jdbcType=SMALLINT},
                 #{exp,jdbcType=INTEGER}, #{score,jdbcType=INTEGER}, #{horoscope,jdbcType=VARCHAR},
-                #{areaId,jdbcType=INTEGER}, #{grade,jdbcType=VARCHAR}, #{specialty,jdbcType=VARCHAR},
-                #{createTime,jdbcType=TIMESTAMP})
+                #{createTime,jdbcType=TIMESTAMP}, #{unionid,jdbcType=VARCHAR}, #{realname,jdbcType=VARCHAR},
+                #{qqOpenid,jdbcType=VARCHAR}, #{birthday,jdbcType=DATE}, #{affective,jdbcType=VARCHAR},
+                #{hometown,jdbcType=VARCHAR}, #{school,jdbcType=VARCHAR})
     </insert>
     <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.gyh.fleacampus.core.model.User"
             useGeneratedKeys="true">
@@ -57,31 +81,39 @@
             <if test="username != null">username,</if>
             <if test="password != null">"password",</if>
             <if test="signature != null">signature,</if>
-            <if test="photo != null">photo,</if>
+            <if test="headimgurl != null">headimgurl,</if>
             <if test="phone != null">phone,</if>
             <if test="sex != null">sex,</if>
             <if test="exp != null">"exp",</if>
             <if test="score != null">score,</if>
             <if test="horoscope != null">horoscope,</if>
-            <if test="areaId != null">area_id,</if>
-            <if test="grade != null">grade,</if>
-            <if test="specialty != null">specialty,</if>
             <if test="createTime != null">create_time,</if>
+            <if test="unionid != null">unionid,</if>
+            <if test="realname != null">realname,</if>
+            <if test="qqOpenid != null">qq_openid,</if>
+            <if test="birthday != null">birthday,</if>
+            <if test="affective != null">affective,</if>
+            <if test="hometown != null">hometown,</if>
+            <if test="school != null">school,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="username != null">#{username,jdbcType=VARCHAR},</if>
             <if test="password != null">#{password,jdbcType=VARCHAR},</if>
             <if test="signature != null">#{signature,jdbcType=VARCHAR},</if>
-            <if test="photo != null">#{photo,jdbcType=VARCHAR},</if>
+            <if test="headimgurl != null">#{headimgurl,jdbcType=VARCHAR},</if>
             <if test="phone != null">#{phone,jdbcType=VARCHAR},</if>
             <if test="sex != null">#{sex,jdbcType=SMALLINT},</if>
             <if test="exp != null">#{exp,jdbcType=INTEGER},</if>
             <if test="score != null">#{score,jdbcType=INTEGER},</if>
             <if test="horoscope != null">#{horoscope,jdbcType=VARCHAR},</if>
-            <if test="areaId != null">#{areaId,jdbcType=INTEGER},</if>
-            <if test="grade != null">#{grade,jdbcType=VARCHAR},</if>
-            <if test="specialty != null">#{specialty,jdbcType=VARCHAR},</if>
             <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
+            <if test="unionid != null">#{unionid,jdbcType=VARCHAR},</if>
+            <if test="realname != null">#{realname,jdbcType=VARCHAR},</if>
+            <if test="qqOpenid != null">#{qqOpenid,jdbcType=VARCHAR},</if>
+            <if test="birthday != null">#{birthday,jdbcType=DATE},</if>
+            <if test="affective != null">#{affective,jdbcType=VARCHAR},</if>
+            <if test="hometown != null">#{hometown,jdbcType=VARCHAR},</if>
+            <if test="school != null">#{school,jdbcType=VARCHAR},</if>
         </trim>
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.gyh.fleacampus.core.model.User">
@@ -90,16 +122,20 @@
             <if test="username != null">username = #{username,jdbcType=VARCHAR},</if>
             <if test="password != null">"password" = #{password,jdbcType=VARCHAR},</if>
             <if test="signature != null">signature = #{signature,jdbcType=VARCHAR},</if>
-            <if test="photo != null">photo = #{photo,jdbcType=VARCHAR},</if>
+            <if test="headimgurl != null">headimgurl = #{headimgurl,jdbcType=VARCHAR},</if>
             <if test="phone != null">phone = #{phone,jdbcType=VARCHAR},</if>
             <if test="sex != null">sex = #{sex,jdbcType=SMALLINT},</if>
             <if test="exp != null">"exp" = #{exp,jdbcType=INTEGER},</if>
             <if test="score != null">score = #{score,jdbcType=INTEGER},</if>
             <if test="horoscope != null">horoscope = #{horoscope,jdbcType=VARCHAR},</if>
-            <if test="areaId != null">area_id = #{areaId,jdbcType=INTEGER},</if>
-            <if test="grade != null">grade = #{grade,jdbcType=VARCHAR},</if>
-            <if test="specialty != null">specialty = #{specialty,jdbcType=VARCHAR},</if>
             <if test="createTime != null">create_time = #{createTime,jdbcType=TIMESTAMP},</if>
+            <if test="unionid != null">unionid = #{unionid,jdbcType=VARCHAR},</if>
+            <if test="realname != null">realname = #{realname,jdbcType=VARCHAR},</if>
+            <if test="qqOpenid != null">qq_openid = #{qqOpenid,jdbcType=VARCHAR},</if>
+            <if test="birthday != null">birthday = #{birthday,jdbcType=DATE},</if>
+            <if test="affective != null">affective = #{affective,jdbcType=VARCHAR},</if>
+            <if test="hometown != null">hometown = #{hometown,jdbcType=VARCHAR},</if>
+            <if test="school != null">school = #{school,jdbcType=VARCHAR},</if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
@@ -108,15 +144,20 @@
         set username    = #{username,jdbcType=VARCHAR},
             "password"  = #{password,jdbcType=VARCHAR},
             signature   = #{signature,jdbcType=VARCHAR},
-            photo       = #{photo,jdbcType=VARCHAR},
+            headimgurl       = #{headimgurl,jdbcType=VARCHAR},
             phone       = #{phone,jdbcType=VARCHAR},
             sex         = #{sex,jdbcType=SMALLINT},
             "exp"       = #{exp,jdbcType=INTEGER},
             score       = #{score,jdbcType=INTEGER},
             horoscope   = #{horoscope,jdbcType=VARCHAR},
-            area_id     = #{areaId,jdbcType=INTEGER},
-            grade       = #{grade,jdbcType=VARCHAR},
-            specialty   = #{specialty,jdbcType=VARCHAR},
-            create_time = #{createTime,jdbcType=TIMESTAMP}
-        where id = #{id,jdbcType=INTEGER}    </update>
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            unionid     = #{unionid,jdbcType=VARCHAR},
+            realname    = #{realname,jdbcType=VARCHAR},
+            qq_openid   = #{qqOpenid,jdbcType=VARCHAR},
+            birthday    = #{birthday,jdbcType=DATE},
+            affective   = #{affective,jdbcType=VARCHAR},
+            hometown    = #{hometown,jdbcType=VARCHAR},
+            school      = #{school,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
 </mapper>

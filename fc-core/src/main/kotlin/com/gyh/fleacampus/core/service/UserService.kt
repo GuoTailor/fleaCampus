@@ -4,12 +4,14 @@ import com.gyh.fleacampus.core.common.getCurrentUser
 import com.gyh.fleacampus.core.mapper.UserMapper
 import com.gyh.fleacampus.core.model.Role
 import com.gyh.fleacampus.core.model.User
+import com.gyh.fleacampus.core.model.view.request.UnifyLoginRequest
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import java.util.*
 import javax.annotation.Resource
 
 /**
@@ -27,6 +29,26 @@ class UserService(val passwordEncoder: PasswordEncoder, val roleService: RoleSer
             ?: throw UsernameNotFoundException("用户：" + s + "不存在")
     }
 
+    fun login(principal: UnifyLoginRequest): User {
+        val user = User()
+        if (principal.type == UnifyLoginRequest.PHONE) {
+            val oldUser = userMapper.selectByPhone(principal.phone!!)
+            if (oldUser == null) {
+                user.setUsername(UUID.randomUUID().toString())
+                user.phone = principal.phone
+                user.sex = 0
+            } else {
+
+            }
+        } else if (principal.type == UnifyLoginRequest.WX) {
+            user.unionid = principal.unionid
+            user.setUsername(principal.nickname ?: UUID.randomUUID().toString())
+            user.sex = principal.sex?.toShort()
+            user.headimgurl = principal.headimgurl
+        }
+        userMapper.insertSelective(user)
+        return user
+    }
 
     /**
      * 注册用户，并添加默认角色[Role.USER]

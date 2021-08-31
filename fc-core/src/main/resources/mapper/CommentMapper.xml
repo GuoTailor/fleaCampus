@@ -17,7 +17,7 @@
     <resultMap id="commentResponse" type="com.gyh.fleacampus.core.model.view.response.CommentResponse"
                extends="BaseResultMap">
         <result property="username" column="username"/>
-        <result property="photo" column="photo"/>
+        <result property="headimgurl" column="headimgurl"/>
         <result property="liked" column="liked"/>
         <collection property="replyList" column="id" javaType="list"
                     ofType="com.gyh.fleacampus.core.model.Reply"
@@ -39,7 +39,7 @@
                c.top_order,
                c.remark,
                fu.username,
-               fu.photo,
+               fu.headimgurl,
                COALESCE(fl.status, 0) as liked
         from "fc_comment" c
                  left join fc_user fu on c.user_id = fu.id
@@ -60,7 +60,7 @@
                c.top_order,
                c.remark,
                fu.username,
-               fu.photo,
+               fu.headimgurl,
                COALESCE(fl.status, 0) as liked
         from "fc_comment" c
                  left join fc_user fu on c.user_id = fu.id

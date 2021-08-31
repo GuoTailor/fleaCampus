@@ -27,7 +27,7 @@
     <resultMap id="postResponse" type="com.gyh.fleacampus.core.model.view.response.DealResponse"
                extends="BaseResultMap">
         <result property="username" column="username"/>
-        <result property="photo" column="photo"/>
+        <result property="headimgurl" column="headimgurl"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -57,7 +57,7 @@
                d.coordinate,
                d.browses,
                u.username,
-               u.photo,
+               u.headimgurl,
                case when fl is null then 0 else 1 end as liked
         from fc_deal d
                  left join fc_user u on u.id = d.user_id
@@ -86,7 +86,7 @@
                d.coordinate,
                d.browses,
                u.username,
-               u.photo,
+               u.headimgurl,
                case when fl is null then 0 else 1 end as liked
         from fc_deal d
                  left join fc_user u on u.id = d.user_id

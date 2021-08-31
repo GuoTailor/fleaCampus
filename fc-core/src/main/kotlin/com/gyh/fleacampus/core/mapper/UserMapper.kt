@@ -10,4 +10,7 @@ interface UserMapper {
     fun updateByPrimaryKeySelective(record: User): Int
     fun updateByPrimaryKey(record: User): Int
     fun loadUserByUsername(username: String): User?
+    fun selectByPhone(phone: String): User?
+    fun selectByUnionid(unionid: String): User?
+    fun selectByQQOpenId(qqOpenid: String): User?
 }
