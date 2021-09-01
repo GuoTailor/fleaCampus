@@ -6,6 +6,7 @@ import com.gyh.fleacampus.core.model.Role
 import com.gyh.fleacampus.core.model.User
 import com.gyh.fleacampus.core.model.view.request.UnifyLoginRequest
 import org.slf4j.LoggerFactory
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -33,21 +34,26 @@ class UserService(val passwordEncoder: PasswordEncoder, val roleService: RoleSer
         val user = User()
         if (principal.type == UnifyLoginRequest.PHONE) {
             val oldUser = userMapper.selectByPhone(principal.phone!!)
-            if (oldUser == null) {
+            return if (oldUser == null) {
                 user.setUsername(UUID.randomUUID().toString())
                 user.phone = principal.phone
                 user.sex = 0
-            } else {
-
-            }
-        } else if (principal.type == UnifyLoginRequest.WX) {
-            user.unionid = principal.unionid
-            user.setUsername(principal.nickname ?: UUID.randomUUID().toString())
-            user.sex = principal.sex?.toShort()
-            user.headimgurl = principal.headimgurl
+                userMapper.insertSelective(user)
+                user
+            } else oldUser
+        } else if (principal.type == UnifyLoginRequest.WX || principal.type == UnifyLoginRequest.QQ) {
+            val oldUser = if (principal.type == UnifyLoginRequest.WX) userMapper.selectByUnionid(principal.unionid!!)
+            else userMapper.selectByQQOpenId(principal.openid!!)
+            return if (oldUser == null) {
+                user.unionid = principal.unionid
+                user.setUsername(principal.nickname ?: UUID.randomUUID().toString())
+                user.sex = principal.sex?.toShort()
+                user.headimgurl = principal.headimgurl
+                userMapper.insertSelective(user)
+                user
+            } else oldUser
         }
-        userMapper.insertSelective(user)
-        return user
+        throw BadCredentialsException("不支持的类型 " + principal.type)
     }
 
     /**
