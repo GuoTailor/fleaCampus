@@ -79,11 +79,8 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
     override fun configure(auth: AuthenticationManagerBuilder) {
         val wxIdAuthenticationProvider = WxIdAuthenticationProvider()
-        val daoAuthenticationProvider = DaoAuthenticationProvider()
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService)
-        daoAuthenticationProvider.setPasswordEncoder(pw)
+        wxIdAuthenticationProvider.userDetailsService = userDetailsService
         auth.authenticationProvider(wxIdAuthenticationProvider)
-        auth.authenticationProvider(daoAuthenticationProvider)
     }
 
     /**

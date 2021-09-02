@@ -36,19 +36,19 @@
         from "fc_user"
         where id = #{id,jdbcType=INTEGER}
     </select>
-    <select id="selectByPhone" parameterType="int" resultMap="BaseResultMap">
+    <select id="selectByPhone" parameterType="string" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from fc_user
         where phone = #{phone}
     </select>
-    <select id="selectByUnionid" parameterType="int" resultMap="BaseResultMap">
+    <select id="selectByUnionid" parameterType="string" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from fc_user
         where unionid = #{unionid}
     </select>
-    <select id="selectByQQOpenId" parameterType="int" resultMap="BaseResultMap">
+    <select id="selectByQQOpenId" parameterType="string" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from fc_user

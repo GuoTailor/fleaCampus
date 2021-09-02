@@ -41,7 +41,7 @@ knife4j:
       locations: classpath:static/*
 
 server:
-  port: 81
+  port: 8082
   http2:
     enabled: true
 
